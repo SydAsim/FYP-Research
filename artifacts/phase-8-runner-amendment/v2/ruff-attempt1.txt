@@ -1,0 +1,653 @@
+E501 Line too long (113 > 100)
+  --> artifacts\phase-8-runner-amendment\v2\assemble_local.py:26:101
+   |
+24 |     parent = REPO / "artifacts/phase-8-runner-amendment/v1"
+25 |     qualify = (parent / "qualify.py").read_text(encoding="utf-8")
+26 |     qualify = qualify.replace('"""Four fixed serial, local PostgreSQL executions. No AWS or main capability."""',
+   |                                                                                                     ^^^^^^^^^^^^^
+27 |                               '"""Nine fixed serial local executions, three arms; no main capability."""')
+28 |     qualify = qualify.replace('"arm": "B3",', '"arm": name.rsplit("-", 1)[-1].upper() '
+   |
+
+E501 Line too long (106 > 100)
+  --> artifacts\phase-8-runner-amendment\v2\assemble_local.py:27:101
+   |
+25 |     qualify = (parent / "qualify.py").read_text(encoding="utf-8")
+26 |     qualify = qualify.replace('"""Four fixed serial, local PostgreSQL executions. No AWS or main capability."""',
+27 |                               '"""Nine fixed serial local executions, three arms; no main capability."""')
+   |                                                                                                     ^^^^^^
+28 |     qualify = qualify.replace('"arm": "B3",', '"arm": name.rsplit("-", 1)[-1].upper() '
+29 |                               'if name != "cal-v4-preflight-v2-never-admit" else "B3",')
+   |
+
+E501 Line too long (132 > 100)
+  --> artifacts\phase-8-runner-amendment\v2\assemble_local.py:35:101
+   |
+33 |     start = qualify.index('    for group, ids in [')
+34 |     end = qualify.index('        if time.monotonic()', start)
+35 |     qualify = qualify[:start] + '''    groups = [("continuation", [f"cal-v4-preflight-v2-refusal-{a}" for a in ("b3", "p1", "p2")])]
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+36 |     groups += [("defect-" + a, [f"cal-v4-preflight-v2-defect-{a}", "cal-v4-preflight-v2-never-admit"]) for a in ("b3", "p1", "p2")]
+37 |     groups += [("recovery-" + a, [f"cal-v4-preflight-v2-recovery-{a}"]) for a in ("b3", "p1", "p2")]
+   |
+
+E501 Line too long (131 > 100)
+  --> artifacts\phase-8-runner-amendment\v2\assemble_local.py:36:101
+   |
+34 |     end = qualify.index('        if time.monotonic()', start)
+35 |     qualify = qualify[:start] + '''    groups = [("continuation", [f"cal-v4-preflight-v2-refusal-{a}" for a in ("b3", "p1", "p2")])]
+36 |     groups += [("defect-" + a, [f"cal-v4-preflight-v2-defect-{a}", "cal-v4-preflight-v2-never-admit"]) for a in ("b3", "p1", "p2")]
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+37 |     groups += [("recovery-" + a, [f"cal-v4-preflight-v2-recovery-{a}"]) for a in ("b3", "p1", "p2")]
+38 |     for group, ids in groups:
+   |
+
+E501 Line too long (113 > 100)
+  --> artifacts\phase-8-runner-amendment\v2\assemble_local.py:40:101
+   |
+38 |     for group, ids in groups:
+39 | ''' + qualify[end:]
+40 |     qualify = qualify.replace('650 * len(ids)', '650 * sum(i != "cal-v4-preflight-v2-never-admit" for i in ids)')
+   |                                                                                                     ^^^^^^^^^^^^^
+41 |     qualify = qualify.replace('group == "recovery"', 'group.startswith("recovery")')
+42 |     qualify = qualify.replace('group == "defect"', 'group.startswith("defect")')
+   |
+
+E501 Line too long (107 > 100)
+  --> artifacts\phase-8-runner-amendment\v2\assemble_local.py:44:101
+   |
+42 |     qualify = qualify.replace('group == "defect"', 'group.startswith("defect")')
+43 |     qualify = qualify.replace('output / "recovery-before.json"', 'output / f"{group}-before.json"')
+44 |     qualify = qualify.replace('output / "defect-pause-proof.json"', 'output / f"{group}-pause-proof.json"')
+   |                                                                                                     ^^^^^^^
+45 |     qualify = qualify.replace('== 2\n', '== 3\n')
+46 |     qualify = qualify.replace('assert backups[0]["at"] < admissions[1]["at"]',
+   |
+
+E501 Line too long (105 > 100)
+  --> artifacts\phase-8-runner-amendment\v2\assemble_local.py:47:101
+   |
+45 |     qualify = qualify.replace('== 2\n', '== 3\n')
+46 |     qualify = qualify.replace('assert backups[0]["at"] < admissions[1]["at"]',
+47 |                               'assert all(backups[i]["at"] < admissions[i + 1]["at"] for i in range(2))')
+   |                                                                                                     ^^^^^
+48 |     # Each arm makes one final synthesis/claim request; no non-retryable retry.
+49 |     qualify = qualify.replace('c["path"] == "/internal/phase6/b3/schedule"',
+   |
+
+E501 Line too long (101 > 100)
+  --> artifacts\phase-8-runner-amendment\v2\assemble_local.py:50:101
+   |
+48 |     # Each arm makes one final synthesis/claim request; no non-retryable retry.
+49 |     qualify = qualify.replace('c["path"] == "/internal/phase6/b3/schedule"',
+50 |                               'c["path"] == ("/internal/phase6/b3/schedule" if trace["arm"] == "B3" '
+   |                                                                                                     ^
+51 |                               'else "/internal/phase3/claims")')
+52 |     (HERE / "qualify.py").write_text(qualify, encoding="utf-8")
+   |
+
+E501 Line too long (135 > 100)
+   --> artifacts\phase-8-runner-amendment\v2\collector.py:392:101
+    |
+390 | …     trial.run()
+391 | …     # Fixed local qualification hook; excluded from main admission.
+392 | …     if case.case_id in {"cal-v4-preflight-v2-defect-b3", "cal-v4-preflight-v2-defect-p1", "cal-v4-preflight-v2-defect-p2"}:
+    |                                                                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+393 | …         trial.barrier("CALIBRATION_TECHNICAL_DEFECT")
+394 | …         raise RuntimeError("CALIBRATION_TECHNICAL_DEFECT")
+    |
+
+E501 Line too long (107 > 100)
+  --> artifacts\phase-8-runner-amendment\v2\prepare_candidate.py:26:101
+   |
+24 |     # Capture the actual source, frozen receipts/packages and retained originals.
+25 |     paths: list[Path] = []
+26 |     inventory = json.loads((REPO / "artifacts/phase-8-review-freeze/v2/review-inventory.json").read_text())
+   |                                                                                                     ^^^^^^^
+27 |     paths.extend(REPO / p for p in inventory["files"])
+28 |     for directory in ("phase-7-pilot", "phase-8-review-freeze/v2", "phase-8-continuation/v1",
+   |
+
+E501 Line too long (101 > 100)
+  --> artifacts\phase-8-runner-amendment\v2\prepare_candidate.py:33:101
+   |
+31 |         root = REPO / "artifacts" / directory
+32 |         paths.extend(p for p in root.rglob("*") if p.is_file()
+33 |                      and not {"__pycache__", "node_modules", ".next", ".venv"}.intersection(p.parts))
+   |                                                                                                     ^
+34 |     paths.extend(p for p in Path("C:/p8c1/m/x/slot").rglob("*") if p.is_file())
+35 |     paths.extend(p for p in Path("C:/p8c1/s/x/slot").rglob("*") if p.is_file())
+   |
+
+E501 Line too long (102 > 100)
+  --> artifacts\phase-8-runner-amendment\v2\prepare_candidate.py:79:101
+   |
+77 |                    "three arm technical-defect durable pauses and rejected sentinel admission",
+78 |                    "three same-execution/deadline interrupted resumes with unchanged POST count",
+79 |                    "negative recognition and corrupted-evidence checks; failed-backup admission stop",
+   |                                                                                                     ^^
+80 |                    "main admission blocked; historical hashes and remaining identity order unchanged"],
+81 |         "stop": "No new local admission after 110 minutes or unexpected failure. Retain every attempt. "
+   |
+
+E501 Line too long (103 > 100)
+  --> artifacts\phase-8-runner-amendment\v2\prepare_candidate.py:80:101
+   |
+78 |                    "three same-execution/deadline interrupted resumes with unchanged POST count",
+79 |                    "negative recognition and corrupted-evidence checks; failed-backup admission stop",
+80 |                    "main admission blocked; historical hashes and remaining identity order unchanged"],
+   |                                                                                                     ^^^
+81 |         "stop": "No new local admission after 110 minutes or unexpected failure. Retain every attempt. "
+82 |                 "An admitted collector finishes its original window and backup; never truncate it.",
+   |
+
+E501 Line too long (104 > 100)
+  --> artifacts\phase-8-runner-amendment\v2\prepare_candidate.py:81:101
+   |
+79 |                    "negative recognition and corrupted-evidence checks; failed-backup admission stop",
+80 |                    "main admission blocked; historical hashes and remaining identity order unchanged"],
+81 |         "stop": "No new local admission after 110 minutes or unexpected failure. Retain every attempt. "
+   |                                                                                                     ^^^^
+82 |                 "An admitted collector finishes its original window and backup; never truncate it.",
+83 |         "evidence": "Scripted tone/client protocol acknowledgements, not human comprehension.",
+   |
+
+E501 Line too long (107 > 100)
+  --> artifacts\phase-8-runner-amendment\v2\prepare_candidate.py:84:101
+   |
+82 |                 "An admitted collector finishes its original window and backup; never truncate it.",
+83 |         "evidence": "Scripted tone/client protocol acknowledgements, not human comprehension.",
+84 |         "backup": "Existing qualified OfflineCloud; two retained local roots; not fresh S3 qualification"})
+   |                                                                                                     ^^^^^^^
+
+E501 Line too long (106 > 100)
+  --> artifacts\phase-8-runner-amendment\v2\qualify.py:40:101
+   |
+38 |             "sequence": i + 1,
+39 |             "case_id": name,
+40 |             "arm": name.rsplit("-", 1)[-1].upper() if name != "cal-v4-preflight-v2-never-admit" else "B3",
+   |                                                                                                     ^^^^^^
+41 |             "fixture_hash": StudyCase.model_validate(cases[name]).fixture_hash,
+42 |         }
+   |
+
+E501 Line too long (153 > 100)
+   --> artifacts\phase-8-runner-amendment\v2\qualify.py:148:101
+    |
+146 | …
+147 | …
+148 | …] == ("/internal/phase6/b3/schedule" if trace["arm"] == "B3" else "/internal/phase3/claims")
+    |                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+149 | …
+150 | …
+    |
+
+E501 Line too long (131 > 100)
+   --> artifacts\phase-8-runner-amendment\v2\qualify.py:188:101
+    |
+186 |     reports = []
+187 |     groups = [("continuation", [f"cal-v4-preflight-v2-refusal-{a}" for a in ("b3", "p1", "p2")])]
+188 |     groups += [("defect-" + a, [f"cal-v4-preflight-v2-defect-{a}", "cal-v4-preflight-v2-never-admit"]) for a in ("b3", "p1", "p2")]
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+189 |     groups += [("recovery-" + a, [f"cal-v4-preflight-v2-recovery-{a}"]) for a in ("b3", "p1", "p2")]
+190 |     for group, ids in groups:
+    |
+
+E501 Line too long (108 > 100)
+   --> artifacts\phase-8-runner-amendment\v2\qualify.py:191:101
+    |
+189 |     groups += [("recovery-" + a, [f"cal-v4-preflight-v2-recovery-{a}"]) for a in ("b3", "p1", "p2")]
+190 |     for group, ids in groups:
+191 |         if time.monotonic() - start + 650 * sum(i != "cal-v4-preflight-v2-never-admit" for i in ids) > 6600:
+    |                                                                                                     ^^^^^^^^
+192 |             raise TimeoutError("FIXED_CALIBRATION_BUDGET_NO_MORE_ADMISSIONS")
+193 |         root = prepare(output / group, ids)
+    |
+
+E501 Line too long (103 > 100)
+  --> artifacts\phase-8-runner-amendment\v2\refusal.py:82:101
+   |
+80 |         call = failures[-1]
+81 |         detail = f"HTTP {call['status']}: {call['path']}: {call['response']}"
+82 |         if row["failure"]["detail"] != detail or (error_detail is not None and error_detail != detail):
+   |                                                                                                     ^^^
+83 |             return None
+84 |         if call["status"] != 409 or call["method"] != "POST":
+   |
+
+E501 Line too long (106 > 100)
+   --> artifacts\phase-8-runner-amendment\v2\refusal.py:103:101
+    |
+101 |             return None
+102 |         operation = current[0]
+103 |         claim_type = ClaimType.CURRENT_APPOINTMENT if revision == 1 else ClaimType.RESCHEDULED_APPOINTMENT
+    |                                                                                                     ^^^^^^
+104 |         receipt_id: str | None = None
+105 |         verification_hash: str | None = None
+    |
+
+E501 Line too long (107 > 100)
+   --> artifacts\phase-8-runner-amendment\v2\refusal.py:139:101
+    |
+137 |             receipt = verification["response"]
+138 |             expected_result = receipt["result"]
+139 |             if verification["status"] != 201 or verification["request"]["operation_id"] != operation["id"]:
+    |                                                                                                     ^^^^^^^
+140 |                 return None
+141 |             if receipt["claim_type"] != claim_type.value or receipt["intent_revision"] != revision:
+    |
+
+E501 Line too long (140 > 100)
+   --> artifacts\phase-8-runner-amendment\v2\refusal.py:143:101
+    |
+141 | …ue or receipt["intent_revision"] != revision:
+142 | …
+143 | …= claim_type.value or verification["request"]["expected_intent_revision"] != revision:
+    |                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+144 | …
+145 | …LATED"):
+    |
+
+E501 Line too long (105 > 100)
+   --> artifacts\phase-8-runner-amendment\v2\refusal.py:168:101
+    |
+166 |         for observation in fresh:
+167 |             raw, query = observation["raw"], observation["query"]
+168 |             if stable_hash(raw) != observation["raw_hash"] or query["scenario_id"] != row["scenario_id"]:
+    |                                                                                                     ^^^^^
+169 |                 return None
+170 |             if raw["status"] not in (200, 501):
+    |
+
+E501 Line too long (114 > 100)
+   --> artifacts\phase-8-runner-amendment\v2\refusal.py:175:101
+    |
+173 |                 is_resource = observation["source_type"] == "SIMULATOR_RESOURCE"
+174 |                 flag = "resource_lookup" if is_resource else "status_lookup"
+175 |                 absent = "Resource state lookup is absent" if is_resource else "Operation status lookup is absent"
+    |                                                                                                     ^^^^^^^^^^^^^^
+176 |                 if case["provider"][flag] is not False or raw["body"] != {"detail": absent}:
+177 |                     return None
+    |
+
+E501 Line too long (107 > 100)
+   --> artifacts\phase-8-runner-amendment\v2\refusal.py:180:101
+    |
+178 |             if observation in resources:
+179 |                 if observation["source_identifier"] != key or query != {
+180 |                     "scenario_id": row["scenario_id"], "operation_id": operation["id"], "resource_key": key
+    |                                                                                                     ^^^^^^^
+181 |                 }:
+182 |                     return None
+    |
+
+E501 Line too long (129 > 100)
+   --> artifacts\phase-8-runner-amendment\v2\refusal.py:183:101
+    |
+181 |                 }:
+182 |                     return None
+183 |             elif observation["source_identifier"] not in operations or query["operation_id"] != observation["source_identifier"]:
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+184 |                 return None
+185 |         # The recorded provider query order is the backend's bounded chain order.
+    |
+
+E501 Line too long (111 > 100)
+   --> artifacts\phase-8-runner-amendment\v2\refusal.py:195:101
+    |
+193 |             "provider_adapter": "simulator", "normalized_request_json": {"resource_key": key}
+194 |         }, observations, None)
+195 |         if verdict.result is Result.SATISFIED or (expected_result and verdict.result.value != expected_result):
+    |                                                                                                     ^^^^^^^^^^^
+196 |             return None
+197 |         if receipt_id:
+    |
+
+E501 Line too long (103 > 100)
+   --> artifacts\phase-8-runner-amendment\v2\refusal.py:199:101
+    |
+197 |         if receipt_id:
+198 |             if len(verification_events) != len(fresh) or any(
+199 |                 e["operation_id"] != operation["id"] or e["content_hash"] != stable_hash(e["raw_json"])
+    |                                                                                                     ^^^
+200 |                 or e["normalized_json"] != {"result": verdict.result.value, "claim_type": claim_type.value}
+201 |                 for e in verification_events
+    |
+
+E501 Line too long (107 > 100)
+   --> artifacts\phase-8-runner-amendment\v2\refusal.py:200:101
+    |
+198 |             if len(verification_events) != len(fresh) or any(
+199 |                 e["operation_id"] != operation["id"] or e["content_hash"] != stable_hash(e["raw_json"])
+200 |                 or e["normalized_json"] != {"result": verdict.result.value, "claim_type": claim_type.value}
+    |                                                                                                     ^^^^^^^
+201 |                 for e in verification_events
+202 |             ):
+    |
+
+E501 Line too long (119 > 100)
+   --> artifacts\phase-8-runner-amendment\v2\refusal.py:204:101
+    |
+202 |             ):
+203 |                 return None
+204 |             if sorted(stable_hash(e["raw_json"]) for e in verification_events) != sorted(o["raw_hash"] for o in fresh):
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^
+205 |                 return None
+206 |             if receipt["observed_resource_version"] != verdict.resource_version:
+    |
+
+E501 Line too long (109 > 100)
+   --> artifacts\phase-8-runner-amendment\v2\refusal.py:210:101
+    |
+208 |         body = {
+209 |             "version": VERSION, "classification": EXPECTED, "raw_driver_status": "FAILED",
+210 |             "original_instrument_status": "INFRASTRUCTURE_FAILURE", "revised_instrument_status": "COMPLETED",
+    |                                                                                                     ^^^^^^^^^
+211 |             "reason": "Bound current claim predicate is not SATISFIED in recorded provider evidence",
+212 |             "call_hash": stable_hash(call), "observation_hashes": [stable_hash(o) for o in ordered],
+    |
+
+E501 Line too long (101 > 100)
+   --> artifacts\phase-8-runner-amendment\v2\refusal.py:211:101
+    |
+209 |             "version": VERSION, "classification": EXPECTED, "raw_driver_status": "FAILED",
+210 |             "original_instrument_status": "INFRASTRUCTURE_FAILURE", "revised_instrument_status": "COMPLETED",
+211 |             "reason": "Bound current claim predicate is not SATISFIED in recorded provider evidence",
+    |                                                                                                     ^
+212 |             "call_hash": stable_hash(call), "observation_hashes": [stable_hash(o) for o in ordered],
+213 |             "verification_hash": verification_hash, "verification_event_hashes": [stable_hash(e) for e in verification_events],
+    |
+
+E501 Line too long (127 > 100)
+   --> artifacts\phase-8-runner-amendment\v2\refusal.py:213:101
+    |
+211 |             "reason": "Bound current claim predicate is not SATISFIED in recorded provider evidence",
+212 |             "call_hash": stable_hash(call), "observation_hashes": [stable_hash(o) for o in ordered],
+213 |             "verification_hash": verification_hash, "verification_event_hashes": [stable_hash(e) for e in verification_events],
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+214 |             "receipt_id": receipt_id, "predicate_result": verdict.result.value,
+215 |             "claim_type": claim_type.value, "backend_trace_id": backend_trace,
+    |
+
+E501 Line too long (106 > 100)
+   --> artifacts\phase-8-runner-amendment\v2\refusal.py:217:101
+    |
+215 |             "claim_type": claim_type.value, "backend_trace_id": backend_trace,
+216 |             "workflow_id": workflow, "intent_revision": revision, "operation_id": operation["id"],
+217 |             "retryable": False, "retry_performed": False, "business_success_inferred_from_refusal": False,
+    |                                                                                                     ^^^^^^
+218 |         }
+219 |         return {**body, "hash": stable_hash(body)}
+    |
+
+E501 Line too long (134 > 100)
+   --> artifacts\phase-8-runner-amendment\v2\refusal.py:234:101
+    |
+233 | def timing_eligible(row: dict[str, Any]) -> bool:
+234 |     if not validate_classification(row) or row.get("missing_final_anchor") or row.get("collection_errors") or row.get("source_drift"):
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+235 |         return False
+236 |     anchor = row["external_requests"][-1]
+    |
+
+E501 Line too long (146 > 100)
+   --> artifacts\phase-8-runner-amendment\v2\refusal.py:240:101
+    |
+238 | …
+239 | …
+240 | …seconds() == 600 and bool(row.get("polls")) and instant(row["polls"][-1]["at"]) >= cutoff
+    |                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+E701 Multiple statements on one line (colon)
+  --> artifacts\phase-8-runner-amendment\v2\test_preflight.py:52:24
+   |
+50 |     call = next(c for c in row["http"] if c["path"] == "/internal/phase3/claims")
+51 |     verify = next(c for c in row["http"] if c["path"] == "/internal/phase3/verifications")
+52 |     if change == "type": call["response"]["type"] = "https://example.invalid/problems/stale-intent-revision"
+   |                        ^
+53 |     elif change == "status": call["status"] = 500
+54 |     elif change == "retryable": call["response"]["retryable"] = True
+   |
+
+E701 Multiple statements on one line (colon)
+  --> artifacts\phase-8-runner-amendment\v2\test_preflight.py:53:28
+   |
+51 |     verify = next(c for c in row["http"] if c["path"] == "/internal/phase3/verifications")
+52 |     if change == "type": call["response"]["type"] = "https://example.invalid/problems/stale-intent-revision"
+53 |     elif change == "status": call["status"] = 500
+   |                            ^
+54 |     elif change == "retryable": call["response"]["retryable"] = True
+55 |     elif change == "receipt": call["request"]["receipt_id"] = "00000000-0000-0000-0000-000000000000"
+   |
+
+E701 Multiple statements on one line (colon)
+  --> artifacts\phase-8-runner-amendment\v2\test_preflight.py:54:31
+   |
+52 |     if change == "type": call["response"]["type"] = "https://example.invalid/problems/stale-intent-revision"
+53 |     elif change == "status": call["status"] = 500
+54 |     elif change == "retryable": call["response"]["retryable"] = True
+   |                               ^
+55 |     elif change == "receipt": call["request"]["receipt_id"] = "00000000-0000-0000-0000-000000000000"
+56 |     elif change == "expiry": verify["response"]["valid_until"] = call["sent_at"]
+   |
+
+E701 Multiple statements on one line (colon)
+  --> artifacts\phase-8-runner-amendment\v2\test_preflight.py:55:29
+   |
+53 |     elif change == "status": call["status"] = 500
+54 |     elif change == "retryable": call["response"]["retryable"] = True
+55 |     elif change == "receipt": call["request"]["receipt_id"] = "00000000-0000-0000-0000-000000000000"
+   |                             ^
+56 |     elif change == "expiry": verify["response"]["valid_until"] = call["sent_at"]
+57 |     elif change == "result": verify["response"]["result"] = "SATISFIED"
+   |
+
+E701 Multiple statements on one line (colon)
+  --> artifacts\phase-8-runner-amendment\v2\test_preflight.py:56:28
+   |
+54 |     elif change == "retryable": call["response"]["retryable"] = True
+55 |     elif change == "receipt": call["request"]["receipt_id"] = "00000000-0000-0000-0000-000000000000"
+56 |     elif change == "expiry": verify["response"]["valid_until"] = call["sent_at"]
+   |                            ^
+57 |     elif change == "result": verify["response"]["result"] = "SATISFIED"
+58 |     elif change == "revision": call["request"]["expected_intent_revision"] = 1
+   |
+
+E701 Multiple statements on one line (colon)
+  --> artifacts\phase-8-runner-amendment\v2\test_preflight.py:57:28
+   |
+55 |     elif change == "receipt": call["request"]["receipt_id"] = "00000000-0000-0000-0000-000000000000"
+56 |     elif change == "expiry": verify["response"]["valid_until"] = call["sent_at"]
+57 |     elif change == "result": verify["response"]["result"] = "SATISFIED"
+   |                            ^
+58 |     elif change == "revision": call["request"]["expected_intent_revision"] = 1
+59 |     elif change == "operation": verify["request"]["operation_id"] = "wrong"
+   |
+
+E701 Multiple statements on one line (colon)
+  --> artifacts\phase-8-runner-amendment\v2\test_preflight.py:58:30
+   |
+56 |     elif change == "expiry": verify["response"]["valid_until"] = call["sent_at"]
+57 |     elif change == "result": verify["response"]["result"] = "SATISFIED"
+58 |     elif change == "revision": call["request"]["expected_intent_revision"] = 1
+   |                              ^
+59 |     elif change == "operation": verify["request"]["operation_id"] = "wrong"
+60 |     elif change == "exception": row["failure"]["type"] = "TimeoutError"
+   |
+
+E701 Multiple statements on one line (colon)
+  --> artifacts\phase-8-runner-amendment\v2\test_preflight.py:59:31
+   |
+57 |     elif change == "result": verify["response"]["result"] = "SATISFIED"
+58 |     elif change == "revision": call["request"]["expected_intent_revision"] = 1
+59 |     elif change == "operation": verify["request"]["operation_id"] = "wrong"
+   |                               ^
+60 |     elif change == "exception": row["failure"]["type"] = "TimeoutError"
+61 |     elif change == "event_hash": row["snapshot"]["raw_provider_events"][-1]["content_hash"] = "0" * 64
+   |
+
+E701 Multiple statements on one line (colon)
+  --> artifacts\phase-8-runner-amendment\v2\test_preflight.py:60:31
+   |
+58 |     elif change == "revision": call["request"]["expected_intent_revision"] = 1
+59 |     elif change == "operation": verify["request"]["operation_id"] = "wrong"
+60 |     elif change == "exception": row["failure"]["type"] = "TimeoutError"
+   |                               ^
+61 |     elif change == "event_hash": row["snapshot"]["raw_provider_events"][-1]["content_hash"] = "0" * 64
+62 |     elif change == "observation_hash": row["snapshot"]["observations"][-1]["raw_hash"] = "0" * 64
+   |
+
+E701 Multiple statements on one line (colon)
+  --> artifacts\phase-8-runner-amendment\v2\test_preflight.py:61:32
+   |
+59 |     elif change == "operation": verify["request"]["operation_id"] = "wrong"
+60 |     elif change == "exception": row["failure"]["type"] = "TimeoutError"
+61 |     elif change == "event_hash": row["snapshot"]["raw_provider_events"][-1]["content_hash"] = "0" * 64
+   |                                ^
+62 |     elif change == "observation_hash": row["snapshot"]["observations"][-1]["raw_hash"] = "0" * 64
+63 |     elif change == "query": row["snapshot"]["observations"][-1]["query"]["scenario_id"] = "wrong"
+   |
+
+E501 Line too long (102 > 100)
+  --> artifacts\phase-8-runner-amendment\v2\test_preflight.py:61:101
+   |
+59 |     elif change == "operation": verify["request"]["operation_id"] = "wrong"
+60 |     elif change == "exception": row["failure"]["type"] = "TimeoutError"
+61 |     elif change == "event_hash": row["snapshot"]["raw_provider_events"][-1]["content_hash"] = "0" * 64
+   |                                                                                                     ^^
+62 |     elif change == "observation_hash": row["snapshot"]["observations"][-1]["raw_hash"] = "0" * 64
+63 |     elif change == "query": row["snapshot"]["observations"][-1]["query"]["scenario_id"] = "wrong"
+   |
+
+E701 Multiple statements on one line (colon)
+  --> artifacts\phase-8-runner-amendment\v2\test_preflight.py:62:38
+   |
+60 |     elif change == "exception": row["failure"]["type"] = "TimeoutError"
+61 |     elif change == "event_hash": row["snapshot"]["raw_provider_events"][-1]["content_hash"] = "0" * 64
+62 |     elif change == "observation_hash": row["snapshot"]["observations"][-1]["raw_hash"] = "0" * 64
+   |                                      ^
+63 |     elif change == "query": row["snapshot"]["observations"][-1]["query"]["scenario_id"] = "wrong"
+64 |     elif change == "missing": row["snapshot"]["observations"] = []
+   |
+
+E701 Multiple statements on one line (colon)
+  --> artifacts\phase-8-runner-amendment\v2\test_preflight.py:63:27
+   |
+61 |     elif change == "event_hash": row["snapshot"]["raw_provider_events"][-1]["content_hash"] = "0" * 64
+62 |     elif change == "observation_hash": row["snapshot"]["observations"][-1]["raw_hash"] = "0" * 64
+63 |     elif change == "query": row["snapshot"]["observations"][-1]["query"]["scenario_id"] = "wrong"
+   |                           ^
+64 |     elif change == "missing": row["snapshot"]["observations"] = []
+65 |     elif change == "clean": row["input"]["generator_family"] = "clean-Asia/Karachi-30"
+   |
+
+E701 Multiple statements on one line (colon)
+  --> artifacts\phase-8-runner-amendment\v2\test_preflight.py:64:29
+   |
+62 |     elif change == "observation_hash": row["snapshot"]["observations"][-1]["raw_hash"] = "0" * 64
+63 |     elif change == "query": row["snapshot"]["observations"][-1]["query"]["scenario_id"] = "wrong"
+64 |     elif change == "missing": row["snapshot"]["observations"] = []
+   |                             ^
+65 |     elif change == "clean": row["input"]["generator_family"] = "clean-Asia/Karachi-30"
+66 |     elif change == "fault": row["input"]["provider"]["status_lookup"] = True
+   |
+
+E701 Multiple statements on one line (colon)
+  --> artifacts\phase-8-runner-amendment\v2\test_preflight.py:65:27
+   |
+63 |     elif change == "query": row["snapshot"]["observations"][-1]["query"]["scenario_id"] = "wrong"
+64 |     elif change == "missing": row["snapshot"]["observations"] = []
+65 |     elif change == "clean": row["input"]["generator_family"] = "clean-Asia/Karachi-30"
+   |                           ^
+66 |     elif change == "fault": row["input"]["provider"]["status_lookup"] = True
+67 |     elif change == "wrong_trace": verify["trace_id"] = "different"
+   |
+
+E701 Multiple statements on one line (colon)
+  --> artifacts\phase-8-runner-amendment\v2\test_preflight.py:66:27
+   |
+64 |     elif change == "missing": row["snapshot"]["observations"] = []
+65 |     elif change == "clean": row["input"]["generator_family"] = "clean-Asia/Karachi-30"
+66 |     elif change == "fault": row["input"]["provider"]["status_lookup"] = True
+   |                           ^
+67 |     elif change == "wrong_trace": verify["trace_id"] = "different"
+68 |     elif change == "receipt_version": verify["response"]["observed_resource_version"] = "999"
+   |
+
+E701 Multiple statements on one line (colon)
+  --> artifacts\phase-8-runner-amendment\v2\test_preflight.py:67:33
+   |
+65 |     elif change == "clean": row["input"]["generator_family"] = "clean-Asia/Karachi-30"
+66 |     elif change == "fault": row["input"]["provider"]["status_lookup"] = True
+67 |     elif change == "wrong_trace": verify["trace_id"] = "different"
+   |                                 ^
+68 |     elif change == "receipt_version": verify["response"]["observed_resource_version"] = "999"
+69 |     else:
+   |
+
+E701 Multiple statements on one line (colon)
+  --> artifacts\phase-8-runner-amendment\v2\test_preflight.py:68:37
+   |
+66 |     elif change == "fault": row["input"]["provider"]["status_lookup"] = True
+67 |     elif change == "wrong_trace": verify["trace_id"] = "different"
+68 |     elif change == "receipt_version": verify["response"]["observed_resource_version"] = "999"
+   |                                     ^
+69 |     else:
+70 |         # Replace unavailable status evidence with bound authoritative PRESENT facts.
+   |
+
+E701 Multiple statements on one line (colon)
+   --> artifacts\phase-8-runner-amendment\v2\test_preflight.py:99:25
+    |
+ 97 |     row = original()
+ 98 |     row["driver_classification"] = recognize(row)
+ 99 |     if missing == "poll": row["polls"] = []
+    |                         ^
+100 |     elif missing == "anchor": row["missing_final_anchor"] = True
+101 |     elif missing == "gap": row["collection_errors"] = [{"type": "CLOCK_OR_GAP"}]
+    |
+
+E701 Multiple statements on one line (colon)
+   --> artifacts\phase-8-runner-amendment\v2\test_preflight.py:100:29
+    |
+ 98 |     row["driver_classification"] = recognize(row)
+ 99 |     if missing == "poll": row["polls"] = []
+100 |     elif missing == "anchor": row["missing_final_anchor"] = True
+    |                             ^
+101 |     elif missing == "gap": row["collection_errors"] = [{"type": "CLOCK_OR_GAP"}]
+102 |     else: row["source_drift"] = "SOURCE_DRIFT"
+    |
+
+E701 Multiple statements on one line (colon)
+   --> artifacts\phase-8-runner-amendment\v2\test_preflight.py:101:26
+    |
+ 99 |     if missing == "poll": row["polls"] = []
+100 |     elif missing == "anchor": row["missing_final_anchor"] = True
+101 |     elif missing == "gap": row["collection_errors"] = [{"type": "CLOCK_OR_GAP"}]
+    |                          ^
+102 |     else: row["source_drift"] = "SOURCE_DRIFT"
+103 |     assert not timing_eligible(row)
+    |
+
+E701 Multiple statements on one line (colon)
+   --> artifacts\phase-8-runner-amendment\v2\test_preflight.py:102:9
+    |
+100 |     elif missing == "anchor": row["missing_final_anchor"] = True
+101 |     elif missing == "gap": row["collection_errors"] = [{"type": "CLOCK_OR_GAP"}]
+102 |     else: row["source_drift"] = "SOURCE_DRIFT"
+    |         ^
+103 |     assert not timing_eligible(row)
+104 |     assert evidence_for(row)[1].status == "INFRASTRUCTURE_FAILURE"
+    |
+
+E501 Line too long (105 > 100)
+   --> artifacts\phase-8-runner-amendment\v2\test_preflight.py:110:101
+    |
+108 |     policy = Policy(scope="CAMPAIGN", run_id="blocked-preflight-main", host_started_at=utc())
+109 |     with pytest.raises(ValueError, match="MAIN_BLOCKED"):
+110 |         initialize(tmp_path / "main", tmp_path, tmp_path, policy, tmp_path, tmp_path, tmp_path, tmp_path)
+    |                                                                                                     ^^^^^
+111 |     assert not (tmp_path / "main").exists()
+    |
+
+Found 61 errors (1 fixed, 60 remaining).

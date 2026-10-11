@@ -1,0 +1,60 @@
+{
+  "status": "success",
+  "stdout": "",
+  "return_value": {
+    "Command": {
+      "CommandId": "030732ed-2c38-4915-bc36-91272df3d02f",
+      "DocumentName": "AWS-RunShellScript",
+      "DocumentVersion": "$DEFAULT",
+      "Comment": "Explicitly authorized frozen Phase 8 main campaign start, serial originals only",
+      "ExpiresAfter": "2026-10-07T16:45:05.684000+00:00",
+      "Parameters": {
+        "commands": [
+          "set -eu\ncd /opt/fyp-phase8-linux-v1\nexport PYTHONPATH=$PWD:$PWD/.venv-analysis/lib/python3.12/site-packages:$PWD/.venv-transport/lib/python3.12/site-packages\n.venv/bin/python -B - <<'PY'\nimport sys,json\nfrom pathlib import Path\nsys.path.insert(0,str(Path.cwd()/'artifacts/phase-8-review-freeze/v2'))\nfrom runner import verify_host_timer,verify_run,meter,cloud_for\nfrom controls import guard,Journal,utc,read\nroot=Path('/var/lib/p8/run');auth=verify_run(root);verify_host_timer(root)\nif read(Path('/var/lib/p8-deployment/final-readiness.json'))['status']!='PASS':raise ValueError('READINESS_NOT_PASS')\nif (root/'pause.json').exists():raise ValueError('PAUSED_ADMISSIONS')\nif any(r['state']!='PLANNED' for r in Journal(root).rows()):raise ValueError('ALREADY_ADMITTED_DO_NOT_START_AGAIN')\ncloud=cloud_for(root);guard(auth.policy,meter(root),utc(),cloud.inventory(),extra_bytes=auth.policy.slot_capacity_reserve_bytes)\nprint('PASS final admission gate')\nPY\nsystemctl start fyp-phase8-campaign.service\nsystemctl is-active fyp-phase8-campaign.service fyp-phase8-watchdog.service fyp-phase8-hardstop.timer\nsystemctl show fyp-phase8-campaign.service -p ActiveState -p SubState -p MainPID -p ActiveEnterTimestamp -p Restart\njournalctl -u fyp-phase8-campaign.service -n 8 --no-pager\n"
+        ],
+        "executionTimeout": [
+          "120"
+        ]
+      },
+      "InstanceIds": [
+        "i-0a6196aff6f8098ac"
+      ],
+      "Targets": [],
+      "RequestedDateTime": "2026-10-07T15:43:05.684000+00:00",
+      "Status": "Pending",
+      "StatusDetails": "Pending",
+      "OutputS3Region": "ap-southeast-2",
+      "OutputS3BucketName": "fyp-p82-20261005-018da1d6-803656589923",
+      "OutputS3KeyPrefix": "exports/phase8/p85-01a116f7-3b82-7a79-8653-3aee62dc99e9/deployment/main-start",
+      "MaxConcurrency": "50",
+      "MaxErrors": "0",
+      "TargetCount": 1,
+      "CompletedCount": 0,
+      "ErrorCount": 0,
+      "DeliveryTimedOutCount": 0,
+      "ServiceRole": "",
+      "NotificationConfig": {
+        "NotificationArn": "",
+        "NotificationEvents": [],
+        "NotificationType": ""
+      },
+      "CloudWatchOutputConfig": {
+        "CloudWatchLogGroupName": "",
+        "CloudWatchOutputEnabled": false
+      },
+      "TimeoutSeconds": 3600,
+      "AlarmConfiguration": {
+        "IgnorePollAlarmFailure": false,
+        "Alarms": []
+      },
+      "TriggeredAlarms": []
+    }
+  },
+  "api_calls": [
+    {
+      "service": "ssm",
+      "operation": "SendCommand",
+      "status": "success"
+    }
+  ]
+}

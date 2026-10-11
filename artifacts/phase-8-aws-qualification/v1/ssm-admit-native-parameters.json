@@ -1,0 +1,5 @@
+{
+  "commands": [
+    "set -eu\nsystemctl is-active fyp-p82-stop.timer\ncd /opt/fyp-phase8-linux-v1\nrunuser -u fyp -- env P8_DOCKER_DATA_PATH=/srv/fyp-p82 .venv/bin/python -c 'from pathlib import Path; from research.execution_linux_v1.platform import host; from research.execution_setup.resources import admission; import json; sample=host(Path(\"/srv/fyp-p82\"),Path(\"/srv/fyp-p82-backup\")); admission(sample); print(json.dumps(sample))'\nsha256sum /tmp/linux-source.tar.gz /tmp/qualification.zip\nsystemctl start --no-block fyp-p82-qualification.service\nsystemctl show fyp-p82-qualification.service -p ActiveState -p MainPID -p ExecMainStartTimestamp\n"
+  ]
+}

@@ -1,0 +1,1 @@
+"""Event schema package placeholder."""

@@ -1,0 +1,603 @@
+--- frozen-v5/closed_restart.py
++++ candidate-v6/closed_restart.py
+@@ -83,11 +83,11 @@
+     shutil.copytree(master, destination / "restart-history")
+     config = read(master / "run.json")
+     config.update(
+-        source="/opt/fyp-phase8-continuation-v5",
+-        manifest="/opt/fyp-phase8-continuation-v5/artifacts/phase-8-review-freeze/v2/review-inventory.json",
++        source="/opt/fyp-phase8-continuation-v6",
++        manifest="/opt/fyp-phase8-continuation-v6/artifacts/phase-8-review-freeze/v2/review-inventory.json",
+         continuation={
+             "manifest": "artifacts/phase-8-runner-amendment/v4-complete/candidate-inventory.json",
+-            "receipts": "/var/lib/fyp-owner/continuation-v5-receipts",
++            "receipts": "/var/lib/fyp-owner/continuation-v6-receipts",
+         },
+     )
+     # Original backup paths remain valid on the retained root; never restore SQL.
+@@ -100,7 +100,7 @@
+         },
+     )
+     record = {
+-        "version": "phase85-continuation-v5",
++        "version": "phase85-continuation-v6",
+         "backed_up": COUNT,
+         "planned": 1418,
+         "next_execution_id": NEXT,
+--- frozen-v5/handover.py
++++ candidate-v6/handover.py
+@@ -120,7 +120,7 @@
+     config = read(root / "run.json")
+     inventory = read(Path(config["source"]) / config["continuation"]["manifest"])
+     value = {
+-        "version": "phase85-continuation-v5",
++        "version": "phase85-continuation-v6",
+         "execution_id": execution_id,
+         "run_id": RUN,
+         "parent_freeze_sha256": PARENT_FREEZE,
+@@ -166,7 +166,7 @@
+         "bd4d32f4968eaff243d65d9cfe8fad36c603cd709c09ee7fdebd29746e90da42"
+     ]
+     immediate_parent_freeze_sha256: Literal[
+-        "cf6d4ff9e6e8916a8204c420076676fe9d9c746545ad686357b4e65a8f78710c"
++        "95d48df4494ad022808c172238596f7761582781108b3f9f982088f8a50dfe26"
+     ]
+     expires_at: datetime
+     signer: str
+@@ -317,6 +317,13 @@
+     """Release only this reviewed boundary; never clear later failure pauses."""
+     authority = ContinuationAuthority(root, read(root / "run.json"))
+     proof = authority.verify()
++    from prelaunch_backup import verify_proof
++    from storage import S3Cloud
++
++    cloud_config = read(root / "cloud.json")
++    cloud = S3Cloud(cloud_config["bucket"], cloud_config["prefix"])
++    verify_proof(root, "prelaunch", cloud)
++    verify_proof(root, "complete", cloud)
+     from runner import verify_clock, verify_host_timer
+ 
+     verify_clock(root, authority.policy, utc())
+--- frozen-v5/postflight.py
++++ candidate-v6/postflight.py
+@@ -7,7 +7,7 @@
+ from pathlib import Path
+ 
+ from controls import read, write_new
+-from storage import ObjectProof, verify_local
++from storage import ObjectProof, verify_continuation_metadata, verify_local
+ from transport import Receipt, S3Store, Store, download, extract
+ 
+ 
+@@ -21,6 +21,10 @@
+         verify_local(archive, proof.sha256)
+         destination = root / "x"
+         result = extract(archive, destination, proof.sha256)
++        metadata = destination / "slot"
++        if (metadata / "master").exists():
++            metadata = metadata / "master"
++        verify_continuation_metadata(metadata)
+         write_new(
+             root / "postflight-verified.json",
+             {
+--- /dev/null
++++ candidate-v6/prelaunch_backup.py
+@@ -0,0 +1,105 @@
++"""Two genuine backup stages; never signs readiness, clears a pause, or starts a driver."""
++
++from __future__ import annotations
++
++import argparse
++import time
++from pathlib import Path
++from typing import Literal
++
++from controls import Journal, hash_file, read, write_new
++from handover import ContinuationAuthority
++from postflight import recover
++from storage import Cloud, S3Cloud, final_backup, upload, verify_local
++
++
++def verify_proof(root: Path, phase: Literal["prelaunch", "complete"], cloud: Cloud) -> None:
++    from storage import ObjectProof
++
++    record = read(root / f"{phase}-backup-proof.json")
++    config = read(root / "run.json")
++    receipts = Path(config["continuation"]["receipts"])
++    required = {
++        "run.json": hash_file(root / "run.json"),
++        "restart-boundary.json": hash_file(root / "restart-boundary.json"),
++        "CONTINUATION_FREEZE.json": hash_file(receipts / "CONTINUATION_FREEZE.json"),
++    }
++    if phase == "complete":
++        required.update(
++            {
++                "continuation-readiness.json": hash_file(root / "continuation-readiness.json"),
++                "CONTINUATION_LAUNCH.json": hash_file(receipts / "CONTINUATION_LAUNCH.json"),
++            }
++        )
++    if (
++        record["phase"] != phase
++        or record["bindings"] != required
++        or record["status"] != "VERIFIED_READBACK_NOT_AUTHORIZATION"
++    ):
++        raise ValueError("BACKUP_PROOF_BINDING_DRIFT")
++    archive = Path(record["archive"])
++    proof = ObjectProof.model_validate(record["cloud"])
++    verify_local(archive, proof.sha256)
++    cloud.verify(proof)
++    if hash_file(Path(record["readback_record"])) != record["readback_sha256"]:
++        raise ValueError("BACKUP_READBACK_PROOF_DRIFT")
++
++
++def run(
++    root: Path, destination: Path, phase: Literal["prelaunch", "complete"], cloud: Cloud
++) -> None:
++    config = read(root / "run.json")
++    authority = ContinuationAuthority(root, config)
++    authority.verify(prelaunch=phase == "prelaunch")  # before any backup or readiness write
++    if phase == "complete":
++        verify_proof(root, "prelaunch", cloud)
++    archive = final_backup(Journal(root), destination, prelaunch=phase == "prelaunch")
++    proof = upload(Journal(root), cloud, authority.policy, archive)
++    # Fresh, bounded version-specific independent readback; no use of local_archive.
++    output = destination / f"readback-{time.time_ns()}"
++    recover(proof, output)
++    authority.verify(prelaunch=phase == "prelaunch")
++    receipts = Path(config["continuation"]["receipts"])
++    bindings = {
++        "run.json": hash_file(root / "run.json"),
++        "restart-boundary.json": hash_file(root / "restart-boundary.json"),
++        "CONTINUATION_FREEZE.json": hash_file(receipts / "CONTINUATION_FREEZE.json"),
++    }
++    if phase == "complete":
++        bindings.update(
++            {
++                "continuation-readiness.json": hash_file(root / "continuation-readiness.json"),
++                "CONTINUATION_LAUNCH.json": hash_file(receipts / "CONTINUATION_LAUNCH.json"),
++            }
++        )
++    write_new(
++        root / f"{phase}-backup-proof.json",
++        {
++            "phase": phase,
++            "status": "VERIFIED_READBACK_NOT_AUTHORIZATION",
++            "bindings": bindings,
++            "archive": str(archive),
++            "cloud": proof.model_dump(),
++            "readback_record": str(output / "postflight-verified.json"),
++            "readback_sha256": hash_file(output / "postflight-verified.json"),
++        },
++    )
++    verify_proof(root, phase, cloud)
++    Journal(root).event(
++        "CONTINUATION_BACKUP_READBACK_VERIFIED", phase=phase, cloud=proof.model_dump()
++    )
++
++
++def main() -> None:
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("phase", choices=("prelaunch", "complete"))
++    parser.add_argument("--root", required=True, type=Path)
++    parser.add_argument("--destination", required=True, type=Path)
++    args = parser.parse_args()
++    config = read(args.root / "cloud.json")
++    phase: Literal["prelaunch", "complete"] = args.phase
++    run(args.root, args.destination, phase, S3Cloud(config["bucket"], config["prefix"]))
++
++
++if __name__ == "__main__":
++    main()
+--- frozen-v5/storage.py
++++ candidate-v6/storage.py
+@@ -323,15 +323,27 @@
+         if handle is None:
+             raise ValueError("MISSING_BACKUP_MANIFEST")
+         manifest = json.load(handle)
+-        for name, digest in manifest["files"].items():
+-            handle = incoming.extractfile("slot/" + name)
++    # Expanded restart closure must be read once in archive order. Random gzip
++    # seeks per member made the bounded metadata-only roundtrip take minutes.
++    expected_members = {"slot/" + name: digest for name, digest in manifest["files"].items()}
++    seen: set[str] = set()
++    with tarfile.open(archive, "r|gz") as incoming:
++        for member in incoming:
++            if member.name not in expected_members:
++                continue
++            if member.name in seen or not member.isfile():
++                raise ValueError("BACKUP_MEMBER_MISSING_OR_DUPLICATE")
++            handle = incoming.extractfile(member)
+             calculated = hashlib.sha256()
+             if handle is None:
+                 raise ValueError("BACKUP_MEMBER_MISSING")
+             while block := handle.read(1024**2):
+                 calculated.update(block)
+-            if calculated.hexdigest() != digest:
++            if calculated.hexdigest() != expected_members[member.name]:
+                 raise ValueError("BACKUP_MEMBER_DRIFT")
++            seen.add(member.name)
++    if seen != expected_members.keys():
++        raise ValueError("BACKUP_MEMBER_MISSING")
+ 
+ 
+ def complete_backup(
+@@ -367,17 +379,99 @@
+         raise
+ 
+ 
+-def copy_continuation_metadata(source: Path, destination: Path) -> None:
++def verify_continuation_metadata(root: Path) -> None:
++    """Readback closure only. This never issues or substitutes launch authority."""
++    if not (root / "handover.json").exists():
++        if (root / "continuation-backup.json").exists() or (
++            (root / "run.json").exists() and "continuation" in read(root / "run.json")
++        ):
++            raise ValueError("CONTINUATION_BACKUP_REQUIRED_METADATA_MISSING")
++        return
++    from handover import verify_imported_first
++
++    record = read(root / "continuation-backup.json")
++    mode = record["phase"]
++    if mode not in ("PRELAUNCH", "COMPLETE") or record["admission_authority"] is not False:
++        raise ValueError("CONTINUATION_BACKUP_PHASE_DRIFT")
++    required = {
++        "handover.json",
++        "saved-identities.json",
++        "host-clock.json",
++        "restart-boundary.json",
++        "historical-evidence.tar.gz",
++        "cloud.json",
++        "public-authority/original/REVIEW_ACCEPTED.json",
++        "public-authority/original/FREEZE.json",
++        "public-authority/original/LAUNCH.json",
++        "public-authority/continuation/CONTINUATION_ACCEPTED.json",
++        "public-authority/continuation/CONTINUATION_FREEZE.json",
++    }
++    late = {"continuation-readiness.json", "public-authority/continuation/CONTINUATION_LAUNCH.json"}
++    if mode == "COMPLETE":
++        required |= late
++    elif any((root / name).exists() for name in late):
++        raise ValueError("PRELAUNCH_MUST_PRECEDE_READINESS_AND_LAUNCH")
++    if not required <= record["files"].keys():
++        raise ValueError("CONTINUATION_BACKUP_REQUIRED_METADATA_MISSING")
++    for name, digest in record["files"].items():
++        target = (root / name).resolve()
++        if root.resolve() not in target.parents or hash_file(target) != digest:
++            raise ValueError("CONTINUATION_BACKUP_METADATA_DRIFT: " + name)
++    if (
++        hash_file(root / "historical-evidence.tar.gz")
++        != read(root / "handover.json")["historical_bundle_sha256"]
++    ):
++        raise ValueError("HISTORICAL_BUNDLE_DRIFT")
++    Journal(root).verify()
++    verify_imported_first(root)  # all 82 receipts, identities, notices and both sidecars
++
++
++def copy_continuation_metadata(source: Path, destination: Path, *, prelaunch: bool = False) -> None:
+     """Preserve public cold-handover controls; never copy the private signing key."""
+     if not (source / "handover.json").exists():
++        if prelaunch or (
++            (source / "run.json").exists() and "continuation" in read(source / "run.json")
++        ):
++            raise ValueError("PRELAUNCH_CONTINUATION_REQUIRED")
+         return
++    from handover import verify_imported_first
++
++    verify_imported_first(source)
++    config = read(source / "run.json")
++    continuation_receipts = Path(config["continuation"]["receipts"])
++    if prelaunch and (
++        (source / "continuation-readiness.json").exists()
++        or (continuation_receipts / "CONTINUATION_LAUNCH.json").exists()
++    ):
++        raise ValueError("PRELAUNCH_MUST_PRECEDE_READINESS_AND_LAUNCH")
+     for name in (
+         "handover.json",
+         "saved-identities.json",
+         "host-clock.json",
+-        "continuation-readiness.json",
++        "restart-boundary.json",
++        "cloud.json",
+     ):
+         shutil.copyfile(source / name, destination / name)
++    if not prelaunch:
++        shutil.copyfile(
++            source / "continuation-readiness.json", destination / "continuation-readiness.json"
++        )
++    shutil.copytree(source / "restart-history", destination / "restart-history")
++    shutil.copytree(source / "backups", destination / "backups", dirs_exist_ok=True)
++    # Preserve real preparation evidence and pauses; no synthesized readiness.
++    for name in (
++        "pause.json",
++        "retained-import-pause.json",
++        "reuse-preparation.json",
++        "prelaunch-backup-proof.json",
++    ):
++        if (source / name).exists():
++            shutil.copyfile(source / name, destination / name)
++    if (source / "postboot-old-operational-evidence").exists():
++        shutil.copytree(
++            source / "postboot-old-operational-evidence",
++            destination / "postboot-old-operational-evidence",
++        )
+     if (source / "historical-evidence.tar.gz").exists():
+         # Carry the complete original evidence once in compressed form, not raw
+         # copies of every old poll in every slot/backup staging directory.
+@@ -387,22 +481,37 @@
+         shutil.copyfile(
+             source / "historical-evidence.tar.gz", destination / "historical-evidence.tar.gz"
+         )
+-    config = read(source / "run.json")
+     for label, directory, names in (
+         ("original", Path(config["receipts"]), ("REVIEW_ACCEPTED", "FREEZE", "LAUNCH")),
+         (
+             "continuation",
+             Path(config["continuation"]["receipts"]),
+-            ("CONTINUATION_ACCEPTED", "CONTINUATION_FREEZE", "CONTINUATION_LAUNCH"),
++            ("CONTINUATION_ACCEPTED", "CONTINUATION_FREEZE")
++            if prelaunch
++            else ("CONTINUATION_ACCEPTED", "CONTINUATION_FREEZE", "CONTINUATION_LAUNCH"),
+         ),
+     ):
+         target = destination / "public-authority" / label
+         target.mkdir(parents=True)
+         for name in names:
+             shutil.copyfile(directory / f"{name}.json", target / f"{name}.json")
+-
+-
+-def final_backup(journal: Journal, destination: Path) -> Path:
++    write_new(
++        destination / "continuation-backup.json",
++        {
++            "version": "phase85-continuation-v6",
++            "phase": "PRELAUNCH" if prelaunch else "COMPLETE",
++            "admission_authority": False,
++            "files": {
++                p.relative_to(destination).as_posix(): hash_file(p)
++                for p in destination.rglob("*")
++                if p.is_file()
++            },
++        },
++    )
++    verify_continuation_metadata(destination)
++
++
++def final_backup(journal: Journal, destination: Path, *, prelaunch: bool = False) -> Path:
+     """Final master metadata plus all per-slot version receipts, without deleting raw evidence."""
+     folder = destination / f"final-{time.time_ns()}"
+     folder.mkdir(parents=True, exist_ok=False)
+@@ -411,7 +520,7 @@
+         source.backup(target)
+     for name in ("run.json", "bindings.json", "binding-seal.json", "cloud.json"):
+         shutil.copyfile(journal.root / name, folder / name)
+-    copy_continuation_metadata(journal.root, folder)
++    copy_continuation_metadata(journal.root, folder, prelaunch=prelaunch)
+     for receipt_file in (journal.root / "backups").glob("*.json"):
+         target_path = folder / "backups" / receipt_file.name
+         target_path.parent.mkdir(exist_ok=True)
+@@ -421,7 +530,11 @@
+     }
+     write_new(
+         folder / "manifest.json",
+-        {"files": files, "postgres_dumps": False, "kind": "FINAL_MASTER_METADATA"},
++        {
++            "files": files,
++            "postgres_dumps": False,
++            "kind": "PRELAUNCH_MASTER_METADATA" if prelaunch else "FINAL_MASTER_METADATA",
++        },
+     )
+     archive = folder.with_suffix(".tar.gz")
+     with tarfile.open(archive, "x:gz") as outgoing:
+--- /dev/null
++++ candidate-v6/test_backup_closure.py
+@@ -0,0 +1,210 @@
++"""Twelve metadata-only controls. Historical records are never live authorization."""
++
++from __future__ import annotations
++
++import json
++import shutil
++from pathlib import Path
++from typing import Any
++
++import pytest
++from closed_restart import HERE, NEXT, stage
++from controls import Journal, hash_file, read, write_new
++from postflight import recover
++from storage import OfflineCloud, final_backup, make_backup, upload, verify_continuation_metadata
++
++
++def metadata(tmp: Path, *, complete: bool = False) -> Path:
++    root = tmp / "cal-metadata"
++    stage(HERE / "closed-82", root)
++    shutil.copyfile(HERE / "closed-82/host-clock.json", root / "host-clock.json")
++    receipts = tmp / "historical-public-only"
++    shutil.copytree(HERE / "backup-calibration-public", receipts)
++    if not complete:
++        (receipts / "continuation/CONTINUATION_LAUNCH.json").unlink()
++    else:
++        # Genuine *historical* readiness, retained byte for byte for closure tests.
++        # It cannot authorize this candidate or host. No new readiness is invented.
++        shutil.copyfile(
++            HERE / "boundary/continuation-readiness.json", root / "continuation-readiness.json"
++        )
++    config = read(root / "run.json")
++    config["receipts"] = str(receipts / "original")
++    config["continuation"]["receipts"] = str(receipts / "continuation")
++    (root / "run.json").write_text(json.dumps(config))
++    (root / "binding-seal.json").write_text(
++        json.dumps(
++            {"run": hash_file(root / "run.json"), "bindings": hash_file(root / "bindings.json")}
++        )
++    )
++    write_new(
++        tmp / "CALIBRATION-ONLY.json",
++        {
++            "kind": "TEMPORARY_METADATA_NOT_CAMPAIGN_AUTHORIZATION",
++            "historical_receipts_not_applicable": True,
++            "drivers": 0,
++        },
++    )
++    return root
++
++
++def roundtrip(root: Path, archive: Path, out: Path) -> Path:
++    from handover import ContinuationPolicy
++
++    cloud = OfflineCloud(out / "offline-versioned-copy")
++    proof = upload(
++        Journal(root),
++        cloud,
++        ContinuationPolicy.model_validate(read(root / "run.json")["policy"]),
++        archive,
++    )
++    cloud.verify(proof)
++    # Actual independent readback consumes the surrogate's stored object, not source archive.
++    recovered = recover(proof, out / "readback", local_archive=cloud.root / proof.version_id)
++    target = recovered / "slot"
++    if (target / "master").exists():
++        target = target / "master"
++    verify_continuation_metadata(target)
++    assert Journal(target).rows() == Journal(root).rows()
++    assert len(list((target / "backups").glob("*.json"))) == 82
++    assert Journal(target).rows()[82]["execution_id"] == NEXT
++    write_new(
++        out / "roundtrip.json",
++        {
++            "status": "PASS",
++            "archive_sha256": hash_file(archive),
++            "cloud": proof.model_dump(),
++            "phase": read(target / "continuation-backup.json")["phase"],
++            "BACKED_UP": 82,
++            "PLANNED": 1418,
++            "drivers": 0,
++        },
++    )
++    return target
++
++
++def test_prelaunch_roundtrip_without_readiness_or_launch(tmp_path: Path) -> None:
++    root = metadata(tmp_path)
++    before = Journal(root).rows()
++    archive = final_backup(Journal(root), tmp_path / "backup", prelaunch=True)
++    recovered = roundtrip(root, archive, tmp_path / "proof")
++    assert not (recovered / "continuation-readiness.json").exists()
++    assert not (recovered / "public-authority/continuation/CONTINUATION_LAUNCH.json").exists()
++    assert read(root / "pause.json")["reason"] == "CONTINUATION_REVIEW_REQUIRED"
++    assert Journal(root).rows() == before
++
++
++def test_complete_master_roundtrip(tmp_path: Path) -> None:
++    root = metadata(tmp_path, complete=True)
++    archive = final_backup(Journal(root), tmp_path / "backup")
++    recovered = roundtrip(root, archive, tmp_path / "proof")
++    assert read(recovered / "continuation-backup.json")["phase"] == "COMPLETE"
++    assert (recovered / "continuation-readiness.json").read_bytes() == (
++        root / "continuation-readiness.json"
++    ).read_bytes()
++
++
++def test_complete_per_slot_roundtrip(tmp_path: Path) -> None:
++    from research.execution_setup.core import Ledger
++
++    root = metadata(tmp_path, complete=True)
++    slot = root / "slots/cal-backup-closure"
++    Ledger(slot)
++    for name in ("qualification-plan.json", "resources.json", "source-seal.json", "config.json"):
++        write_new(slot / name, {"kind": "CALIBRATION_METADATA_ONLY"})
++    archive = make_backup(slot, tmp_path / "backup", dumps=False)
++    roundtrip(root, archive, tmp_path / "proof")
++
++
++@pytest.mark.parametrize("name", ["restart-boundary.json", "restart-history/summary.json"])
++def test_missing_required_restart_metadata_rejected(tmp_path: Path, name: str) -> None:
++    root = metadata(tmp_path)
++    archive = final_backup(Journal(root), tmp_path / "backup", prelaunch=True)
++    recovered = roundtrip(root, archive, tmp_path / "proof")
++    (recovered / name).unlink()
++    with pytest.raises((ValueError, FileNotFoundError)):
++        verify_continuation_metadata(recovered)
++
++
++def test_corrupt_required_history_rejected(tmp_path: Path) -> None:
++    root = metadata(tmp_path)
++    archive = final_backup(Journal(root), tmp_path / "backup", prelaunch=True)
++    recovered = roundtrip(root, archive, tmp_path / "proof")
++    (recovered / "restart-history/summary.json").write_text("{}")
++    with pytest.raises(ValueError, match="METADATA_DRIFT"):
++        verify_continuation_metadata(recovered)
++
++
++@pytest.mark.parametrize("name", ["continuation-readiness.json", "CONTINUATION_LAUNCH.json"])
++def test_normal_backup_rejects_missing_late_metadata(tmp_path: Path, name: str) -> None:
++    root = metadata(tmp_path, complete=True)
++    target = (
++        root / name
++        if name == "continuation-readiness.json"
++        else Path(read(root / "run.json")["continuation"]["receipts"]) / name
++    )
++    target.unlink()
++    with pytest.raises(FileNotFoundError):
++        final_backup(Journal(root), tmp_path / "failed-backup")
++    assert list((tmp_path / "failed-backup").glob("final-*"))  # partial retained
++    assert read(root / "pause.json")["reason"] == "CONTINUATION_REVIEW_REQUIRED"
++
++
++def test_prelaunch_rejects_existing_late_records(tmp_path: Path) -> None:
++    root = metadata(tmp_path, complete=True)
++    with pytest.raises(ValueError, match="MUST_PRECEDE_READINESS_AND_LAUNCH"):
++        final_backup(Journal(root), tmp_path / "failed-backup", prelaunch=True)
++
++
++def test_corrupt_archive_readback_retains_failure(tmp_path: Path) -> None:
++    from storage import ObjectProof
++
++    root = metadata(tmp_path)
++    archive = final_backup(Journal(root), tmp_path / "backup", prelaunch=True)
++    proof = ObjectProof(
++        bucket="offline-calibration",
++        key="calibration/test",
++        version_id="test-version",
++        sha256=hash_file(archive),
++        bytes=archive.stat().st_size,
++    )
++    corrupt = tmp_path / "corrupted-copy.tar.gz"
++    corrupt.write_bytes(archive.read_bytes()[:-20])
++    with pytest.raises(ValueError, match="LOCAL_ARCHIVE_DRIFT"):
++        recover(proof, tmp_path / "failed-readback", local_archive=corrupt)
++    assert list((tmp_path / "failed-readback").glob("postflight-failure-*.json"))
++    assert archive.is_file() and corrupt.is_file()
++
++
++def test_authorization_failure_precedes_backup_or_readiness(
++    tmp_path: Path, monkeypatch: Any
++) -> None:
++    from handover import ContinuationAuthority
++    from prelaunch_backup import run
++
++    root = metadata(tmp_path)
++    calls: list[bool] = []
++
++    def deny(self: Any, at: Any = None, *, prelaunch: bool = False) -> str:
++        calls.append(prelaunch)
++        raise ValueError("MISSING_CALIBRATION_AUTHORIZATION")
++
++    # Only a failing guard is stubbed; no test grants authority or releases a pause.
++    monkeypatch.setattr(ContinuationAuthority, "verify", deny)
++    with pytest.raises(ValueError, match="MISSING_CALIBRATION_AUTHORIZATION"):
++        run(root, tmp_path / "never-created", "prelaunch", OfflineCloud(tmp_path / "offline"))
++    assert calls == [True] and not (tmp_path / "never-created").exists()
++    assert not (root / "continuation-readiness.json").exists()
++    assert not (root / "prelaunch-backup-proof.json").exists()
++
++
++def test_private_signer_never_copied(tmp_path: Path) -> None:
++    root = metadata(tmp_path)
++    receipts = Path(read(root / "run.json")["continuation"]["receipts"])
++    (receipts / "owner.key").write_bytes(b"CALIBRATION_SENTINEL_NOT_A_SIGNING_KEY")
++    archive = final_backup(Journal(root), tmp_path / "backup", prelaunch=True)
++    recovered = roundtrip(root, archive, tmp_path / "proof")
++    assert not list(recovered.rglob("owner.key"))
++    (recovered / "handover.json").unlink()
++    with pytest.raises(ValueError, match="REQUIRED_METADATA_MISSING"):
++        verify_continuation_metadata(recovered)

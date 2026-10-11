@@ -1,0 +1,99 @@
+E402 Module level import not at top of file
+  --> E:/p8v8/source/artifacts/phase-8-runner-amendment/v4-complete/runner.py:21:1
+   |
+20 | from clock_sampling import anchor_record, measurement, sample  # noqa: E402
+21 | from clock_sampling import check as paired_clock_check
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+22 | from closed_restart import imported as imported_closed  # noqa: E402
+23 | from controls import (  # noqa: E402
+   |
+help: Move module level imports to top of file
+
+E501 Line too long (110 > 100)
+   --> E:/p8v8/source/artifacts/phase-8-runner-amendment/v4-complete/test_clock_continuation_v8.py:123:101
+    |
+121 |         clocks.anchor_record(reading(0, 100, .1), "cal-boot")
+122 |     with pytest.raises(ValueError, match="BRACKETED_BOOT_ANCHOR_REQUIRED"):
+123 |         clocks.check(POLICY, {k:got[k] for k in ("boot_id","wall","monotonic")}, reading(100,200), "cal-boot")
+    |                                                                                                     ^^^^^^^^^^
+
+E501 Line too long (107 > 100)
+   --> E:/p8v8/source/artifacts/phase-8-runner-amendment/v4-complete/test_clock_continuation_v8.py:126:101
+    |
+126 | def test_clock_12_rejection_actual_operands_durable(tmp_path: Path, monkeypatch: Any, capsys: Any) -> None:
+    |                                                                                                     ^^^^^^^
+127 |     root = clock_root(tmp_path)
+128 |     monkeypatch.setattr(runner, "sample", lambda: reading(94, 200, .002))
+    |
+
+E501 Line too long (115 > 100)
+   --> E:/p8v8/source/artifacts/phase-8-runner-amendment/v4-complete/test_clock_continuation_v8.py:147:101
+    |
+145 |     assert read(root / "pause.json")["reason"] == failure["reason"]
+146 |     logged = json.loads(capsys.readouterr().out)
+147 |     assert logged["result"] == failure["reason"] and logged["anchor_sha256"] == hash_file(root / "host-clock.json")
+    |                                                                                                     ^^^^^^^^^^^^^^^
+
+E501 Line too long (108 > 100)
+   --> E:/p8v8/source/artifacts/phase-8-runner-amendment/v4-complete/test_clock_continuation_v8.py:161:101
+    |
+159 |     verify_imported_first(imported)
+160 |     rows = Journal(imported).rows()
+161 |     assert len(rows) == 1500 and rows[:120] == read(HERE / "closed-120/ledger-read-only.json")["rows"][:120]
+    |                                                                                                     ^^^^^^^^
+162 |     assert rows[120]["execution_id"] == NEXT and rows[120]["arm"] == "P1"
+163 |     assert sum(r["state"] == "PLANNED" for r in rows) == 1380
+    |
+
+E501 Line too long (107 > 100)
+   --> E:/p8v8/source/artifacts/phase-8-runner-amendment/v4-complete/test_clock_continuation_v8.py:165:101
+    |
+163 |     assert sum(r["state"] == "PLANNED" for r in rows) == 1380
+164 |     assert read(imported / "pause.json")["reason"] == "CONTINUATION_REVIEW_REQUIRED"
+165 |     assert read(imported / "restart-history/pause.json")["reason"] == "WALL_CLOCK_BACKWARD_STOP_ADMISSIONS"
+    |                                                                                                     ^^^^^^^
+
+E501 Line too long (110 > 100)
+   --> E:/p8v8/source/artifacts/phase-8-runner-amendment/v4-complete/test_clock_continuation_v8.py:202:101
+    |
+200 |     shutil.copytree(HERE / "closed-120/public-authority", receipts)
+201 |     if complete:
+202 |         shutil.copyfile(HERE / "closed-120/continuation-readiness.json", root / "continuation-readiness.json")
+    |                                                                                                     ^^^^^^^^^^
+203 |     else:
+204 |         (receipts / "continuation/CONTINUATION_LAUNCH.json").unlink()
+    |
+
+E501 Line too long (102 > 100)
+   --> E:/p8v8/source/artifacts/phase-8-runner-amendment/v4-complete/test_clock_continuation_v8.py:212:101
+    |
+210 |     from handover import ContinuationPolicy
+211 |     cloud = OfflineCloud(tmp / "independent-stored-copy")
+212 |     proof = upload(Journal(root), cloud, ContinuationPolicy.model_validate(config["policy"]), archive)
+    |                                                                                                     ^^
+213 |     cloud.verify(proof)
+214 |     recovered = recover(proof, tmp / "readback", local_archive=cloud.root / proof.version_id) / "slot"
+    |
+
+E501 Line too long (102 > 100)
+   --> E:/p8v8/source/artifacts/phase-8-runner-amendment/v4-complete/test_clock_continuation_v8.py:214:101
+    |
+212 |     proof = upload(Journal(root), cloud, ContinuationPolicy.model_validate(config["policy"]), archive)
+213 |     cloud.verify(proof)
+214 |     recovered = recover(proof, tmp / "readback", local_archive=cloud.root / proof.version_id) / "slot"
+    |                                                                                                     ^^
+215 |     verify_continuation_metadata(recovered)
+216 |     assert Journal(recovered).rows() == Journal(imported).rows()
+    |
+
+E501 Line too long (262 > 100)
+   --> E:/p8v8/source/artifacts/phase-8-runner-amendment/v4-complete/test_clock_continuation_v8.py:218:101
+    |
+216 | …
+217 | …
+218 | …ELAUNCH", "bytes":archive.stat().st_size, "sha256":hash_file(archive), "BACKED_UP":120,"PLANNED":1380,"driver_calls":0,"historical_records_not_launch_authority":True})
+    |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+219 | …
+    |
+
+Found 15 errors (5 fixed, 10 remaining).

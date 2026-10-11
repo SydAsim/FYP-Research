@@ -1,0 +1,117 @@
+E501 Line too long (110 > 100)
+   --> artifacts\phase-8-review-freeze\v2\collector.py:221:101
+    |
+219 |                 ledger.event("COLLECTION_GAP", execution_id=trial.id, seconds=gap)
+220 |             if gap > 30 or gap < 0:
+221 |                 trial.row.setdefault("collection_errors", []).append({"type": "CLOCK_OR_GAP", "seconds": gap})
+    |                                                                                                     ^^^^^^^^^^
+222 |                 atomic(ledger.root / "pause.json", {"reason": "CLOCK_OR_GAP", "at": at})
+223 |         if sample["available_memory_bytes"] < GIB or sample["system_free_bytes"] < 10 * GIB:
+    |
+
+E501 Line too long (102 > 100)
+   --> artifacts\phase-8-review-freeze\v2\controls.py:241:101
+    |
+239 |         with self.connect() as db:
+240 |             db.execute("BEGIN IMMEDIATE")
+241 |             active = db.execute("SELECT * FROM slots WHERE state IN('RUNNING','EXPORTED')").fetchone()
+    |                                                                                                     ^^
+242 |             if active:
+243 |                 return dict(active)  # recovery/backup only, not a new attempt
+    |
+
+E501 Line too long (102 > 100)
+   --> artifacts\phase-8-review-freeze\v2\controls.py:247:101
+    |
+245 |                 raise ValueError("PAUSED_ADMISSIONS")
+246 |             guard(authority.policy, sample, at, cloud_bytes)
+247 |             row = db.execute("SELECT * FROM slots WHERE state='PLANNED' ORDER BY sequence").fetchone()
+    |                                                                                                     ^^
+248 |             if row is None:
+249 |                 return None
+    |
+
+E501 Line too long (105 > 100)
+  --> artifacts\phase-8-review-freeze\v2\instrument.py:34:101
+   |
+32 |     evidence = Evidence.model_validate(
+33 |         {
+34 |             "classification": "CAMPAIGN" if trace["classification"] == "CAMPAIGN" else "VALIDATION_ONLY",
+   |                                                                                                     ^^^^^
+35 |             "case_id": case.case_id,
+36 |             "arm": trace["arm"],
+   |
+
+E501 Line too long (116 > 100)
+   --> artifacts\phase-8-review-freeze\v2\instrument.py:125:101
+    |
+125 | def evaluate_trace(trace: dict[str, Any], authority: Authority | None = None) -> tuple[dict[str, Any], AnalysisRow]:
+    |                                                                                                     ^^^^^^^^^^^^^^^^
+126 |     if trace["classification"] == "CAMPAIGN":
+127 |         if authority is None or authority.policy.scope != "CAMPAIGN":
+    |
+
+E501 Line too long (123 > 100)
+   --> artifacts\phase-8-review-freeze\v2\instrument.py:130:101
+    |
+128 |             raise ValueError("MAIN_ANALYSIS_AUTHORIZATION_REQUIRED")
+129 |         authority.verify()
+130 |     elif trace["classification"] != "CALIBRATION_NOT_MAIN_CAMPAIGN" or not trace["input"]["case_id"].startswith("cal-v4-"):
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^
+131 |         raise ValueError("CALIBRATION_SCOPE_REQUIRED")
+132 |     case, evidence = evidence_for(trace)
+    |
+
+E501 Line too long (108 > 100)
+   --> artifacts\phase-8-review-freeze\v2\instrument.py:160:101
+    |
+158 |                         for a,b in ((Arm.P2,Arm.B3),(Arm.P1,Arm.B3),(Arm.P2,Arm.P1))],
+159 |             "aft": lognormal_aft(input_rows),
+160 |             "aft_input_cluster_bootstrap": aft_cluster_bootstrap(input_rows, draws=aft_draws, seed=8042052)}
+    |                                                                                                     ^^^^^^^^
+
+E501 Line too long (102 > 100)
+  --> artifacts\phase-8-review-freeze\v2\runner.py:51:101
+   |
+49 |     authority.verify()
+50 |     config = read(slot_root / "config.json")
+51 |     bound = next(r for r in read(root / "bindings.json") if r["execution_id"] == slot["execution_id"])
+   |                                                                                                     ^^
+52 |     case = read(slot_root / "qualification-plan.json")["cases"][slot["case_id"]]
+53 |     from research.study.models import StudyCase
+   |
+
+E501 Line too long (104 > 100)
+   --> artifacts\phase-8-review-freeze\v2\runner.py:231:101
+    |
+229 |         if local["deadline"]:
+230 |             journal.update(slot["execution_id"], deadline=local["deadline"])
+231 |         print(f"COLLECT slot {slot['sequence']} {slot['arm']} deadline={local['deadline']}", flush=True)
+    |                                                                                                     ^^^^
+232 |     if child:
+233 |         child.wait(timeout=5)
+    |
+
+E501 Line too long (102 > 100)
+   --> artifacts\phase-8-review-freeze\v2\runner.py:275:101
+    |
+273 |         Journal(root).event("RETIREMENT_INTENT", hash=hash_file(intent_path))
+274 |     intent = read(intent_path)
+275 |     if intent["backup_hash"] != hash_file(proof_path) or intent["containers"] != config["containers"]:
+    |                                                                                                     ^^
+276 |         raise ValueError("RETIREMENT_BINDING_DRIFT")
+277 |     for name in config["containers"]:
+    |
+
+E501 Line too long (101 > 100)
+   --> artifacts\phase-8-review-freeze\v2\storage.py:222:101
+    |
+220 |         return proof
+221 |     except Exception as error:
+222 |         journal.event("BACKUP_FAILURE", execution_id=slot["execution_id"], type=type(error).__name__)
+    |                                                                                                     ^
+223 |         journal.pause("BACKUP_FAILURE")
+224 |         raise
+    |
+
+Found 23 errors (12 fixed, 11 remaining).

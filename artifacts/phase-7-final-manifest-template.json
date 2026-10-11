@@ -1,0 +1,90 @@
+{
+  "version": "phase8-final-manifest-template-v1",
+  "status": "TEMPLATE_NOT_EXECUTED",
+  "protocol_freeze_hash": "90901263019a6ebb1c4b4981b06279687618f9f2aeb00a52e69b45c46e160f4a",
+  "source_inventory_hash": "537b5984f585dbf78bbe41c4ef1d85e091c5369ceb5222546ab962a41b339c09",
+  "schema_versions": {
+    "migration_head": "0011_phase6_b3_audio",
+    "event_envelope": 1,
+    "primary_metrics": "phase6-primary-v1",
+    "clean_metrics": "phase6-clean-v1",
+    "secondary_metrics": "phase6-secondary-metrics-v2",
+    "analysis": "phase7-analysis-v1"
+  },
+  "plan": {
+    "independent_instances": 500,
+    "strata": {
+      "clean": 100,
+      "postcommit_ambiguity": 200,
+      "playout": 100,
+      "other_provider_boundaries": 100
+    },
+    "arms": [
+      "B0",
+      "B1",
+      "B2",
+      "B3",
+      "P1",
+      "P2"
+    ],
+    "primary_unit": "Scenario instance, not execution or repeated audio",
+    "required_before_start": "Materialize/hash all 500 external scripts/fixtures and arm applicability; freeze campaign manifest",
+    "pilot_reuse": false
+  },
+  "primary_endpoints": {
+    "correction_success": "Domain-permitted external final intent with no forbidden effect; revision cases only",
+    "unsupported_confirmation": "At least one decisive client exposure lacking applicable evidence at release/play; post-commit ambiguity cases only"
+  },
+  "primary_comparison": {
+    "reference": "B3",
+    "comparison": "P2"
+  },
+  "clean_noninferiority": {
+    "reference": "B3",
+    "comparison": "P2",
+    "margin": 0.05,
+    "criterion": "one-sided 95% lower paired risk-difference bound > -margin",
+    "bound": "Bonferroni exact binomial bounds on paired wins and losses, .025 per tail",
+    "utility_guard": "Safety improvement requires passing clean NI and reporting outcome coverage",
+    "margin_origin": "Phase 7 design choice, not an implementation-pack constant"
+  },
+  "budgets": {
+    "reconciliation_max_attempts": 8,
+    "worker_lease_seconds": 180,
+    "provider_http_timeout_seconds": 30,
+    "runner_http_timeout_seconds": 40,
+    "named_barrier_timeout_seconds": 40,
+    "workflow_drain_transition_limit": 30,
+    "verification_validity_seconds": 30,
+    "intent_http_timeout_seconds": 90,
+    "local_intent_temperature": 0,
+    "local_intent_max_tokens": 120,
+    "local_acoustic_capture_process_timeout_seconds": 240,
+    "failure_policy": "Record infrastructure failure/timeout, trace ID and rerun reason; never silently replace"
+  },
+  "exclusions": {
+    "task_failures": "Retain refusals, UNKNOWN, handoffs, wrong intent, clarification and recognition failures",
+    "infrastructure": "Separate missing/corrupted trace or unavailable infrastructure; retain planned slot and every attempt",
+    "reruns": "Same scenario ID/version, explicit reason, original retained; no replacement chosen for favorable outcome",
+    "confirmatory_missing": "No confirmatory conclusion if planned primary pairs are unaccounted for; report sensitivity bounds",
+    "structural": "Multi-workflow/unavailable side completion infeasible; conflict B0-B2 not applicable, declared before runs"
+  },
+  "analysis_plan": {
+    "binary": "Exact paired McNemar; raw 2x2 counts; exact binomial rare-event intervals",
+    "latency": "Scenario-cluster bootstrap of paired differences, 2000 draws, seed 7001; report NOT_OBSERVED/NOT_COMPARABLE",
+    "timeout": "Resolution right-censored at actual recorded timeout; report status/time and survival analysis in Phase 8",
+    "repetitions": "If repeated seeds/audio: logistic mixed effects arm/phase/fault/revision/action; scenario-template and audio/speaker random intercepts",
+    "secondary": "P1 mechanisms and B0-B2 exploratory comparisons; Holm correction within declared families",
+    "physical_hearing": "Not inferred; optional RQ9 study is excluded",
+    "pilot": "Descriptive protocol debug only; no confirmatory power, effect, or NI claim"
+  },
+  "fixtures": [],
+  "required_before_execution": [
+    "500 externally specified scenario fixtures and hashes",
+    "frozen arm applicability for each slot",
+    "planned execution/attempt ledger",
+    "container and model/audio versions match freeze",
+    "no pilot-instance reuse"
+  ],
+  "hash": "11d1167bfabe1dafd95b64f02a78d9a3dfc968b6ede5ed4464a5424e901a8d7c"
+}

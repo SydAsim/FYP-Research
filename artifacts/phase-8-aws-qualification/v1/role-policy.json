@@ -1,0 +1,35 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::fyp-p82-20261005-018da1d6-803656589923/source/*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:GetObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::fyp-p82-20261005-018da1d6-803656589923/exports/*",
+        "arn:aws:s3:::fyp-p82-20261005-018da1d6-803656589923/ssm/*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": "s3:ListBucket",
+      "Resource": "arn:aws:s3:::fyp-p82-20261005-018da1d6-803656589923",
+      "Condition": {
+        "StringLike": {
+          "s3:prefix": [
+            "source/*",
+            "exports/*",
+            "ssm/*"
+          ]
+        }
+      }
+    }
+  ]
+}

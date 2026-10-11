@@ -1,0 +1,2921 @@
+{
+  "run_id": "73a90ec2-37ef-4ebd-9c61-afd3a4cbbba7",
+  "case_id": "17c19026-d54b-4ad5-b51e-5c7c019154b4",
+  "manifest": {
+    "name": "Phase 6 paired pilot-p0",
+    "runner_version": "phase6-paired-runner-v6",
+    "latency_analysis_version": "phase6-correction-latency-v1",
+    "scenario": {
+      "fixture_version": "phase6-synthetic-maintenance-v1",
+      "scenario_key": "pilot-p0",
+      "revision_type": "PRE_ACCEPT_CORRECTION",
+      "action_semantics": "CREATE_AFTER_PREACCEPT_CORRECTION",
+      "workflow_shape": "ONE_TICKET_ONE_APPOINTMENT",
+      "acoustic_condition": "CLEAN_SCRIPTED_TRANSCRIPT",
+      "provider_capability": "ATOMIC_RESCHEDULE_STATUS_AND_RESOURCE_LOOKUP",
+      "visibility": "IMMEDIATE",
+      "speech_exposure": "NONE",
+      "fault_family": "NONE",
+      "correction_barrier": "P0",
+      "seed": 1,
+      "initial_start": "2026-11-05T15:00:00+05:00",
+      "final_start": "2026-11-05T16:00:00+05:00",
+      "timezone": "Asia/Karachi",
+      "initial_transcript": "Book maintenance on November fifth twenty twenty six at three P M.",
+      "correction_transcript": "Actually change it to four P M.",
+      "audio_hash": "96ca029eb97abef12a51320a3de68f84fa3a04c550f10d989f38687299c99032",
+      "repetition": 1
+    },
+    "fixture_hash": "c7fa89b4503d5d3a21f877b2f3709a0ddce440d1e1be9842ce71a357afa0b525",
+    "audio_hash": "96ca029eb97abef12a51320a3de68f84fa3a04c550f10d989f38687299c99032",
+    "source_tree_hash": "52add14c9947155f38289299ea5c5c7c4eb35261d63d0b6a6584932ed3c657d4",
+    "source_commit": "uncommitted:52add14c9947155f38289299ea5c5c7c4eb35261d63d0b6a6584932ed3c657d4",
+    "container_digests": {
+      "api-controller": "sha256:48b515b83ff662aec21b8b4257722adab4997f301871f917d55d80f9e611e3a6",
+      "durable-worker": "sha256:03a5f6a293feb886d61fd7bf7c6b2e204a326bcbaef75f8a96a007851e491cbf",
+      "livekit": "sha256:6fd3b7088874c4d119160dd688798dfec852bc014786d392caad15f6f63912a3",
+      "local-llm": "sha256:00bd6c289c590e576948cb3639b8195e4d3e6dd6ba1d761f0e2b871fcd4df24f",
+      "postgres": "sha256:ddfe3e8713e3ee5b8f286082cb12512488dfbf3f5a1ecb0b74a42e6055af0a5f",
+      "provider-simulator": "sha256:cdea1fa5fe0f91e06070366c7c02daa0969a266782b2c659db8ae42381f08566",
+      "redis": "sha256:bb186d083732f669da90be8b0f975a37812b15e913465bb14d845db72a4e3e08",
+      "simulator-postgres": "sha256:ddfe3e8713e3ee5b8f286082cb12512488dfbf3f5a1ecb0b74a42e6055af0a5f",
+      "voice-worker": "sha256:b6028788048393207a2161a7d89ea3601e686db0f2a622b3b7792fe995f8fda0",
+      "web": "sha256:ef77848daf1922d93993b6c3617be116f5f9afc2563b1038d70f6af5de794685"
+    },
+    "migration_version": "0011_phase6_b3_audio",
+    "model_profile": "phase6-frozen-scripted-transcript",
+    "prompt_hashes": [
+      "4e7f37b164df1e6f2cfd59d7e98be9e1cf5cfe68ba748c40e7088639748566fe",
+      "b8585c69631be6333874ca1a586e03f64d3b0df07a5fdc667de6096af7fe66da"
+    ],
+    "retry_budget": 8,
+    "provider_timeout_seconds": 40,
+    "primary_endpoints": [
+      "correction_success",
+      "unsupported_confirmation"
+    ],
+    "speech_policy_version": "phase3-policy-v1",
+    "fault_schedule": {
+      "barrier": "P0",
+      "fault": "NONE",
+      "request_index": 1,
+      "target": "P0:1",
+      "hash": "4b28fb8710f5c5fbd2f85076d5e37b4361da065480573a0658595f4c0ae7b69c"
+    },
+    "arms": {
+      "B0": {
+        "arm": "B0",
+        "durable_idempotency": false,
+        "reconcile_before_retry": false,
+        "revision_invalidation": false,
+        "transaction_staging": false,
+        "compensation": false,
+        "playback_tracking": false,
+        "claim_permits": false,
+        "product_state_invariants": false,
+        "durable_played_span_repair": false
+      },
+      "B1": {
+        "arm": "B1",
+        "durable_idempotency": true,
+        "reconcile_before_retry": true,
+        "revision_invalidation": false,
+        "transaction_staging": false,
+        "compensation": false,
+        "playback_tracking": false,
+        "claim_permits": false,
+        "product_state_invariants": false,
+        "durable_played_span_repair": false
+      },
+      "B2": {
+        "arm": "B2",
+        "durable_idempotency": true,
+        "reconcile_before_retry": true,
+        "revision_invalidation": true,
+        "transaction_staging": true,
+        "compensation": true,
+        "playback_tracking": false,
+        "claim_permits": false,
+        "product_state_invariants": false,
+        "durable_played_span_repair": false
+      },
+      "B3": {
+        "arm": "B3",
+        "durable_idempotency": true,
+        "reconcile_before_retry": true,
+        "revision_invalidation": true,
+        "transaction_staging": true,
+        "compensation": true,
+        "playback_tracking": true,
+        "claim_permits": false,
+        "product_state_invariants": false,
+        "durable_played_span_repair": false
+      },
+      "P1": {
+        "arm": "P1",
+        "durable_idempotency": true,
+        "reconcile_before_retry": true,
+        "revision_invalidation": true,
+        "transaction_staging": true,
+        "compensation": true,
+        "playback_tracking": true,
+        "claim_permits": true,
+        "product_state_invariants": true,
+        "durable_played_span_repair": false
+      },
+      "P2": {
+        "arm": "P2",
+        "durable_idempotency": true,
+        "reconcile_before_retry": true,
+        "revision_invalidation": true,
+        "transaction_staging": true,
+        "compensation": true,
+        "playback_tracking": true,
+        "claim_permits": true,
+        "product_state_invariants": true,
+        "durable_played_span_repair": true
+      }
+    },
+    "run_id": "73a90ec2-37ef-4ebd-9c61-afd3a4cbbba7",
+    "frozen_at_utc": "2026-10-03T17:54:30.902549+00:00"
+  },
+  "manifest_hash": "8d97904e72a82ac6b273e13b9b33c9bd3bd08ae1b1cf079e8c347f7de3c6252f",
+  "execution_count": 6,
+  "independent_scenario_count": 1,
+  "paired_summary": {
+    "independent_scenarios": 1,
+    "executions": 6,
+    "by_arm": {
+      "B0": {
+        "scenarios": 1,
+        "successes": 1
+      },
+      "B1": {
+        "scenarios": 1,
+        "successes": 1
+      },
+      "B2": {
+        "scenarios": 1,
+        "successes": 1
+      },
+      "B3": {
+        "scenarios": 1,
+        "successes": 1
+      },
+      "P1": {
+        "scenarios": 1,
+        "successes": 1
+      },
+      "P2": {
+        "scenarios": 1,
+        "successes": 1
+      }
+    }
+  },
+  "executions": [
+    {
+      "execution_id": "07494fa9-42fb-43cc-8cd7-d01567fee074",
+      "arm": "B0",
+      "scenario_id": "41470a49-dfdd-42a2-a52a-65148f2da71c",
+      "workflow_id": "51fc3fb2-5119-40aa-83c5-6797ea2b236e",
+      "first_operation_id": null,
+      "current_operation_id": "fcbf77b4-b378-4c98-8523-948d104fe4e0",
+      "fault_occurrence_id": null,
+      "fault_placement_hash": "4b28fb8710f5c5fbd2f85076d5e37b4361da065480573a0658595f4c0ae7b69c",
+      "speech_source": "research_baseline_tool_response",
+      "receipt_id": null,
+      "permit_id": null,
+      "playback_ack": {
+        "event_id": "7060f3d5-3552-43d0-b986-99290992f120",
+        "claim_type": "CURRENT_APPOINTMENT",
+        "claim_start": "2026-11-05T16:00:00+05:00",
+        "intent_revision": 1,
+        "released_at": "2026-10-03T17:54:31.438305Z",
+        "played_at": "2026-10-03T17:54:31.438305Z",
+        "played_ms": 500,
+        "permit_id": null
+      },
+      "correction_scripted_at": "2026-10-03T17:54:31.138294+00:00",
+      "observation_ended_at": "2026-10-03T17:54:31.531346+00:00",
+      "worker_steps": [],
+      "normalized_events": [
+        {
+          "workflow_sequence": 1,
+          "event_name": "IntentRevisionAccepted",
+          "intent_revision": 1,
+          "payload": {
+            "revision": 1,
+            "change_class": "INITIAL",
+            "desired_state_hash": "887cc9d4292ebea1d91a0b91dd66fc3ea36ba9a20c6294389f0314e57626f08e"
+          }
+        }
+      ],
+      "provider_evidence": [],
+      "baseline_events": [
+        {
+          "ordinal": 1,
+          "event_kind": "REQUEST_SENT",
+          "raw_json": {
+            "action": "CREATE",
+            "timezone": "Asia/Karachi",
+            "scenario_id": "41470a49-dfdd-42a2-a52a-65148f2da71c",
+            "operation_id": "fcbf77b4-b378-4c98-8523-948d104fe4e0",
+            "request_hash": "6f839ff115d0dc9280f24288998aeafb181eccf7f563f41be8f2cbcc0f882310",
+            "resource_key": "property:516d5907-c1cf-4e62-a9c5-6977c5214399:maintenance",
+            "requested_end": "2026-11-05T17:00:00+05:00",
+            "idempotency_key": "phase6:07494fa9-42fb-43cc-8cd7-d01567fee074:corrected",
+            "requested_start": "2026-11-05T16:00:00+05:00"
+          },
+          "normalized_json": {
+            "sent": true,
+            "action": "CREATE"
+          },
+          "content_hash": "0256a8fb8a00c5508430c1b7af50c210e44f5c9c0cabba0c565fec9b14187f09",
+          "trace_id": "890de093-2584-4e35-82b0-6ca8af9ff969",
+          "occurred_at": "2026-10-03 17:54:31.288466+00:00"
+        },
+        {
+          "ordinal": 2,
+          "event_kind": "PROVIDER_RESPONSE",
+          "raw_json": {
+            "body": {
+              "facts": {
+                "status": "CONFIRMED",
+                "ends_at": "2026-11-05T12:00:00+00:00",
+                "version": 0,
+                "timezone": "Asia/Karachi",
+                "starts_at": "2026-11-05T11:00:00+00:00",
+                "resource_key": "property:516d5907-c1cf-4e62-a9c5-6977c5214399:maintenance",
+                "appointment_id": "8f3181d5-5a79-4a44-a927-449c96afdbc1"
+              },
+              "outcome": "PRESENT",
+              "operation_id": "fcbf77b4-b378-4c98-8523-948d104fe4e0",
+              "appointment_id": "8f3181d5-5a79-4a44-a927-449c96afdbc1",
+              "commit_sequence": 4922,
+              "resource_version": 0,
+              "idempotent_replay": false
+            },
+            "status": 200
+          },
+          "normalized_json": {
+            "status": 200,
+            "outcome": "PRESENT",
+            "authoritative": null,
+            "transport_error": false
+          },
+          "content_hash": "fdca94eeb3b3ccd60a09a64050b62747f8f85a4b479904043355c009545fd198",
+          "trace_id": "890de093-2584-4e35-82b0-6ca8af9ff969",
+          "occurred_at": "2026-10-03 17:54:31.431110+00:00"
+        }
+      ],
+      "baseline_simulator_config": {
+        "idempotency": true,
+        "status_lookup": true,
+        "resource_lookup": true,
+        "visibility": "IMMEDIATE",
+        "visibility_reads": 0,
+        "supports_reschedule": true,
+        "held_barriers": [],
+        "faults": []
+      },
+      "timing_evidence": {
+        "barriers": [
+          {
+            "id": "e8baa8f0-74da-4a90-b37b-37b0558851f4",
+            "barrier_name": "P0",
+            "ordinal": 1,
+            "state": "RELEASED",
+            "source_event_id": "P0:1",
+            "reached_at": "2026-10-03 17:54:31.106387+00:00",
+            "released_at": "2026-10-03 17:54:31.219770+00:00"
+          }
+        ],
+        "faults": []
+      },
+      "simulator_truth": [
+        {
+          "sequence": 4922,
+          "scenario_id": "41470a49-dfdd-42a2-a52a-65148f2da71c",
+          "operation_id": "fcbf77b4-b378-4c98-8523-948d104fe4e0",
+          "request_hash": "6f839ff115d0dc9280f24288998aeafb181eccf7f563f41be8f2cbcc0f882310",
+          "idempotency_key": "phase6:07494fa9-42fb-43cc-8cd7-d01567fee074:corrected",
+          "action": "CREATE",
+          "appointment_id": "8f3181d5-5a79-4a44-a927-449c96afdbc1",
+          "resource_key": "property:516d5907-c1cf-4e62-a9c5-6977c5214399:maintenance",
+          "before_facts": null,
+          "after_facts": {
+            "status": "CONFIRMED",
+            "ends_at": "2026-11-05T12:00:00+00:00",
+            "version": 0,
+            "timezone": "Asia/Karachi",
+            "starts_at": "2026-11-05T11:00:00+00:00",
+            "resource_key": "property:516d5907-c1cf-4e62-a9c5-6977c5214399:maintenance",
+            "appointment_id": "8f3181d5-5a79-4a44-a927-449c96afdbc1"
+          },
+          "result_code": "PRESENT",
+          "committed_at": "2026-10-03 17:54:31.383616+00:00"
+        }
+      ],
+      "oracle_result": {
+        "oracle_version": "phase6-truth-oracle-v1",
+        "correction_success": true,
+        "unsupported_confirmation": false,
+        "unsupported_event_ids": [],
+        "stale_confirmation_count": 0,
+        "relevant_claim_count": 1,
+        "duplicate_effect": false,
+        "outcome_coverage": true,
+        "safe_resolution": true,
+        "active_final_truth": [
+          {
+            "status": "CONFIRMED",
+            "ends_at": "2026-11-05T12:00:00+00:00",
+            "version": 0,
+            "timezone": "Asia/Karachi",
+            "starts_at": "2026-11-05T11:00:00+00:00",
+            "resource_key": "property:516d5907-c1cf-4e62-a9c5-6977c5214399:maintenance",
+            "appointment_id": "8f3181d5-5a79-4a44-a927-449c96afdbc1"
+          }
+        ],
+        "provider_commit_count": 1,
+        "result_hash": "8d41cd9106bb4dc27cb9a36f479b40fcb95e8c7b0e9a305ec498586468527029"
+      },
+      "metrics": [
+        {
+          "metric_name": "correction_success",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 1,
+          "numerator": 1,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "unsupported_confirmation",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "duplicate_effect",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "safe_resolution",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 1,
+          "numerator": 1,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "outcome_coverage",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 1,
+          "numerator": 1,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        }
+      ],
+      "pre_accept_history": {
+        "workflow_id": "51fc3fb2-5119-40aa-83c5-6797ea2b236e",
+        "current_revision": 0,
+        "desired_state": {},
+        "revisions": [],
+        "operations": [],
+        "effects": [],
+        "appointments": [],
+        "events": [],
+        "read_at": "2026-10-03T17:54:31.105843+00:00"
+      },
+      "accepted_correction": {
+        "workflow_id": "51fc3fb2-5119-40aa-83c5-6797ea2b236e",
+        "revision": 1,
+        "desired_state": {
+          "ticket_id": "99677fc3-ea16-4e02-bb63-0e563ab80b4a",
+          "appointment_id": null,
+          "requested_start": "2026-11-05T16:00:00+05:00",
+          "requested_end": "2026-11-05T17:00:00+05:00",
+          "timezone": "Asia/Karachi"
+        },
+        "accepted_at": "2026-10-03T17:54:31.175601+00:00"
+      },
+      "correction_to_outcome_latency": {
+        "duration_ms": 300.011,
+        "event_observed": true,
+        "censored": false
+      }
+    },
+    {
+      "execution_id": "c038ff47-473e-4455-b8d8-5d090d6473a5",
+      "arm": "B1",
+      "scenario_id": "45d0ddf6-1401-4904-be4c-97141a69e4b3",
+      "workflow_id": "ef5b8835-de6b-444d-a7d4-8ed49518439d",
+      "first_operation_id": null,
+      "current_operation_id": "4234a33f-7677-42a4-8db2-03d9661b4e99",
+      "fault_occurrence_id": null,
+      "fault_placement_hash": "4b28fb8710f5c5fbd2f85076d5e37b4361da065480573a0658595f4c0ae7b69c",
+      "speech_source": "research_baseline_tool_response",
+      "receipt_id": null,
+      "permit_id": null,
+      "playback_ack": {
+        "event_id": "28a505e1-890b-44d5-a041-d981b6600d5f",
+        "claim_type": "CURRENT_APPOINTMENT",
+        "claim_start": "2026-11-05T16:00:00+05:00",
+        "intent_revision": 1,
+        "released_at": "2026-10-03T17:54:32.136975Z",
+        "played_at": "2026-10-03T17:54:32.136975Z",
+        "played_ms": 500,
+        "permit_id": null
+      },
+      "correction_scripted_at": "2026-10-03T17:54:31.801191+00:00",
+      "observation_ended_at": "2026-10-03T17:54:32.248405+00:00",
+      "worker_steps": [],
+      "normalized_events": [
+        {
+          "workflow_sequence": 1,
+          "event_name": "IntentRevisionAccepted",
+          "intent_revision": 1,
+          "payload": {
+            "revision": 1,
+            "change_class": "INITIAL",
+            "desired_state_hash": "23d681129242fb07dd26b0a8432fb802d0f21ba359f7b20bc2ef874cb90cbb99"
+          }
+        }
+      ],
+      "provider_evidence": [],
+      "baseline_events": [
+        {
+          "ordinal": 1,
+          "event_kind": "REQUEST_SENT",
+          "raw_json": {
+            "action": "CREATE",
+            "timezone": "Asia/Karachi",
+            "scenario_id": "45d0ddf6-1401-4904-be4c-97141a69e4b3",
+            "operation_id": "4234a33f-7677-42a4-8db2-03d9661b4e99",
+            "request_hash": "700d1c81c9eaa5657d9b4682a1510b5d908f98b6c8765431df0fdce21efec265",
+            "resource_key": "property:f19b6086-7088-4265-9eff-91656a702db8:maintenance",
+            "requested_end": "2026-11-05T17:00:00+05:00",
+            "idempotency_key": "phase6:c038ff47-473e-4455-b8d8-5d090d6473a5:corrected",
+            "requested_start": "2026-11-05T16:00:00+05:00"
+          },
+          "normalized_json": {
+            "sent": true,
+            "action": "CREATE"
+          },
+          "content_hash": "70537484abe999f50a3fee23ac0135e0c73ef92232649e3f1fb29ab23cddd68c",
+          "trace_id": "a82855c3-1b1f-4c6c-9bd6-a2317396585f",
+          "occurred_at": "2026-10-03 17:54:31.922602+00:00"
+        },
+        {
+          "ordinal": 2,
+          "event_kind": "PROVIDER_RESPONSE",
+          "raw_json": {
+            "body": {
+              "facts": {
+                "status": "CONFIRMED",
+                "ends_at": "2026-11-05T12:00:00+00:00",
+                "version": 0,
+                "timezone": "Asia/Karachi",
+                "starts_at": "2026-11-05T11:00:00+00:00",
+                "resource_key": "property:f19b6086-7088-4265-9eff-91656a702db8:maintenance",
+                "appointment_id": "0f8686d2-d254-40ac-a668-46e38e83dbc5"
+              },
+              "outcome": "PRESENT",
+              "operation_id": "4234a33f-7677-42a4-8db2-03d9661b4e99",
+              "appointment_id": "0f8686d2-d254-40ac-a668-46e38e83dbc5",
+              "commit_sequence": 4923,
+              "resource_version": 0,
+              "idempotent_replay": false
+            },
+            "status": 200
+          },
+          "normalized_json": {
+            "status": 200,
+            "outcome": "PRESENT",
+            "authoritative": null,
+            "transport_error": false
+          },
+          "content_hash": "9b0e55c9c943cc6e82afcc80c07a3941bbcfcf966e3cbb38b496f4e7d965b7b1",
+          "trace_id": "a82855c3-1b1f-4c6c-9bd6-a2317396585f",
+          "occurred_at": "2026-10-03 17:54:32.046077+00:00"
+        },
+        {
+          "ordinal": 3,
+          "event_kind": "POSTCONDITION_READ",
+          "raw_json": {
+            "body": {
+              "outcome": "PRESENT",
+              "appointments": [
+                {
+                  "status": "CONFIRMED",
+                  "ends_at": "2026-11-05T12:00:00+00:00",
+                  "version": 0,
+                  "timezone": "Asia/Karachi",
+                  "starts_at": "2026-11-05T11:00:00+00:00",
+                  "resource_key": "property:f19b6086-7088-4265-9eff-91656a702db8:maintenance",
+                  "appointment_id": "0f8686d2-d254-40ac-a668-46e38e83dbc5"
+                }
+              ],
+              "authoritative": true
+            },
+            "status": 200
+          },
+          "normalized_json": {
+            "status": 200,
+            "outcome": "PRESENT",
+            "authoritative": true,
+            "transport_error": false
+          },
+          "content_hash": "f3c059efa9dee2cf10e412bd0e7d2746610937e6848e1a8587a1d5ce848fcba1",
+          "trace_id": "a82855c3-1b1f-4c6c-9bd6-a2317396585f",
+          "occurred_at": "2026-10-03 17:54:32.129279+00:00"
+        }
+      ],
+      "baseline_simulator_config": {
+        "idempotency": true,
+        "status_lookup": true,
+        "resource_lookup": true,
+        "visibility": "IMMEDIATE",
+        "visibility_reads": 0,
+        "supports_reschedule": true,
+        "held_barriers": [],
+        "faults": []
+      },
+      "timing_evidence": {
+        "barriers": [
+          {
+            "id": "d721cc3e-b217-4a2b-a92f-e05c91754f4a",
+            "barrier_name": "P0",
+            "ordinal": 1,
+            "state": "RELEASED",
+            "source_event_id": "P0:1",
+            "reached_at": "2026-10-03 17:54:31.776677+00:00",
+            "released_at": "2026-10-03 17:54:31.862495+00:00"
+          }
+        ],
+        "faults": []
+      },
+      "simulator_truth": [
+        {
+          "sequence": 4923,
+          "scenario_id": "45d0ddf6-1401-4904-be4c-97141a69e4b3",
+          "operation_id": "4234a33f-7677-42a4-8db2-03d9661b4e99",
+          "request_hash": "700d1c81c9eaa5657d9b4682a1510b5d908f98b6c8765431df0fdce21efec265",
+          "idempotency_key": "phase6:c038ff47-473e-4455-b8d8-5d090d6473a5:corrected",
+          "action": "CREATE",
+          "appointment_id": "0f8686d2-d254-40ac-a668-46e38e83dbc5",
+          "resource_key": "property:f19b6086-7088-4265-9eff-91656a702db8:maintenance",
+          "before_facts": null,
+          "after_facts": {
+            "status": "CONFIRMED",
+            "ends_at": "2026-11-05T12:00:00+00:00",
+            "version": 0,
+            "timezone": "Asia/Karachi",
+            "starts_at": "2026-11-05T11:00:00+00:00",
+            "resource_key": "property:f19b6086-7088-4265-9eff-91656a702db8:maintenance",
+            "appointment_id": "0f8686d2-d254-40ac-a668-46e38e83dbc5"
+          },
+          "result_code": "PRESENT",
+          "committed_at": "2026-10-03 17:54:31.994800+00:00"
+        }
+      ],
+      "oracle_result": {
+        "oracle_version": "phase6-truth-oracle-v1",
+        "correction_success": true,
+        "unsupported_confirmation": false,
+        "unsupported_event_ids": [],
+        "stale_confirmation_count": 0,
+        "relevant_claim_count": 1,
+        "duplicate_effect": false,
+        "outcome_coverage": true,
+        "safe_resolution": true,
+        "active_final_truth": [
+          {
+            "status": "CONFIRMED",
+            "ends_at": "2026-11-05T12:00:00+00:00",
+            "version": 0,
+            "timezone": "Asia/Karachi",
+            "starts_at": "2026-11-05T11:00:00+00:00",
+            "resource_key": "property:f19b6086-7088-4265-9eff-91656a702db8:maintenance",
+            "appointment_id": "0f8686d2-d254-40ac-a668-46e38e83dbc5"
+          }
+        ],
+        "provider_commit_count": 1,
+        "result_hash": "2c0717692e90300484704eca5921a7178662df579dc31a72b783d7f529d72304"
+      },
+      "metrics": [
+        {
+          "metric_name": "correction_success",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 1,
+          "numerator": 1,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "unsupported_confirmation",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "duplicate_effect",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "safe_resolution",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 1,
+          "numerator": 1,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "outcome_coverage",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 1,
+          "numerator": 1,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        }
+      ],
+      "pre_accept_history": {
+        "workflow_id": "ef5b8835-de6b-444d-a7d4-8ed49518439d",
+        "current_revision": 0,
+        "desired_state": {},
+        "revisions": [],
+        "operations": [],
+        "effects": [],
+        "appointments": [],
+        "events": [],
+        "read_at": "2026-10-03T17:54:31.776137+00:00"
+      },
+      "accepted_correction": {
+        "workflow_id": "ef5b8835-de6b-444d-a7d4-8ed49518439d",
+        "revision": 1,
+        "desired_state": {
+          "ticket_id": "8e83c4d2-8199-4846-8e48-9c1e30345b47",
+          "appointment_id": null,
+          "requested_start": "2026-11-05T16:00:00+05:00",
+          "requested_end": "2026-11-05T17:00:00+05:00",
+          "timezone": "Asia/Karachi"
+        },
+        "accepted_at": "2026-10-03T17:54:31.819197+00:00"
+      },
+      "correction_to_outcome_latency": {
+        "duration_ms": 335.784,
+        "event_observed": true,
+        "censored": false
+      }
+    },
+    {
+      "execution_id": "5a8c13e1-8480-4e0d-9e7e-c68734a87961",
+      "arm": "B2",
+      "scenario_id": "1986b3d5-1a02-486f-a809-52e710960d46",
+      "workflow_id": "bb121af4-b91a-42b1-991d-378dcbc558f1",
+      "first_operation_id": null,
+      "current_operation_id": "154034f1-f3ef-495c-b524-0d32723c9e3e",
+      "fault_occurrence_id": null,
+      "fault_placement_hash": "4b28fb8710f5c5fbd2f85076d5e37b4361da065480573a0658595f4c0ae7b69c",
+      "speech_source": "research_baseline_tool_response",
+      "receipt_id": null,
+      "permit_id": null,
+      "playback_ack": {
+        "event_id": "a7d7b93d-f355-4736-a4b6-b4cf206c9614",
+        "claim_type": "CURRENT_APPOINTMENT",
+        "claim_start": "2026-11-05T16:00:00+05:00",
+        "intent_revision": 1,
+        "released_at": "2026-10-03T17:54:32.943580Z",
+        "played_at": "2026-10-03T17:54:32.943580Z",
+        "played_ms": 500,
+        "permit_id": null
+      },
+      "correction_scripted_at": "2026-10-03T17:54:32.526781+00:00",
+      "observation_ended_at": "2026-10-03T17:54:33.138616+00:00",
+      "worker_steps": [],
+      "normalized_events": [
+        {
+          "workflow_sequence": 1,
+          "event_name": "IntentRevisionAccepted",
+          "intent_revision": 1,
+          "payload": {
+            "revision": 1,
+            "change_class": "INITIAL",
+            "desired_state_hash": "5ee3a394c85f9abca2c48032c210280b436dc85eb14cd90bc61a827189f3662d"
+          }
+        }
+      ],
+      "provider_evidence": [],
+      "baseline_events": [
+        {
+          "ordinal": 1,
+          "event_kind": "REQUEST_SENT",
+          "raw_json": {
+            "action": "CREATE",
+            "timezone": "Asia/Karachi",
+            "scenario_id": "1986b3d5-1a02-486f-a809-52e710960d46",
+            "operation_id": "154034f1-f3ef-495c-b524-0d32723c9e3e",
+            "request_hash": "f77c6b42778fee0e78cdf930215322b194ae21520c745b2d5c30dadb022177da",
+            "resource_key": "property:e36e6b52-d5c8-47a8-9429-0ab77a721118:maintenance",
+            "requested_end": "2026-11-05T17:00:00+05:00",
+            "idempotency_key": "phase6:5a8c13e1-8480-4e0d-9e7e-c68734a87961:corrected",
+            "requested_start": "2026-11-05T16:00:00+05:00"
+          },
+          "normalized_json": {
+            "sent": true,
+            "action": "CREATE"
+          },
+          "content_hash": "08a1dd50f5a52045a406087ef7c2db1df04bcad3d509dd9e65f7b5063ca490aa",
+          "trace_id": "03f97dcb-ad32-4a44-974b-aab384a855c9",
+          "occurred_at": "2026-10-03 17:54:32.693265+00:00"
+        },
+        {
+          "ordinal": 2,
+          "event_kind": "PROVIDER_RESPONSE",
+          "raw_json": {
+            "body": {
+              "facts": {
+                "status": "CONFIRMED",
+                "ends_at": "2026-11-05T12:00:00+00:00",
+                "version": 0,
+                "timezone": "Asia/Karachi",
+                "starts_at": "2026-11-05T11:00:00+00:00",
+                "resource_key": "property:e36e6b52-d5c8-47a8-9429-0ab77a721118:maintenance",
+                "appointment_id": "8864d1b4-cea1-40bf-8c03-f0892313c5fe"
+              },
+              "outcome": "PRESENT",
+              "operation_id": "154034f1-f3ef-495c-b524-0d32723c9e3e",
+              "appointment_id": "8864d1b4-cea1-40bf-8c03-f0892313c5fe",
+              "commit_sequence": 4924,
+              "resource_version": 0,
+              "idempotent_replay": false
+            },
+            "status": 200
+          },
+          "normalized_json": {
+            "status": 200,
+            "outcome": "PRESENT",
+            "authoritative": null,
+            "transport_error": false
+          },
+          "content_hash": "9ee15ab0a46f11a397571efb460f82639600a9df3266f338298ccbdead329288",
+          "trace_id": "03f97dcb-ad32-4a44-974b-aab384a855c9",
+          "occurred_at": "2026-10-03 17:54:32.860865+00:00"
+        },
+        {
+          "ordinal": 3,
+          "event_kind": "POSTCONDITION_READ",
+          "raw_json": {
+            "body": {
+              "outcome": "PRESENT",
+              "appointments": [
+                {
+                  "status": "CONFIRMED",
+                  "ends_at": "2026-11-05T12:00:00+00:00",
+                  "version": 0,
+                  "timezone": "Asia/Karachi",
+                  "starts_at": "2026-11-05T11:00:00+00:00",
+                  "resource_key": "property:e36e6b52-d5c8-47a8-9429-0ab77a721118:maintenance",
+                  "appointment_id": "8864d1b4-cea1-40bf-8c03-f0892313c5fe"
+                }
+              ],
+              "authoritative": true
+            },
+            "status": 200
+          },
+          "normalized_json": {
+            "status": 200,
+            "outcome": "PRESENT",
+            "authoritative": true,
+            "transport_error": false
+          },
+          "content_hash": "eb41012be3b5d32125ba461c3a3029d8d5f2d1b16bfa35d4a4027c1613312833",
+          "trace_id": "03f97dcb-ad32-4a44-974b-aab384a855c9",
+          "occurred_at": "2026-10-03 17:54:32.935337+00:00"
+        }
+      ],
+      "baseline_simulator_config": {
+        "idempotency": true,
+        "status_lookup": true,
+        "resource_lookup": true,
+        "visibility": "IMMEDIATE",
+        "visibility_reads": 0,
+        "supports_reschedule": true,
+        "held_barriers": [],
+        "faults": []
+      },
+      "timing_evidence": {
+        "barriers": [
+          {
+            "id": "750137f6-d79f-465f-8626-b8797b810d0b",
+            "barrier_name": "P0",
+            "ordinal": 1,
+            "state": "RELEASED",
+            "source_event_id": "P0:1",
+            "reached_at": "2026-10-03 17:54:32.489966+00:00",
+            "released_at": "2026-10-03 17:54:32.627074+00:00"
+          }
+        ],
+        "faults": []
+      },
+      "simulator_truth": [
+        {
+          "sequence": 4924,
+          "scenario_id": "1986b3d5-1a02-486f-a809-52e710960d46",
+          "operation_id": "154034f1-f3ef-495c-b524-0d32723c9e3e",
+          "request_hash": "f77c6b42778fee0e78cdf930215322b194ae21520c745b2d5c30dadb022177da",
+          "idempotency_key": "phase6:5a8c13e1-8480-4e0d-9e7e-c68734a87961:corrected",
+          "action": "CREATE",
+          "appointment_id": "8864d1b4-cea1-40bf-8c03-f0892313c5fe",
+          "resource_key": "property:e36e6b52-d5c8-47a8-9429-0ab77a721118:maintenance",
+          "before_facts": null,
+          "after_facts": {
+            "status": "CONFIRMED",
+            "ends_at": "2026-11-05T12:00:00+00:00",
+            "version": 0,
+            "timezone": "Asia/Karachi",
+            "starts_at": "2026-11-05T11:00:00+00:00",
+            "resource_key": "property:e36e6b52-d5c8-47a8-9429-0ab77a721118:maintenance",
+            "appointment_id": "8864d1b4-cea1-40bf-8c03-f0892313c5fe"
+          },
+          "result_code": "PRESENT",
+          "committed_at": "2026-10-03 17:54:32.796830+00:00"
+        }
+      ],
+      "oracle_result": {
+        "oracle_version": "phase6-truth-oracle-v1",
+        "correction_success": true,
+        "unsupported_confirmation": false,
+        "unsupported_event_ids": [],
+        "stale_confirmation_count": 0,
+        "relevant_claim_count": 1,
+        "duplicate_effect": false,
+        "outcome_coverage": true,
+        "safe_resolution": true,
+        "active_final_truth": [
+          {
+            "status": "CONFIRMED",
+            "ends_at": "2026-11-05T12:00:00+00:00",
+            "version": 0,
+            "timezone": "Asia/Karachi",
+            "starts_at": "2026-11-05T11:00:00+00:00",
+            "resource_key": "property:e36e6b52-d5c8-47a8-9429-0ab77a721118:maintenance",
+            "appointment_id": "8864d1b4-cea1-40bf-8c03-f0892313c5fe"
+          }
+        ],
+        "provider_commit_count": 1,
+        "result_hash": "f91e7fb1c50032ef94b7ca1fafdba1973b7c5732b66c481339fb5219a795948e"
+      },
+      "metrics": [
+        {
+          "metric_name": "correction_success",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 1,
+          "numerator": 1,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "unsupported_confirmation",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "duplicate_effect",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "safe_resolution",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 1,
+          "numerator": 1,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "outcome_coverage",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 1,
+          "numerator": 1,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        }
+      ],
+      "pre_accept_history": {
+        "workflow_id": "bb121af4-b91a-42b1-991d-378dcbc558f1",
+        "current_revision": 0,
+        "desired_state": {},
+        "revisions": [],
+        "operations": [],
+        "effects": [],
+        "appointments": [],
+        "events": [],
+        "read_at": "2026-10-03T17:54:32.489412+00:00"
+      },
+      "accepted_correction": {
+        "workflow_id": "bb121af4-b91a-42b1-991d-378dcbc558f1",
+        "revision": 1,
+        "desired_state": {
+          "ticket_id": "d0b722fe-6aaf-415c-a792-5700bc76bd5c",
+          "appointment_id": null,
+          "requested_start": "2026-11-05T16:00:00+05:00",
+          "requested_end": "2026-11-05T17:00:00+05:00",
+          "timezone": "Asia/Karachi"
+        },
+        "accepted_at": "2026-10-03T17:54:32.559232+00:00"
+      },
+      "correction_to_outcome_latency": {
+        "duration_ms": 416.799,
+        "event_observed": true,
+        "censored": false
+      }
+    },
+    {
+      "execution_id": "0ec1b480-c761-48f4-b753-fa9144e37143",
+      "arm": "B3",
+      "scenario_id": "31bd7560-39c2-4494-b567-d1fdaad637dd",
+      "workflow_id": "281a8f8a-1b49-413a-ac2e-6551b97f277e",
+      "first_operation_id": null,
+      "current_operation_id": "43293e8d-d4d6-4146-9bdd-81ec5117a3ab",
+      "fault_occurrence_id": null,
+      "fault_placement_hash": "4b28fb8710f5c5fbd2f85076d5e37b4361da065480573a0658595f4c0ae7b69c",
+      "speech_source": "research_baseline_without_claim_permit",
+      "receipt_id": null,
+      "permit_id": null,
+      "playback_ack": {
+        "event_id": "856f30a4-32a6-4412-8527-2362ba27d5ca",
+        "claim_type": "CURRENT_APPOINTMENT",
+        "claim_start": "2026-11-05T16:00:00+05:00",
+        "intent_revision": 1,
+        "released_at": "2026-10-03T17:54:33.945177Z",
+        "played_at": "2026-10-03T17:54:33.945177Z",
+        "played_ms": 500,
+        "permit_id": null
+      },
+      "correction_scripted_at": "2026-10-03T17:54:33.396351+00:00",
+      "observation_ended_at": "2026-10-03T17:54:34.142859+00:00",
+      "pre_correction_receipt_id": null,
+      "pre_accept_history": {
+        "workflow_id": "281a8f8a-1b49-413a-ac2e-6551b97f277e",
+        "current_revision": 0,
+        "desired_state": {},
+        "revisions": [],
+        "operations": [],
+        "effects": [],
+        "appointments": [],
+        "events": [],
+        "read_at": "2026-10-03T17:54:33.358942+00:00"
+      },
+      "accepted_correction": {
+        "workflow_id": "281a8f8a-1b49-413a-ac2e-6551b97f277e",
+        "revision": 1,
+        "desired_state": {
+          "ticket_id": "407b68f9-cdec-410f-94a7-5d57d4fc2789",
+          "appointment_id": null,
+          "requested_start": "2026-11-05T16:00:00+05:00",
+          "requested_end": "2026-11-05T17:00:00+05:00",
+          "timezone": "Asia/Karachi"
+        },
+        "accepted_at": "2026-10-03T17:54:33.415667+00:00"
+      },
+      "initial_worker_steps": [],
+      "worker_steps": [
+        {
+          "job_id": "6a611326-9d07-4cde-be73-6212aae10eee",
+          "action": "dispatch",
+          "state": "DONE",
+          "provider_status": 200,
+          "effect_knowledge": "UNKNOWN"
+        },
+        {
+          "job_id": "d1fcca9b-d123-4ff4-9935-e8115b21eccd",
+          "action": "reconcile",
+          "outcome": "PRESENT"
+        }
+      ],
+      "normalized_events": [
+        {
+          "workflow_sequence": 1,
+          "event_name": "IntentRevisionAccepted",
+          "intent_revision": 1,
+          "payload": {
+            "revision": 1,
+            "change_class": "INITIAL",
+            "desired_state_hash": "001895e42cdd8e443369dc6d7e4206f28597f41c37f9af3abcc86236ad661d08"
+          }
+        },
+        {
+          "workflow_sequence": 2,
+          "event_name": "OperationReady",
+          "intent_revision": 1,
+          "payload": {
+            "request_hash": "a550f83e6b365bbad92b462f518189d100cc1f6bc40b38042a1745e2d4e160e6"
+          }
+        },
+        {
+          "workflow_sequence": 3,
+          "event_name": "DispatchRecorded",
+          "intent_revision": 1,
+          "payload": {
+            "attempt_id": "e9346d2e-dedb-4335-96fc-a506998840ba"
+          }
+        },
+        {
+          "workflow_sequence": 4,
+          "event_name": "ProviderRequestSent",
+          "intent_revision": 1,
+          "payload": {
+            "attempt_id": "e9346d2e-dedb-4335-96fc-a506998840ba"
+          }
+        },
+        {
+          "workflow_sequence": 5,
+          "event_name": "ProviderResponseReceived",
+          "intent_revision": 1,
+          "payload": {
+            "attempt_id": "e9346d2e-dedb-4335-96fc-a506998840ba"
+          }
+        },
+        {
+          "workflow_sequence": 6,
+          "event_name": "ProviderEffectObserved",
+          "intent_revision": 1,
+          "payload": {
+            "facts_hash": "f4b0e219980e22cd4c6b0d1175c87560c00a87a4488fa9db520f9562643f17f3"
+          }
+        },
+        {
+          "workflow_sequence": 7,
+          "event_name": "WorkflowResolved",
+          "intent_revision": 1,
+          "payload": {
+            "resource_version": 0
+          }
+        }
+      ],
+      "provider_evidence": [
+        {
+          "operation": {
+            "id": "43293e8d-d4d6-4146-9bdd-81ec5117a3ab",
+            "workflow_id": "281a8f8a-1b49-413a-ac2e-6551b97f277e",
+            "intent_revision": 1,
+            "parent_operation_id": null,
+            "supersedes_operation_id": null,
+            "action_type": "CREATE_APPOINTMENT",
+            "target_resource_type": "appointment",
+            "target_resource_id": "3743289f-cf34-4836-bf35-de3fbcba8532",
+            "processing_phase": "TERMINAL",
+            "effect_knowledge": "PRESENT",
+            "applicability": "CURRENT",
+            "speech_eligibility": "BLOCKED",
+            "idempotency_key": "phase6:0ec1b480-c761-48f4-b753-fa9144e37143:preaccept-corrected",
+            "request_hash": "a550f83e6b365bbad92b462f518189d100cc1f6bc40b38042a1745e2d4e160e6",
+            "normalized_request_json": {
+              "action": "CREATE",
+              "scenario_id": "31bd7560-39c2-4494-b567-d1fdaad637dd",
+              "workflow_id": "281a8f8a-1b49-413a-ac2e-6551b97f277e",
+              "resource_key": "property:983b5782-e66c-40c3-a6ea-4d94b713b3e2:maintenance",
+              "desired_state": {
+                "timezone": "Asia/Karachi",
+                "ticket_id": "407b68f9-cdec-410f-94a7-5d57d4fc2789",
+                "requested_end": "2026-11-05T17:00:00+05:00",
+                "appointment_id": null,
+                "requested_start": "2026-11-05T16:00:00+05:00"
+              },
+              "intent_revision": 1,
+              "expected_resource_version": 0
+            },
+            "provider_adapter": "simulator",
+            "provider_operation_id": null,
+            "reconciliation_required": false,
+            "dispatch_recorded_at": "2026-10-03T17:54:33.566755Z",
+            "response_received_at": "2026-10-03T17:54:33.705524Z",
+            "effect_observed_at": "2026-10-03T17:54:33.898569Z",
+            "resolved_at": "2026-10-03T17:54:33.898569Z",
+            "version": 3,
+            "created_at": "2026-10-03T17:54:33.487819Z",
+            "updated_at": "2026-10-03T17:54:33.898569Z"
+          },
+          "attempts": [
+            {
+              "id": "e9346d2e-dedb-4335-96fc-a506998840ba",
+              "attempt_number": 1,
+              "attempt_type": "WRITE",
+              "request_hash": "a550f83e6b365bbad92b462f518189d100cc1f6bc40b38042a1745e2d4e160e6",
+              "request_sent_at": "2026-10-03T17:54:33.592009Z",
+              "response_received_at": "2026-10-03T17:54:33.705524Z",
+              "raw_response_json": {
+                "body": {
+                  "facts": {
+                    "status": "CONFIRMED",
+                    "ends_at": "2026-11-05T12:00:00+00:00",
+                    "version": 0,
+                    "timezone": "Asia/Karachi",
+                    "starts_at": "2026-11-05T11:00:00+00:00",
+                    "resource_key": "property:983b5782-e66c-40c3-a6ea-4d94b713b3e2:maintenance",
+                    "appointment_id": "3743289f-cf34-4836-bf35-de3fbcba8532"
+                  },
+                  "outcome": "PRESENT",
+                  "operation_id": "43293e8d-d4d6-4146-9bdd-81ec5117a3ab",
+                  "appointment_id": "3743289f-cf34-4836-bf35-de3fbcba8532",
+                  "commit_sequence": 4925,
+                  "resource_version": 0,
+                  "idempotent_replay": false
+                },
+                "status": 200
+              },
+              "normalized_result_json": {
+                "facts": {
+                  "status": "CONFIRMED",
+                  "ends_at": "2026-11-05T12:00:00+00:00",
+                  "version": 0,
+                  "timezone": "Asia/Karachi",
+                  "starts_at": "2026-11-05T11:00:00+00:00",
+                  "resource_key": "property:983b5782-e66c-40c3-a6ea-4d94b713b3e2:maintenance",
+                  "appointment_id": "3743289f-cf34-4836-bf35-de3fbcba8532"
+                },
+                "outcome": "PRESENT",
+                "operation_id": "43293e8d-d4d6-4146-9bdd-81ec5117a3ab",
+                "appointment_id": "3743289f-cf34-4836-bf35-de3fbcba8532",
+                "commit_sequence": 4925,
+                "resource_version": 0,
+                "idempotent_replay": false
+              },
+              "result_code": "ACKNOWLEDGED_UNVERIFIED",
+              "trace_id": "worker:174ae07e-5ad4-4b94-b847-3bba7360ef78"
+            },
+            {
+              "id": "73ebf49b-61bf-4d09-bed7-04c1d4b9752d",
+              "attempt_number": 2,
+              "attempt_type": "STATUS_LOOKUP",
+              "request_hash": "a550f83e6b365bbad92b462f518189d100cc1f6bc40b38042a1745e2d4e160e6",
+              "request_sent_at": "2026-10-03T17:54:33.898569Z",
+              "response_received_at": "2026-10-03T17:54:33.898569Z",
+              "raw_response_json": {
+                "status": {
+                  "body": {
+                    "facts": {
+                      "status": "CONFIRMED",
+                      "ends_at": "2026-11-05T12:00:00+00:00",
+                      "version": 0,
+                      "timezone": "Asia/Karachi",
+                      "starts_at": "2026-11-05T11:00:00+00:00",
+                      "resource_key": "property:983b5782-e66c-40c3-a6ea-4d94b713b3e2:maintenance",
+                      "appointment_id": "3743289f-cf34-4836-bf35-de3fbcba8532"
+                    },
+                    "outcome": "PRESENT",
+                    "operation_id": "43293e8d-d4d6-4146-9bdd-81ec5117a3ab",
+                    "authoritative": true,
+                    "appointment_id": "3743289f-cf34-4836-bf35-de3fbcba8532",
+                    "commit_sequence": 4925,
+                    "resource_version": 0,
+                    "idempotent_replay": false
+                  },
+                  "status": 200
+                },
+                "resource": {
+                  "body": {
+                    "outcome": "PRESENT",
+                    "appointments": [
+                      {
+                        "status": "CONFIRMED",
+                        "ends_at": "2026-11-05T12:00:00+00:00",
+                        "version": 0,
+                        "timezone": "Asia/Karachi",
+                        "starts_at": "2026-11-05T11:00:00+00:00",
+                        "resource_key": "property:983b5782-e66c-40c3-a6ea-4d94b713b3e2:maintenance",
+                        "appointment_id": "3743289f-cf34-4836-bf35-de3fbcba8532"
+                      }
+                    ],
+                    "authoritative": true
+                  },
+                  "status": 200
+                },
+                "capability": {
+                  "body": {
+                    "config": {
+                      "faults": [],
+                      "visibility": "IMMEDIATE",
+                      "idempotency": true,
+                      "held_barriers": [],
+                      "status_lookup": true,
+                      "resource_lookup": true,
+                      "visibility_reads": 0,
+                      "supports_reschedule": true
+                    },
+                    "scenario_id": "31bd7560-39c2-4494-b567-d1fdaad637dd"
+                  },
+                  "status": 200
+                }
+              },
+              "normalized_result_json": {
+                "outcome": "PRESENT",
+                "authoritative": true
+              },
+              "result_code": "PRESENT",
+              "trace_id": "worker:7f1d07f6-f4ee-46e4-9925-bea435e6f2a3"
+            }
+          ],
+          "provider_events": [
+            {
+              "id": "d705bdb0-27c7-4462-9638-bd8285deb63d",
+              "event_kind": "REQUEST_SENT",
+              "raw_json": {
+                "action": "CREATE",
+                "timezone": "Asia/Karachi",
+                "scenario_id": "31bd7560-39c2-4494-b567-d1fdaad637dd",
+                "operation_id": "43293e8d-d4d6-4146-9bdd-81ec5117a3ab",
+                "request_hash": "a550f83e6b365bbad92b462f518189d100cc1f6bc40b38042a1745e2d4e160e6",
+                "resource_key": "property:983b5782-e66c-40c3-a6ea-4d94b713b3e2:maintenance",
+                "requested_end": "2026-11-05T17:00:00+05:00",
+                "appointment_id": null,
+                "idempotency_key": "phase6:0ec1b480-c761-48f4-b753-fa9144e37143:preaccept-corrected",
+                "requested_start": "2026-11-05T16:00:00+05:00",
+                "expected_resource_version": 0
+              },
+              "normalized_json": {
+                "request_hash": "a550f83e6b365bbad92b462f518189d100cc1f6bc40b38042a1745e2d4e160e6"
+              },
+              "content_hash": "e92717702ea70d835595799115a7edaeaa01573bc032a1ef9b98d4ee1338bda5",
+              "trace_id": "worker:174ae07e-5ad4-4b94-b847-3bba7360ef78",
+              "occurred_at": "2026-10-03T17:54:33.592009Z"
+            },
+            {
+              "id": "dd14935f-69ef-40c6-98b5-2fff0368de09",
+              "event_kind": "RESPONSE_RECEIVED",
+              "raw_json": {
+                "body": {
+                  "facts": {
+                    "status": "CONFIRMED",
+                    "ends_at": "2026-11-05T12:00:00+00:00",
+                    "version": 0,
+                    "timezone": "Asia/Karachi",
+                    "starts_at": "2026-11-05T11:00:00+00:00",
+                    "resource_key": "property:983b5782-e66c-40c3-a6ea-4d94b713b3e2:maintenance",
+                    "appointment_id": "3743289f-cf34-4836-bf35-de3fbcba8532"
+                  },
+                  "outcome": "PRESENT",
+                  "operation_id": "43293e8d-d4d6-4146-9bdd-81ec5117a3ab",
+                  "appointment_id": "3743289f-cf34-4836-bf35-de3fbcba8532",
+                  "commit_sequence": 4925,
+                  "resource_version": 0,
+                  "idempotent_replay": false
+                },
+                "status": 200
+              },
+              "normalized_json": {
+                "outcome": "UNVERIFIED"
+              },
+              "content_hash": "1a8c128f14c462672e7cc4b5ba73fe4728201be095f68543563087ddfbaa2ee9",
+              "trace_id": "worker:174ae07e-5ad4-4b94-b847-3bba7360ef78",
+              "occurred_at": "2026-10-03T17:54:33.705524Z"
+            },
+            {
+              "id": "2c2ac61a-b335-497f-bb28-2d91c4fad605",
+              "event_kind": "STATUS_LOOKUP",
+              "raw_json": {
+                "body": {
+                  "facts": {
+                    "status": "CONFIRMED",
+                    "ends_at": "2026-11-05T12:00:00+00:00",
+                    "version": 0,
+                    "timezone": "Asia/Karachi",
+                    "starts_at": "2026-11-05T11:00:00+00:00",
+                    "resource_key": "property:983b5782-e66c-40c3-a6ea-4d94b713b3e2:maintenance",
+                    "appointment_id": "3743289f-cf34-4836-bf35-de3fbcba8532"
+                  },
+                  "outcome": "PRESENT",
+                  "operation_id": "43293e8d-d4d6-4146-9bdd-81ec5117a3ab",
+                  "authoritative": true,
+                  "appointment_id": "3743289f-cf34-4836-bf35-de3fbcba8532",
+                  "commit_sequence": 4925,
+                  "resource_version": 0,
+                  "idempotent_replay": false
+                },
+                "status": 200
+              },
+              "normalized_json": {
+                "facts": {
+                  "status": "CONFIRMED",
+                  "ends_at": "2026-11-05T12:00:00+00:00",
+                  "version": 0,
+                  "timezone": "Asia/Karachi",
+                  "starts_at": "2026-11-05T11:00:00+00:00",
+                  "resource_key": "property:983b5782-e66c-40c3-a6ea-4d94b713b3e2:maintenance",
+                  "appointment_id": "3743289f-cf34-4836-bf35-de3fbcba8532"
+                },
+                "outcome": "PRESENT",
+                "operation_id": "43293e8d-d4d6-4146-9bdd-81ec5117a3ab",
+                "authoritative": true,
+                "appointment_id": "3743289f-cf34-4836-bf35-de3fbcba8532",
+                "commit_sequence": 4925,
+                "resource_version": 0,
+                "idempotent_replay": false
+              },
+              "content_hash": "320ce91b05e848b095dc82cb5d10b2971746df8ce73a06ae92ef35b032abca76",
+              "trace_id": "worker:7f1d07f6-f4ee-46e4-9925-bea435e6f2a3",
+              "occurred_at": "2026-10-03T17:54:33.898569Z"
+            },
+            {
+              "id": "bcc239e6-250a-41e4-81ab-05d84445d39d",
+              "event_kind": "POSTCONDITION_READ",
+              "raw_json": {
+                "body": {
+                  "outcome": "PRESENT",
+                  "appointments": [
+                    {
+                      "status": "CONFIRMED",
+                      "ends_at": "2026-11-05T12:00:00+00:00",
+                      "version": 0,
+                      "timezone": "Asia/Karachi",
+                      "starts_at": "2026-11-05T11:00:00+00:00",
+                      "resource_key": "property:983b5782-e66c-40c3-a6ea-4d94b713b3e2:maintenance",
+                      "appointment_id": "3743289f-cf34-4836-bf35-de3fbcba8532"
+                    }
+                  ],
+                  "authoritative": true
+                },
+                "status": 200
+              },
+              "normalized_json": {
+                "outcome": "PRESENT",
+                "appointments": [
+                  {
+                    "status": "CONFIRMED",
+                    "ends_at": "2026-11-05T12:00:00+00:00",
+                    "version": 0,
+                    "timezone": "Asia/Karachi",
+                    "starts_at": "2026-11-05T11:00:00+00:00",
+                    "resource_key": "property:983b5782-e66c-40c3-a6ea-4d94b713b3e2:maintenance",
+                    "appointment_id": "3743289f-cf34-4836-bf35-de3fbcba8532"
+                  }
+                ],
+                "authoritative": true
+              },
+              "content_hash": "0337d8fc9ed117f604d1df5633462d1dcd4de2f065443c9c1a003ce237c955b7",
+              "trace_id": "worker:7f1d07f6-f4ee-46e4-9925-bea435e6f2a3",
+              "occurred_at": "2026-10-03T17:54:33.898569Z"
+            }
+          ],
+          "jobs": [
+            {
+              "id": "6a611326-9d07-4cde-be73-6212aae10eee",
+              "job_type": "DISPATCH_OPERATION",
+              "state": "DONE",
+              "attempt_count": 1,
+              "max_attempts": 8,
+              "next_run_at": "2026-10-03T17:54:33.487819Z",
+              "lease_owner": null,
+              "lease_until": null,
+              "last_error_json": null
+            },
+            {
+              "id": "d1fcca9b-d123-4ff4-9935-e8115b21eccd",
+              "job_type": "RECONCILE_OPERATION",
+              "state": "DONE",
+              "attempt_count": 1,
+              "max_attempts": 8,
+              "next_run_at": "2026-10-03T17:54:33.705524Z",
+              "lease_owner": null,
+              "lease_until": null,
+              "last_error_json": null
+            }
+          ]
+        }
+      ],
+      "timing_evidence": {
+        "barriers": [
+          {
+            "id": "fb86a409-5767-458d-824e-60356d7484f3",
+            "barrier_name": "P0",
+            "ordinal": 1,
+            "state": "RELEASED",
+            "source_event_id": "P0:1",
+            "reached_at": "2026-10-03 17:54:33.359503+00:00",
+            "released_at": "2026-10-03 17:54:33.463015+00:00"
+          }
+        ],
+        "faults": []
+      },
+      "simulator_truth": [
+        {
+          "sequence": 4925,
+          "scenario_id": "31bd7560-39c2-4494-b567-d1fdaad637dd",
+          "operation_id": "43293e8d-d4d6-4146-9bdd-81ec5117a3ab",
+          "request_hash": "a550f83e6b365bbad92b462f518189d100cc1f6bc40b38042a1745e2d4e160e6",
+          "idempotency_key": "phase6:0ec1b480-c761-48f4-b753-fa9144e37143:preaccept-corrected",
+          "action": "CREATE",
+          "appointment_id": "3743289f-cf34-4836-bf35-de3fbcba8532",
+          "resource_key": "property:983b5782-e66c-40c3-a6ea-4d94b713b3e2:maintenance",
+          "before_facts": null,
+          "after_facts": {
+            "status": "CONFIRMED",
+            "ends_at": "2026-11-05T12:00:00+00:00",
+            "version": 0,
+            "timezone": "Asia/Karachi",
+            "starts_at": "2026-11-05T11:00:00+00:00",
+            "resource_key": "property:983b5782-e66c-40c3-a6ea-4d94b713b3e2:maintenance",
+            "appointment_id": "3743289f-cf34-4836-bf35-de3fbcba8532"
+          },
+          "result_code": "PRESENT",
+          "committed_at": "2026-10-03 17:54:33.666120+00:00"
+        }
+      ],
+      "oracle_result": {
+        "oracle_version": "phase6-truth-oracle-v1",
+        "correction_success": true,
+        "unsupported_confirmation": false,
+        "unsupported_event_ids": [],
+        "stale_confirmation_count": 0,
+        "relevant_claim_count": 1,
+        "duplicate_effect": false,
+        "outcome_coverage": true,
+        "safe_resolution": true,
+        "active_final_truth": [
+          {
+            "status": "CONFIRMED",
+            "ends_at": "2026-11-05T12:00:00+00:00",
+            "version": 0,
+            "timezone": "Asia/Karachi",
+            "starts_at": "2026-11-05T11:00:00+00:00",
+            "resource_key": "property:983b5782-e66c-40c3-a6ea-4d94b713b3e2:maintenance",
+            "appointment_id": "3743289f-cf34-4836-bf35-de3fbcba8532"
+          }
+        ],
+        "provider_commit_count": 1,
+        "result_hash": "bd0e890b5002e5a173b06e4c0d86ccbd8a1fc40fef8ebcba8bfcf9d58e43c736"
+      },
+      "metrics": [
+        {
+          "metric_name": "correction_success",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 1,
+          "numerator": 1,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "unsupported_confirmation",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "duplicate_effect",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "safe_resolution",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 1,
+          "numerator": 1,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "outcome_coverage",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 1,
+          "numerator": 1,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        }
+      ],
+      "correction_to_outcome_latency": {
+        "duration_ms": 548.826,
+        "event_observed": true,
+        "censored": false
+      }
+    },
+    {
+      "execution_id": "7a36286a-51e8-46a9-9e01-80a46619630a",
+      "arm": "P1",
+      "scenario_id": "7db37db9-1484-4ede-95ab-0c3be0338729",
+      "workflow_id": "d7e656fc-0918-4786-b6b3-26ad216bf53f",
+      "first_operation_id": null,
+      "current_operation_id": "9140810b-68ac-4362-af28-fa4934d862be",
+      "fault_occurrence_id": null,
+      "fault_placement_hash": "4b28fb8710f5c5fbd2f85076d5e37b4361da065480573a0658595f4c0ae7b69c",
+      "speech_source": "controller_revision_bound_permit",
+      "receipt_id": "d330c298-6910-4530-a974-8dfa3b5ef0a8",
+      "permit_id": "412b2a8a-c9e9-4a89-939a-6ad4164a75c6",
+      "playback_ack": {
+        "event_id": "8ecf694e-a02d-4308-a0c2-477d70aeb105",
+        "claim_type": "CURRENT_APPOINTMENT",
+        "claim_start": "2026-11-05T16:00:00+05:00",
+        "intent_revision": 1,
+        "released_at": "2026-10-03T17:54:35.526374Z",
+        "played_at": "2026-10-03T17:54:35.526374Z",
+        "played_ms": 500,
+        "permit_id": "412b2a8a-c9e9-4a89-939a-6ad4164a75c6"
+      },
+      "correction_scripted_at": "2026-10-03T17:54:34.485328+00:00",
+      "observation_ended_at": "2026-10-03T17:54:35.692350+00:00",
+      "pre_correction_receipt_id": null,
+      "pre_accept_history": {
+        "workflow_id": "d7e656fc-0918-4786-b6b3-26ad216bf53f",
+        "current_revision": 0,
+        "desired_state": {},
+        "revisions": [],
+        "operations": [],
+        "effects": [],
+        "appointments": [],
+        "events": [],
+        "read_at": "2026-10-03T17:54:34.434037+00:00"
+      },
+      "accepted_correction": {
+        "workflow_id": "d7e656fc-0918-4786-b6b3-26ad216bf53f",
+        "revision": 1,
+        "desired_state": {
+          "ticket_id": "15a79154-d9c3-4d24-8dc7-6f379791f8ba",
+          "appointment_id": null,
+          "requested_start": "2026-11-05T16:00:00+05:00",
+          "requested_end": "2026-11-05T17:00:00+05:00",
+          "timezone": "Asia/Karachi"
+        },
+        "accepted_at": "2026-10-03T17:54:34.540054+00:00"
+      },
+      "initial_worker_steps": [],
+      "worker_steps": [
+        {
+          "job_id": "43758f2a-5fcc-405c-858b-7e4e26d3cd83",
+          "action": "dispatch",
+          "state": "DONE",
+          "provider_status": 200,
+          "effect_knowledge": "UNKNOWN"
+        },
+        {
+          "job_id": "0e71036e-ef54-4f18-a667-49d3fdc6b8c1",
+          "action": "reconcile",
+          "outcome": "PRESENT"
+        }
+      ],
+      "normalized_events": [
+        {
+          "workflow_sequence": 1,
+          "event_name": "IntentRevisionAccepted",
+          "intent_revision": 1,
+          "payload": {
+            "revision": 1,
+            "change_class": "INITIAL",
+            "desired_state_hash": "3c8cd09d0d5c24f1be1d1b64937e24effcd712faaf5a7ca773de5ab2abd692aa"
+          }
+        },
+        {
+          "workflow_sequence": 2,
+          "event_name": "OperationReady",
+          "intent_revision": 1,
+          "payload": {
+            "request_hash": "0d01d76347359059ec81c5622b2a5fa390a9932d08f14787883498186b982768"
+          }
+        },
+        {
+          "workflow_sequence": 3,
+          "event_name": "DispatchRecorded",
+          "intent_revision": 1,
+          "payload": {
+            "attempt_id": "6f60e1d7-16b7-42cf-87fd-da6df8569441"
+          }
+        },
+        {
+          "workflow_sequence": 4,
+          "event_name": "ProviderRequestSent",
+          "intent_revision": 1,
+          "payload": {
+            "attempt_id": "6f60e1d7-16b7-42cf-87fd-da6df8569441"
+          }
+        },
+        {
+          "workflow_sequence": 5,
+          "event_name": "ProviderResponseReceived",
+          "intent_revision": 1,
+          "payload": {
+            "attempt_id": "6f60e1d7-16b7-42cf-87fd-da6df8569441"
+          }
+        },
+        {
+          "workflow_sequence": 6,
+          "event_name": "ProviderEffectObserved",
+          "intent_revision": 1,
+          "payload": {
+            "facts_hash": "f46bf44f95f823d66d3b486e41e5092a7a9f864785f6d0689d0e9564757e7d82"
+          }
+        },
+        {
+          "workflow_sequence": 7,
+          "event_name": "WorkflowResolved",
+          "intent_revision": 1,
+          "payload": {
+            "resource_version": 0
+          }
+        },
+        {
+          "workflow_sequence": 8,
+          "event_name": "VerificationSatisfied",
+          "intent_revision": 1,
+          "payload": {
+            "result": "SATISFIED",
+            "receipt_id": "d330c298-6910-4530-a974-8dfa3b5ef0a8"
+          }
+        },
+        {
+          "workflow_sequence": 9,
+          "event_name": "ReceiptIssued",
+          "intent_revision": 1,
+          "payload": {
+            "receipt_id": "d330c298-6910-4530-a974-8dfa3b5ef0a8",
+            "receipt_hash": "3aac4a559075cbe48589b44f00f1e25d2d166c076ab6a054cc226406badeff8f"
+          }
+        },
+        {
+          "workflow_sequence": 10,
+          "event_name": "ClaimPrepared",
+          "intent_revision": 1,
+          "payload": {
+            "claim_id": "f371a86e-38ca-40cf-8101-5f7424e0441d",
+            "content_hash": "f25ba041df4f2dd778d3d5b064158561e39997ab4e8bf5adcb32ab2ba584de8b"
+          }
+        },
+        {
+          "workflow_sequence": 11,
+          "event_name": "ClaimAuthorized",
+          "intent_revision": 1,
+          "payload": {
+            "permit_id": "412b2a8a-c9e9-4a89-939a-6ad4164a75c6",
+            "receipt_id": "d330c298-6910-4530-a974-8dfa3b5ef0a8"
+          }
+        },
+        {
+          "workflow_sequence": 12,
+          "event_name": "ClaimQueued",
+          "intent_revision": 1,
+          "payload": {
+            "permit_id": "412b2a8a-c9e9-4a89-939a-6ad4164a75c6"
+          }
+        },
+        {
+          "workflow_sequence": 13,
+          "event_name": "ClaimPublished",
+          "intent_revision": 1,
+          "payload": {
+            "claim_id": "f371a86e-38ca-40cf-8101-5f7424e0441d",
+            "permit_id": "412b2a8a-c9e9-4a89-939a-6ad4164a75c6",
+            "content_hash": "f25ba041df4f2dd778d3d5b064158561e39997ab4e8bf5adcb32ab2ba584de8b"
+          }
+        }
+      ],
+      "provider_evidence": [
+        {
+          "operation": {
+            "id": "9140810b-68ac-4362-af28-fa4934d862be",
+            "workflow_id": "d7e656fc-0918-4786-b6b3-26ad216bf53f",
+            "intent_revision": 1,
+            "parent_operation_id": null,
+            "supersedes_operation_id": null,
+            "action_type": "CREATE_APPOINTMENT",
+            "target_resource_type": "appointment",
+            "target_resource_id": "00950ad3-c04c-4333-9fd8-da7bf4ab4969",
+            "processing_phase": "TERMINAL",
+            "effect_knowledge": "PRESENT",
+            "applicability": "CURRENT",
+            "speech_eligibility": "CLAIM_PERMITTED",
+            "idempotency_key": "phase6:7a36286a-51e8-46a9-9e01-80a46619630a:preaccept-corrected",
+            "request_hash": "0d01d76347359059ec81c5622b2a5fa390a9932d08f14787883498186b982768",
+            "normalized_request_json": {
+              "action": "CREATE",
+              "scenario_id": "7db37db9-1484-4ede-95ab-0c3be0338729",
+              "workflow_id": "d7e656fc-0918-4786-b6b3-26ad216bf53f",
+              "resource_key": "property:14d105ec-8af0-4edf-8ba3-3bb1ef928930:maintenance",
+              "desired_state": {
+                "timezone": "Asia/Karachi",
+                "ticket_id": "15a79154-d9c3-4d24-8dc7-6f379791f8ba",
+                "requested_end": "2026-11-05T17:00:00+05:00",
+                "appointment_id": null,
+                "requested_start": "2026-11-05T16:00:00+05:00"
+              },
+              "intent_revision": 1,
+              "expected_resource_version": 0
+            },
+            "provider_adapter": "simulator",
+            "provider_operation_id": null,
+            "reconciliation_required": false,
+            "dispatch_recorded_at": "2026-10-03T17:54:34.746002Z",
+            "response_received_at": "2026-10-03T17:54:34.921475Z",
+            "effect_observed_at": "2026-10-03T17:54:35.174206Z",
+            "resolved_at": "2026-10-03T17:54:35.174206Z",
+            "version": 3,
+            "created_at": "2026-10-03T17:54:34.635707Z",
+            "updated_at": "2026-10-03T17:54:35.362048Z"
+          },
+          "attempts": [
+            {
+              "id": "6f60e1d7-16b7-42cf-87fd-da6df8569441",
+              "attempt_number": 1,
+              "attempt_type": "WRITE",
+              "request_hash": "0d01d76347359059ec81c5622b2a5fa390a9932d08f14787883498186b982768",
+              "request_sent_at": "2026-10-03T17:54:34.782917Z",
+              "response_received_at": "2026-10-03T17:54:34.921475Z",
+              "raw_response_json": {
+                "body": {
+                  "facts": {
+                    "status": "CONFIRMED",
+                    "ends_at": "2026-11-05T12:00:00+00:00",
+                    "version": 0,
+                    "timezone": "Asia/Karachi",
+                    "starts_at": "2026-11-05T11:00:00+00:00",
+                    "resource_key": "property:14d105ec-8af0-4edf-8ba3-3bb1ef928930:maintenance",
+                    "appointment_id": "00950ad3-c04c-4333-9fd8-da7bf4ab4969"
+                  },
+                  "outcome": "PRESENT",
+                  "operation_id": "9140810b-68ac-4362-af28-fa4934d862be",
+                  "appointment_id": "00950ad3-c04c-4333-9fd8-da7bf4ab4969",
+                  "commit_sequence": 4926,
+                  "resource_version": 0,
+                  "idempotent_replay": false
+                },
+                "status": 200
+              },
+              "normalized_result_json": {
+                "facts": {
+                  "status": "CONFIRMED",
+                  "ends_at": "2026-11-05T12:00:00+00:00",
+                  "version": 0,
+                  "timezone": "Asia/Karachi",
+                  "starts_at": "2026-11-05T11:00:00+00:00",
+                  "resource_key": "property:14d105ec-8af0-4edf-8ba3-3bb1ef928930:maintenance",
+                  "appointment_id": "00950ad3-c04c-4333-9fd8-da7bf4ab4969"
+                },
+                "outcome": "PRESENT",
+                "operation_id": "9140810b-68ac-4362-af28-fa4934d862be",
+                "appointment_id": "00950ad3-c04c-4333-9fd8-da7bf4ab4969",
+                "commit_sequence": 4926,
+                "resource_version": 0,
+                "idempotent_replay": false
+              },
+              "result_code": "ACKNOWLEDGED_UNVERIFIED",
+              "trace_id": "worker:f420b42c-9aa2-488e-9194-bf7bd5a4228b"
+            },
+            {
+              "id": "86cb9c44-1101-4336-bb67-33b2e268d966",
+              "attempt_number": 2,
+              "attempt_type": "STATUS_LOOKUP",
+              "request_hash": "0d01d76347359059ec81c5622b2a5fa390a9932d08f14787883498186b982768",
+              "request_sent_at": "2026-10-03T17:54:35.174206Z",
+              "response_received_at": "2026-10-03T17:54:35.174206Z",
+              "raw_response_json": {
+                "status": {
+                  "body": {
+                    "facts": {
+                      "status": "CONFIRMED",
+                      "ends_at": "2026-11-05T12:00:00+00:00",
+                      "version": 0,
+                      "timezone": "Asia/Karachi",
+                      "starts_at": "2026-11-05T11:00:00+00:00",
+                      "resource_key": "property:14d105ec-8af0-4edf-8ba3-3bb1ef928930:maintenance",
+                      "appointment_id": "00950ad3-c04c-4333-9fd8-da7bf4ab4969"
+                    },
+                    "outcome": "PRESENT",
+                    "operation_id": "9140810b-68ac-4362-af28-fa4934d862be",
+                    "authoritative": true,
+                    "appointment_id": "00950ad3-c04c-4333-9fd8-da7bf4ab4969",
+                    "commit_sequence": 4926,
+                    "resource_version": 0,
+                    "idempotent_replay": false
+                  },
+                  "status": 200
+                },
+                "resource": {
+                  "body": {
+                    "outcome": "PRESENT",
+                    "appointments": [
+                      {
+                        "status": "CONFIRMED",
+                        "ends_at": "2026-11-05T12:00:00+00:00",
+                        "version": 0,
+                        "timezone": "Asia/Karachi",
+                        "starts_at": "2026-11-05T11:00:00+00:00",
+                        "resource_key": "property:14d105ec-8af0-4edf-8ba3-3bb1ef928930:maintenance",
+                        "appointment_id": "00950ad3-c04c-4333-9fd8-da7bf4ab4969"
+                      }
+                    ],
+                    "authoritative": true
+                  },
+                  "status": 200
+                },
+                "capability": {
+                  "body": {
+                    "config": {
+                      "faults": [],
+                      "visibility": "IMMEDIATE",
+                      "idempotency": true,
+                      "held_barriers": [],
+                      "status_lookup": true,
+                      "resource_lookup": true,
+                      "visibility_reads": 0,
+                      "supports_reschedule": true
+                    },
+                    "scenario_id": "7db37db9-1484-4ede-95ab-0c3be0338729"
+                  },
+                  "status": 200
+                }
+              },
+              "normalized_result_json": {
+                "outcome": "PRESENT",
+                "authoritative": true
+              },
+              "result_code": "PRESENT",
+              "trace_id": "worker:30b24445-f9ff-4e5d-986a-a85f3d4fe3d4"
+            }
+          ],
+          "provider_events": [
+            {
+              "id": "ffa05ff0-486c-44cb-bb6a-3c29a9db0c5c",
+              "event_kind": "REQUEST_SENT",
+              "raw_json": {
+                "action": "CREATE",
+                "timezone": "Asia/Karachi",
+                "scenario_id": "7db37db9-1484-4ede-95ab-0c3be0338729",
+                "operation_id": "9140810b-68ac-4362-af28-fa4934d862be",
+                "request_hash": "0d01d76347359059ec81c5622b2a5fa390a9932d08f14787883498186b982768",
+                "resource_key": "property:14d105ec-8af0-4edf-8ba3-3bb1ef928930:maintenance",
+                "requested_end": "2026-11-05T17:00:00+05:00",
+                "appointment_id": null,
+                "idempotency_key": "phase6:7a36286a-51e8-46a9-9e01-80a46619630a:preaccept-corrected",
+                "requested_start": "2026-11-05T16:00:00+05:00",
+                "expected_resource_version": 0
+              },
+              "normalized_json": {
+                "request_hash": "0d01d76347359059ec81c5622b2a5fa390a9932d08f14787883498186b982768"
+              },
+              "content_hash": "1e34f5e5065da045b2ed7156e087f6040ac56d3f0d04d8dc99083d8269ba5995",
+              "trace_id": "worker:f420b42c-9aa2-488e-9194-bf7bd5a4228b",
+              "occurred_at": "2026-10-03T17:54:34.782917Z"
+            },
+            {
+              "id": "f9e71a3d-8095-4dda-8557-07c727c8215e",
+              "event_kind": "RESPONSE_RECEIVED",
+              "raw_json": {
+                "body": {
+                  "facts": {
+                    "status": "CONFIRMED",
+                    "ends_at": "2026-11-05T12:00:00+00:00",
+                    "version": 0,
+                    "timezone": "Asia/Karachi",
+                    "starts_at": "2026-11-05T11:00:00+00:00",
+                    "resource_key": "property:14d105ec-8af0-4edf-8ba3-3bb1ef928930:maintenance",
+                    "appointment_id": "00950ad3-c04c-4333-9fd8-da7bf4ab4969"
+                  },
+                  "outcome": "PRESENT",
+                  "operation_id": "9140810b-68ac-4362-af28-fa4934d862be",
+                  "appointment_id": "00950ad3-c04c-4333-9fd8-da7bf4ab4969",
+                  "commit_sequence": 4926,
+                  "resource_version": 0,
+                  "idempotent_replay": false
+                },
+                "status": 200
+              },
+              "normalized_json": {
+                "outcome": "UNVERIFIED"
+              },
+              "content_hash": "3e1d6e14ebd5da54869a099d2805082ffd84fedf165e1d4fd8022e517cab964a",
+              "trace_id": "worker:f420b42c-9aa2-488e-9194-bf7bd5a4228b",
+              "occurred_at": "2026-10-03T17:54:34.921475Z"
+            },
+            {
+              "id": "9565ee2c-50ed-46a9-aa08-81d4b04f7cb8",
+              "event_kind": "STATUS_LOOKUP",
+              "raw_json": {
+                "body": {
+                  "facts": {
+                    "status": "CONFIRMED",
+                    "ends_at": "2026-11-05T12:00:00+00:00",
+                    "version": 0,
+                    "timezone": "Asia/Karachi",
+                    "starts_at": "2026-11-05T11:00:00+00:00",
+                    "resource_key": "property:14d105ec-8af0-4edf-8ba3-3bb1ef928930:maintenance",
+                    "appointment_id": "00950ad3-c04c-4333-9fd8-da7bf4ab4969"
+                  },
+                  "outcome": "PRESENT",
+                  "operation_id": "9140810b-68ac-4362-af28-fa4934d862be",
+                  "authoritative": true,
+                  "appointment_id": "00950ad3-c04c-4333-9fd8-da7bf4ab4969",
+                  "commit_sequence": 4926,
+                  "resource_version": 0,
+                  "idempotent_replay": false
+                },
+                "status": 200
+              },
+              "normalized_json": {
+                "facts": {
+                  "status": "CONFIRMED",
+                  "ends_at": "2026-11-05T12:00:00+00:00",
+                  "version": 0,
+                  "timezone": "Asia/Karachi",
+                  "starts_at": "2026-11-05T11:00:00+00:00",
+                  "resource_key": "property:14d105ec-8af0-4edf-8ba3-3bb1ef928930:maintenance",
+                  "appointment_id": "00950ad3-c04c-4333-9fd8-da7bf4ab4969"
+                },
+                "outcome": "PRESENT",
+                "operation_id": "9140810b-68ac-4362-af28-fa4934d862be",
+                "authoritative": true,
+                "appointment_id": "00950ad3-c04c-4333-9fd8-da7bf4ab4969",
+                "commit_sequence": 4926,
+                "resource_version": 0,
+                "idempotent_replay": false
+              },
+              "content_hash": "0fbb06c5801620f32aaa718f74be9826e2eedc549e41b9cf5ef9cd98bcbc3810",
+              "trace_id": "worker:30b24445-f9ff-4e5d-986a-a85f3d4fe3d4",
+              "occurred_at": "2026-10-03T17:54:35.174206Z"
+            },
+            {
+              "id": "e1a1be4a-e62e-4f95-aaa6-197927a4e620",
+              "event_kind": "POSTCONDITION_READ",
+              "raw_json": {
+                "body": {
+                  "outcome": "PRESENT",
+                  "appointments": [
+                    {
+                      "status": "CONFIRMED",
+                      "ends_at": "2026-11-05T12:00:00+00:00",
+                      "version": 0,
+                      "timezone": "Asia/Karachi",
+                      "starts_at": "2026-11-05T11:00:00+00:00",
+                      "resource_key": "property:14d105ec-8af0-4edf-8ba3-3bb1ef928930:maintenance",
+                      "appointment_id": "00950ad3-c04c-4333-9fd8-da7bf4ab4969"
+                    }
+                  ],
+                  "authoritative": true
+                },
+                "status": 200
+              },
+              "normalized_json": {
+                "outcome": "PRESENT",
+                "appointments": [
+                  {
+                    "status": "CONFIRMED",
+                    "ends_at": "2026-11-05T12:00:00+00:00",
+                    "version": 0,
+                    "timezone": "Asia/Karachi",
+                    "starts_at": "2026-11-05T11:00:00+00:00",
+                    "resource_key": "property:14d105ec-8af0-4edf-8ba3-3bb1ef928930:maintenance",
+                    "appointment_id": "00950ad3-c04c-4333-9fd8-da7bf4ab4969"
+                  }
+                ],
+                "authoritative": true
+              },
+              "content_hash": "bfb061eafad98e6b42858df6140f77fb479ddea2a120027ede206fb20ca278dd",
+              "trace_id": "worker:30b24445-f9ff-4e5d-986a-a85f3d4fe3d4",
+              "occurred_at": "2026-10-03T17:54:35.174206Z"
+            },
+            {
+              "id": "36efbfa1-1210-46e5-bf40-0373dc0b2024",
+              "event_kind": "VERIFICATION_READ",
+              "raw_json": {
+                "body": {
+                  "outcome": "PRESENT",
+                  "appointments": [
+                    {
+                      "status": "CONFIRMED",
+                      "ends_at": "2026-11-05T12:00:00+00:00",
+                      "version": 0,
+                      "timezone": "Asia/Karachi",
+                      "starts_at": "2026-11-05T11:00:00+00:00",
+                      "resource_key": "property:14d105ec-8af0-4edf-8ba3-3bb1ef928930:maintenance",
+                      "appointment_id": "00950ad3-c04c-4333-9fd8-da7bf4ab4969"
+                    }
+                  ],
+                  "authoritative": true
+                },
+                "status": 200
+              },
+              "normalized_json": {
+                "result": "SATISFIED",
+                "claim_type": "CURRENT_APPOINTMENT"
+              },
+              "content_hash": "bfb061eafad98e6b42858df6140f77fb479ddea2a120027ede206fb20ca278dd",
+              "trace_id": "1bda1715-46e0-4944-af80-17f889aad8be",
+              "occurred_at": "2026-10-03T17:54:35.322932Z"
+            }
+          ],
+          "jobs": [
+            {
+              "id": "43758f2a-5fcc-405c-858b-7e4e26d3cd83",
+              "job_type": "DISPATCH_OPERATION",
+              "state": "DONE",
+              "attempt_count": 1,
+              "max_attempts": 8,
+              "next_run_at": "2026-10-03T17:54:34.635707Z",
+              "lease_owner": null,
+              "lease_until": null,
+              "last_error_json": null
+            },
+            {
+              "id": "0e71036e-ef54-4f18-a667-49d3fdc6b8c1",
+              "job_type": "RECONCILE_OPERATION",
+              "state": "DONE",
+              "attempt_count": 1,
+              "max_attempts": 8,
+              "next_run_at": "2026-10-03T17:54:34.921475Z",
+              "lease_owner": null,
+              "lease_until": null,
+              "last_error_json": null
+            }
+          ]
+        }
+      ],
+      "timing_evidence": {
+        "barriers": [
+          {
+            "id": "da279859-575b-47dd-b782-ac7b8bcb04da",
+            "barrier_name": "P0",
+            "ordinal": 1,
+            "state": "RELEASED",
+            "source_event_id": "P0:1",
+            "reached_at": "2026-10-03 17:54:34.437949+00:00",
+            "released_at": "2026-10-03 17:54:34.607158+00:00"
+          }
+        ],
+        "faults": []
+      },
+      "simulator_truth": [
+        {
+          "sequence": 4926,
+          "scenario_id": "7db37db9-1484-4ede-95ab-0c3be0338729",
+          "operation_id": "9140810b-68ac-4362-af28-fa4934d862be",
+          "request_hash": "0d01d76347359059ec81c5622b2a5fa390a9932d08f14787883498186b982768",
+          "idempotency_key": "phase6:7a36286a-51e8-46a9-9e01-80a46619630a:preaccept-corrected",
+          "action": "CREATE",
+          "appointment_id": "00950ad3-c04c-4333-9fd8-da7bf4ab4969",
+          "resource_key": "property:14d105ec-8af0-4edf-8ba3-3bb1ef928930:maintenance",
+          "before_facts": null,
+          "after_facts": {
+            "status": "CONFIRMED",
+            "ends_at": "2026-11-05T12:00:00+00:00",
+            "version": 0,
+            "timezone": "Asia/Karachi",
+            "starts_at": "2026-11-05T11:00:00+00:00",
+            "resource_key": "property:14d105ec-8af0-4edf-8ba3-3bb1ef928930:maintenance",
+            "appointment_id": "00950ad3-c04c-4333-9fd8-da7bf4ab4969"
+          },
+          "result_code": "PRESENT",
+          "committed_at": "2026-10-03 17:54:34.868632+00:00"
+        }
+      ],
+      "oracle_result": {
+        "oracle_version": "phase6-truth-oracle-v1",
+        "correction_success": true,
+        "unsupported_confirmation": false,
+        "unsupported_event_ids": [],
+        "stale_confirmation_count": 0,
+        "relevant_claim_count": 1,
+        "duplicate_effect": false,
+        "outcome_coverage": true,
+        "safe_resolution": true,
+        "active_final_truth": [
+          {
+            "status": "CONFIRMED",
+            "ends_at": "2026-11-05T12:00:00+00:00",
+            "version": 0,
+            "timezone": "Asia/Karachi",
+            "starts_at": "2026-11-05T11:00:00+00:00",
+            "resource_key": "property:14d105ec-8af0-4edf-8ba3-3bb1ef928930:maintenance",
+            "appointment_id": "00950ad3-c04c-4333-9fd8-da7bf4ab4969"
+          }
+        ],
+        "provider_commit_count": 1,
+        "result_hash": "5da117736334e064fee041ba851d118b808f3d15139cc1887ce1f6cf0a9dca3c"
+      },
+      "metrics": [
+        {
+          "metric_name": "correction_success",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 1,
+          "numerator": 1,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "unsupported_confirmation",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "duplicate_effect",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "safe_resolution",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 1,
+          "numerator": 1,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "outcome_coverage",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 1,
+          "numerator": 1,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        }
+      ],
+      "correction_to_outcome_latency": {
+        "duration_ms": 1041.046,
+        "event_observed": true,
+        "censored": false
+      }
+    },
+    {
+      "execution_id": "1dd424bd-b1b7-451d-a24c-acc7f136c104",
+      "arm": "P2",
+      "scenario_id": "8a7dfd62-56d8-4931-8bb7-e85e4bbec328",
+      "workflow_id": "bedab002-9ee4-4024-9ff4-523158220b87",
+      "first_operation_id": null,
+      "current_operation_id": "b5fe6f26-d909-46dc-b3f8-06d60b12f14d",
+      "fault_occurrence_id": null,
+      "fault_placement_hash": "4b28fb8710f5c5fbd2f85076d5e37b4361da065480573a0658595f4c0ae7b69c",
+      "speech_source": "controller_revision_bound_permit",
+      "receipt_id": "bf0f259f-ed64-41b0-a749-7c9c272d7f9f",
+      "permit_id": "3625870a-de0e-4978-97db-56e6d4b0bd93",
+      "playback_ack": {
+        "event_id": "0739d4ed-d092-40d4-b6d1-5cb973dc26af",
+        "claim_type": "CURRENT_APPOINTMENT",
+        "claim_start": "2026-11-05T16:00:00+05:00",
+        "intent_revision": 1,
+        "released_at": "2026-10-03T17:54:37.021428Z",
+        "played_at": "2026-10-03T17:54:37.021428Z",
+        "played_ms": 500,
+        "permit_id": "3625870a-de0e-4978-97db-56e6d4b0bd93"
+      },
+      "correction_scripted_at": "2026-10-03T17:54:35.965466+00:00",
+      "observation_ended_at": "2026-10-03T17:54:37.184587+00:00",
+      "pre_correction_receipt_id": null,
+      "pre_accept_history": {
+        "workflow_id": "bedab002-9ee4-4024-9ff4-523158220b87",
+        "current_revision": 0,
+        "desired_state": {},
+        "revisions": [],
+        "operations": [],
+        "effects": [],
+        "appointments": [],
+        "events": [],
+        "read_at": "2026-10-03T17:54:35.926832+00:00"
+      },
+      "accepted_correction": {
+        "workflow_id": "bedab002-9ee4-4024-9ff4-523158220b87",
+        "revision": 1,
+        "desired_state": {
+          "ticket_id": "fae57566-8fcb-4910-b271-4a71ab69edaa",
+          "appointment_id": null,
+          "requested_start": "2026-11-05T16:00:00+05:00",
+          "requested_end": "2026-11-05T17:00:00+05:00",
+          "timezone": "Asia/Karachi"
+        },
+        "accepted_at": "2026-10-03T17:54:36.036985+00:00"
+      },
+      "initial_worker_steps": [],
+      "worker_steps": [
+        {
+          "job_id": "39394a6b-cc42-4786-9bc4-316f584be8f4",
+          "action": "dispatch",
+          "state": "DONE",
+          "provider_status": 200,
+          "effect_knowledge": "UNKNOWN"
+        },
+        {
+          "job_id": "57cc0b6e-d806-41a6-97aa-bbcf7c93efa9",
+          "action": "reconcile",
+          "outcome": "PRESENT"
+        }
+      ],
+      "normalized_events": [
+        {
+          "workflow_sequence": 1,
+          "event_name": "IntentRevisionAccepted",
+          "intent_revision": 1,
+          "payload": {
+            "revision": 1,
+            "change_class": "INITIAL",
+            "desired_state_hash": "937443e9c4398495d5e922d745697465effd3b6f72a75181b1a73c4af450d4ed"
+          }
+        },
+        {
+          "workflow_sequence": 2,
+          "event_name": "OperationReady",
+          "intent_revision": 1,
+          "payload": {
+            "request_hash": "44a0382b0d5c119fdbaa586b9bdf7738b54fea97331952ba98b769e2086f7174"
+          }
+        },
+        {
+          "workflow_sequence": 3,
+          "event_name": "DispatchRecorded",
+          "intent_revision": 1,
+          "payload": {
+            "attempt_id": "e3f36d53-67e4-4286-a7b4-f8f8238c7116"
+          }
+        },
+        {
+          "workflow_sequence": 4,
+          "event_name": "ProviderRequestSent",
+          "intent_revision": 1,
+          "payload": {
+            "attempt_id": "e3f36d53-67e4-4286-a7b4-f8f8238c7116"
+          }
+        },
+        {
+          "workflow_sequence": 5,
+          "event_name": "ProviderResponseReceived",
+          "intent_revision": 1,
+          "payload": {
+            "attempt_id": "e3f36d53-67e4-4286-a7b4-f8f8238c7116"
+          }
+        },
+        {
+          "workflow_sequence": 6,
+          "event_name": "ProviderEffectObserved",
+          "intent_revision": 1,
+          "payload": {
+            "facts_hash": "8119462fe48cb28714972a8dd85d0c04693fe9f95a4ad6cee162159d9a6613a6"
+          }
+        },
+        {
+          "workflow_sequence": 7,
+          "event_name": "WorkflowResolved",
+          "intent_revision": 1,
+          "payload": {
+            "resource_version": 0
+          }
+        },
+        {
+          "workflow_sequence": 8,
+          "event_name": "VerificationSatisfied",
+          "intent_revision": 1,
+          "payload": {
+            "result": "SATISFIED",
+            "receipt_id": "bf0f259f-ed64-41b0-a749-7c9c272d7f9f"
+          }
+        },
+        {
+          "workflow_sequence": 9,
+          "event_name": "ReceiptIssued",
+          "intent_revision": 1,
+          "payload": {
+            "receipt_id": "bf0f259f-ed64-41b0-a749-7c9c272d7f9f",
+            "receipt_hash": "ad55794bfa5251c66aeb3c8845b7c146cc2e72b41f79d93114ac0afe0cd3612b"
+          }
+        },
+        {
+          "workflow_sequence": 10,
+          "event_name": "ClaimPrepared",
+          "intent_revision": 1,
+          "payload": {
+            "claim_id": "ee5d4510-f9ef-4d77-befe-f2873b6bc712",
+            "content_hash": "f25ba041df4f2dd778d3d5b064158561e39997ab4e8bf5adcb32ab2ba584de8b"
+          }
+        },
+        {
+          "workflow_sequence": 11,
+          "event_name": "ClaimAuthorized",
+          "intent_revision": 1,
+          "payload": {
+            "permit_id": "3625870a-de0e-4978-97db-56e6d4b0bd93",
+            "receipt_id": "bf0f259f-ed64-41b0-a749-7c9c272d7f9f"
+          }
+        },
+        {
+          "workflow_sequence": 12,
+          "event_name": "ClaimQueued",
+          "intent_revision": 1,
+          "payload": {
+            "permit_id": "3625870a-de0e-4978-97db-56e6d4b0bd93"
+          }
+        },
+        {
+          "workflow_sequence": 13,
+          "event_name": "ClaimPublished",
+          "intent_revision": 1,
+          "payload": {
+            "claim_id": "ee5d4510-f9ef-4d77-befe-f2873b6bc712",
+            "permit_id": "3625870a-de0e-4978-97db-56e6d4b0bd93",
+            "content_hash": "f25ba041df4f2dd778d3d5b064158561e39997ab4e8bf5adcb32ab2ba584de8b"
+          }
+        }
+      ],
+      "provider_evidence": [
+        {
+          "operation": {
+            "id": "b5fe6f26-d909-46dc-b3f8-06d60b12f14d",
+            "workflow_id": "bedab002-9ee4-4024-9ff4-523158220b87",
+            "intent_revision": 1,
+            "parent_operation_id": null,
+            "supersedes_operation_id": null,
+            "action_type": "CREATE_APPOINTMENT",
+            "target_resource_type": "appointment",
+            "target_resource_id": "2ec17581-b9ff-4c86-98f9-9fc4aa7245e0",
+            "processing_phase": "TERMINAL",
+            "effect_knowledge": "PRESENT",
+            "applicability": "CURRENT",
+            "speech_eligibility": "CLAIM_PERMITTED",
+            "idempotency_key": "phase6:1dd424bd-b1b7-451d-a24c-acc7f136c104:preaccept-corrected",
+            "request_hash": "44a0382b0d5c119fdbaa586b9bdf7738b54fea97331952ba98b769e2086f7174",
+            "normalized_request_json": {
+              "action": "CREATE",
+              "scenario_id": "8a7dfd62-56d8-4931-8bb7-e85e4bbec328",
+              "workflow_id": "bedab002-9ee4-4024-9ff4-523158220b87",
+              "resource_key": "property:773194fe-97ed-4581-af28-24dc71bb7124:maintenance",
+              "desired_state": {
+                "timezone": "Asia/Karachi",
+                "ticket_id": "fae57566-8fcb-4910-b271-4a71ab69edaa",
+                "requested_end": "2026-11-05T17:00:00+05:00",
+                "appointment_id": null,
+                "requested_start": "2026-11-05T16:00:00+05:00"
+              },
+              "intent_revision": 1,
+              "expected_resource_version": 0
+            },
+            "provider_adapter": "simulator",
+            "provider_operation_id": null,
+            "reconciliation_required": false,
+            "dispatch_recorded_at": "2026-10-03T17:54:36.221730Z",
+            "response_received_at": "2026-10-03T17:54:36.419344Z",
+            "effect_observed_at": "2026-10-03T17:54:36.630582Z",
+            "resolved_at": "2026-10-03T17:54:36.630582Z",
+            "version": 3,
+            "created_at": "2026-10-03T17:54:36.128025Z",
+            "updated_at": "2026-10-03T17:54:36.840921Z"
+          },
+          "attempts": [
+            {
+              "id": "e3f36d53-67e4-4286-a7b4-f8f8238c7116",
+              "attempt_number": 1,
+              "attempt_type": "WRITE",
+              "request_hash": "44a0382b0d5c119fdbaa586b9bdf7738b54fea97331952ba98b769e2086f7174",
+              "request_sent_at": "2026-10-03T17:54:36.247684Z",
+              "response_received_at": "2026-10-03T17:54:36.419344Z",
+              "raw_response_json": {
+                "body": {
+                  "facts": {
+                    "status": "CONFIRMED",
+                    "ends_at": "2026-11-05T12:00:00+00:00",
+                    "version": 0,
+                    "timezone": "Asia/Karachi",
+                    "starts_at": "2026-11-05T11:00:00+00:00",
+                    "resource_key": "property:773194fe-97ed-4581-af28-24dc71bb7124:maintenance",
+                    "appointment_id": "2ec17581-b9ff-4c86-98f9-9fc4aa7245e0"
+                  },
+                  "outcome": "PRESENT",
+                  "operation_id": "b5fe6f26-d909-46dc-b3f8-06d60b12f14d",
+                  "appointment_id": "2ec17581-b9ff-4c86-98f9-9fc4aa7245e0",
+                  "commit_sequence": 4927,
+                  "resource_version": 0,
+                  "idempotent_replay": false
+                },
+                "status": 200
+              },
+              "normalized_result_json": {
+                "facts": {
+                  "status": "CONFIRMED",
+                  "ends_at": "2026-11-05T12:00:00+00:00",
+                  "version": 0,
+                  "timezone": "Asia/Karachi",
+                  "starts_at": "2026-11-05T11:00:00+00:00",
+                  "resource_key": "property:773194fe-97ed-4581-af28-24dc71bb7124:maintenance",
+                  "appointment_id": "2ec17581-b9ff-4c86-98f9-9fc4aa7245e0"
+                },
+                "outcome": "PRESENT",
+                "operation_id": "b5fe6f26-d909-46dc-b3f8-06d60b12f14d",
+                "appointment_id": "2ec17581-b9ff-4c86-98f9-9fc4aa7245e0",
+                "commit_sequence": 4927,
+                "resource_version": 0,
+                "idempotent_replay": false
+              },
+              "result_code": "ACKNOWLEDGED_UNVERIFIED",
+              "trace_id": "worker:ce6b3212-17cd-466b-bab1-02940c28bcc8"
+            },
+            {
+              "id": "211d01fb-9b07-4827-9933-922164d3cc9b",
+              "attempt_number": 2,
+              "attempt_type": "STATUS_LOOKUP",
+              "request_hash": "44a0382b0d5c119fdbaa586b9bdf7738b54fea97331952ba98b769e2086f7174",
+              "request_sent_at": "2026-10-03T17:54:36.630582Z",
+              "response_received_at": "2026-10-03T17:54:36.630582Z",
+              "raw_response_json": {
+                "status": {
+                  "body": {
+                    "facts": {
+                      "status": "CONFIRMED",
+                      "ends_at": "2026-11-05T12:00:00+00:00",
+                      "version": 0,
+                      "timezone": "Asia/Karachi",
+                      "starts_at": "2026-11-05T11:00:00+00:00",
+                      "resource_key": "property:773194fe-97ed-4581-af28-24dc71bb7124:maintenance",
+                      "appointment_id": "2ec17581-b9ff-4c86-98f9-9fc4aa7245e0"
+                    },
+                    "outcome": "PRESENT",
+                    "operation_id": "b5fe6f26-d909-46dc-b3f8-06d60b12f14d",
+                    "authoritative": true,
+                    "appointment_id": "2ec17581-b9ff-4c86-98f9-9fc4aa7245e0",
+                    "commit_sequence": 4927,
+                    "resource_version": 0,
+                    "idempotent_replay": false
+                  },
+                  "status": 200
+                },
+                "resource": {
+                  "body": {
+                    "outcome": "PRESENT",
+                    "appointments": [
+                      {
+                        "status": "CONFIRMED",
+                        "ends_at": "2026-11-05T12:00:00+00:00",
+                        "version": 0,
+                        "timezone": "Asia/Karachi",
+                        "starts_at": "2026-11-05T11:00:00+00:00",
+                        "resource_key": "property:773194fe-97ed-4581-af28-24dc71bb7124:maintenance",
+                        "appointment_id": "2ec17581-b9ff-4c86-98f9-9fc4aa7245e0"
+                      }
+                    ],
+                    "authoritative": true
+                  },
+                  "status": 200
+                },
+                "capability": {
+                  "body": {
+                    "config": {
+                      "faults": [],
+                      "visibility": "IMMEDIATE",
+                      "idempotency": true,
+                      "held_barriers": [],
+                      "status_lookup": true,
+                      "resource_lookup": true,
+                      "visibility_reads": 0,
+                      "supports_reschedule": true
+                    },
+                    "scenario_id": "8a7dfd62-56d8-4931-8bb7-e85e4bbec328"
+                  },
+                  "status": 200
+                }
+              },
+              "normalized_result_json": {
+                "outcome": "PRESENT",
+                "authoritative": true
+              },
+              "result_code": "PRESENT",
+              "trace_id": "worker:f360c2bc-ef23-445c-be7c-c836834cb40f"
+            }
+          ],
+          "provider_events": [
+            {
+              "id": "e163c4da-d977-4121-acee-4acf9c405c3e",
+              "event_kind": "REQUEST_SENT",
+              "raw_json": {
+                "action": "CREATE",
+                "timezone": "Asia/Karachi",
+                "scenario_id": "8a7dfd62-56d8-4931-8bb7-e85e4bbec328",
+                "operation_id": "b5fe6f26-d909-46dc-b3f8-06d60b12f14d",
+                "request_hash": "44a0382b0d5c119fdbaa586b9bdf7738b54fea97331952ba98b769e2086f7174",
+                "resource_key": "property:773194fe-97ed-4581-af28-24dc71bb7124:maintenance",
+                "requested_end": "2026-11-05T17:00:00+05:00",
+                "appointment_id": null,
+                "idempotency_key": "phase6:1dd424bd-b1b7-451d-a24c-acc7f136c104:preaccept-corrected",
+                "requested_start": "2026-11-05T16:00:00+05:00",
+                "expected_resource_version": 0
+              },
+              "normalized_json": {
+                "request_hash": "44a0382b0d5c119fdbaa586b9bdf7738b54fea97331952ba98b769e2086f7174"
+              },
+              "content_hash": "4b9fa5c5ba84bb0232fb8183bf0c7ae10ca5d9fe2247e4783fb2406dfaa40797",
+              "trace_id": "worker:ce6b3212-17cd-466b-bab1-02940c28bcc8",
+              "occurred_at": "2026-10-03T17:54:36.247684Z"
+            },
+            {
+              "id": "c91e5410-6651-4363-bd20-69b14547dbd1",
+              "event_kind": "RESPONSE_RECEIVED",
+              "raw_json": {
+                "body": {
+                  "facts": {
+                    "status": "CONFIRMED",
+                    "ends_at": "2026-11-05T12:00:00+00:00",
+                    "version": 0,
+                    "timezone": "Asia/Karachi",
+                    "starts_at": "2026-11-05T11:00:00+00:00",
+                    "resource_key": "property:773194fe-97ed-4581-af28-24dc71bb7124:maintenance",
+                    "appointment_id": "2ec17581-b9ff-4c86-98f9-9fc4aa7245e0"
+                  },
+                  "outcome": "PRESENT",
+                  "operation_id": "b5fe6f26-d909-46dc-b3f8-06d60b12f14d",
+                  "appointment_id": "2ec17581-b9ff-4c86-98f9-9fc4aa7245e0",
+                  "commit_sequence": 4927,
+                  "resource_version": 0,
+                  "idempotent_replay": false
+                },
+                "status": 200
+              },
+              "normalized_json": {
+                "outcome": "UNVERIFIED"
+              },
+              "content_hash": "22589c7f197d7eaa2e9cbd7662a2d88c4d64fd54078d767c1342b7f239041216",
+              "trace_id": "worker:ce6b3212-17cd-466b-bab1-02940c28bcc8",
+              "occurred_at": "2026-10-03T17:54:36.419344Z"
+            },
+            {
+              "id": "98662ca9-95b2-437b-8221-30dfdf4ea103",
+              "event_kind": "POSTCONDITION_READ",
+              "raw_json": {
+                "body": {
+                  "outcome": "PRESENT",
+                  "appointments": [
+                    {
+                      "status": "CONFIRMED",
+                      "ends_at": "2026-11-05T12:00:00+00:00",
+                      "version": 0,
+                      "timezone": "Asia/Karachi",
+                      "starts_at": "2026-11-05T11:00:00+00:00",
+                      "resource_key": "property:773194fe-97ed-4581-af28-24dc71bb7124:maintenance",
+                      "appointment_id": "2ec17581-b9ff-4c86-98f9-9fc4aa7245e0"
+                    }
+                  ],
+                  "authoritative": true
+                },
+                "status": 200
+              },
+              "normalized_json": {
+                "outcome": "PRESENT",
+                "appointments": [
+                  {
+                    "status": "CONFIRMED",
+                    "ends_at": "2026-11-05T12:00:00+00:00",
+                    "version": 0,
+                    "timezone": "Asia/Karachi",
+                    "starts_at": "2026-11-05T11:00:00+00:00",
+                    "resource_key": "property:773194fe-97ed-4581-af28-24dc71bb7124:maintenance",
+                    "appointment_id": "2ec17581-b9ff-4c86-98f9-9fc4aa7245e0"
+                  }
+                ],
+                "authoritative": true
+              },
+              "content_hash": "d84c93861cd758b81fb2882660ffc415494448e2c245d9a4af4a601c6a749947",
+              "trace_id": "worker:f360c2bc-ef23-445c-be7c-c836834cb40f",
+              "occurred_at": "2026-10-03T17:54:36.630582Z"
+            },
+            {
+              "id": "b73d7351-7cf8-471d-8cbd-369001f538ff",
+              "event_kind": "STATUS_LOOKUP",
+              "raw_json": {
+                "body": {
+                  "facts": {
+                    "status": "CONFIRMED",
+                    "ends_at": "2026-11-05T12:00:00+00:00",
+                    "version": 0,
+                    "timezone": "Asia/Karachi",
+                    "starts_at": "2026-11-05T11:00:00+00:00",
+                    "resource_key": "property:773194fe-97ed-4581-af28-24dc71bb7124:maintenance",
+                    "appointment_id": "2ec17581-b9ff-4c86-98f9-9fc4aa7245e0"
+                  },
+                  "outcome": "PRESENT",
+                  "operation_id": "b5fe6f26-d909-46dc-b3f8-06d60b12f14d",
+                  "authoritative": true,
+                  "appointment_id": "2ec17581-b9ff-4c86-98f9-9fc4aa7245e0",
+                  "commit_sequence": 4927,
+                  "resource_version": 0,
+                  "idempotent_replay": false
+                },
+                "status": 200
+              },
+              "normalized_json": {
+                "facts": {
+                  "status": "CONFIRMED",
+                  "ends_at": "2026-11-05T12:00:00+00:00",
+                  "version": 0,
+                  "timezone": "Asia/Karachi",
+                  "starts_at": "2026-11-05T11:00:00+00:00",
+                  "resource_key": "property:773194fe-97ed-4581-af28-24dc71bb7124:maintenance",
+                  "appointment_id": "2ec17581-b9ff-4c86-98f9-9fc4aa7245e0"
+                },
+                "outcome": "PRESENT",
+                "operation_id": "b5fe6f26-d909-46dc-b3f8-06d60b12f14d",
+                "authoritative": true,
+                "appointment_id": "2ec17581-b9ff-4c86-98f9-9fc4aa7245e0",
+                "commit_sequence": 4927,
+                "resource_version": 0,
+                "idempotent_replay": false
+              },
+              "content_hash": "5f585fb18ea57960449116bbef28e8505fb1431d58cff75648de77ef01cfc2af",
+              "trace_id": "worker:f360c2bc-ef23-445c-be7c-c836834cb40f",
+              "occurred_at": "2026-10-03T17:54:36.630582Z"
+            },
+            {
+              "id": "b2418bc8-a7da-46e8-8ca8-ed69bda020dd",
+              "event_kind": "VERIFICATION_READ",
+              "raw_json": {
+                "body": {
+                  "outcome": "PRESENT",
+                  "appointments": [
+                    {
+                      "status": "CONFIRMED",
+                      "ends_at": "2026-11-05T12:00:00+00:00",
+                      "version": 0,
+                      "timezone": "Asia/Karachi",
+                      "starts_at": "2026-11-05T11:00:00+00:00",
+                      "resource_key": "property:773194fe-97ed-4581-af28-24dc71bb7124:maintenance",
+                      "appointment_id": "2ec17581-b9ff-4c86-98f9-9fc4aa7245e0"
+                    }
+                  ],
+                  "authoritative": true
+                },
+                "status": 200
+              },
+              "normalized_json": {
+                "result": "SATISFIED",
+                "claim_type": "CURRENT_APPOINTMENT"
+              },
+              "content_hash": "d84c93861cd758b81fb2882660ffc415494448e2c245d9a4af4a601c6a749947",
+              "trace_id": "11f576b6-8dc7-4942-91a8-98731072eb37",
+              "occurred_at": "2026-10-03T17:54:36.799528Z"
+            }
+          ],
+          "jobs": [
+            {
+              "id": "39394a6b-cc42-4786-9bc4-316f584be8f4",
+              "job_type": "DISPATCH_OPERATION",
+              "state": "DONE",
+              "attempt_count": 1,
+              "max_attempts": 8,
+              "next_run_at": "2026-10-03T17:54:36.128025Z",
+              "lease_owner": null,
+              "lease_until": null,
+              "last_error_json": null
+            },
+            {
+              "id": "57cc0b6e-d806-41a6-97aa-bbcf7c93efa9",
+              "job_type": "RECONCILE_OPERATION",
+              "state": "DONE",
+              "attempt_count": 1,
+              "max_attempts": 8,
+              "next_run_at": "2026-10-03T17:54:36.419344Z",
+              "lease_owner": null,
+              "lease_until": null,
+              "last_error_json": null
+            }
+          ]
+        }
+      ],
+      "timing_evidence": {
+        "barriers": [
+          {
+            "id": "8b42805b-dcaa-472b-b5bc-755e5e8c446b",
+            "barrier_name": "P0",
+            "ordinal": 1,
+            "state": "RELEASED",
+            "source_event_id": "P0:1",
+            "reached_at": "2026-10-03 17:54:35.929086+00:00",
+            "released_at": "2026-10-03 17:54:36.100735+00:00"
+          }
+        ],
+        "faults": []
+      },
+      "simulator_truth": [
+        {
+          "sequence": 4927,
+          "scenario_id": "8a7dfd62-56d8-4931-8bb7-e85e4bbec328",
+          "operation_id": "b5fe6f26-d909-46dc-b3f8-06d60b12f14d",
+          "request_hash": "44a0382b0d5c119fdbaa586b9bdf7738b54fea97331952ba98b769e2086f7174",
+          "idempotency_key": "phase6:1dd424bd-b1b7-451d-a24c-acc7f136c104:preaccept-corrected",
+          "action": "CREATE",
+          "appointment_id": "2ec17581-b9ff-4c86-98f9-9fc4aa7245e0",
+          "resource_key": "property:773194fe-97ed-4581-af28-24dc71bb7124:maintenance",
+          "before_facts": null,
+          "after_facts": {
+            "status": "CONFIRMED",
+            "ends_at": "2026-11-05T12:00:00+00:00",
+            "version": 0,
+            "timezone": "Asia/Karachi",
+            "starts_at": "2026-11-05T11:00:00+00:00",
+            "resource_key": "property:773194fe-97ed-4581-af28-24dc71bb7124:maintenance",
+            "appointment_id": "2ec17581-b9ff-4c86-98f9-9fc4aa7245e0"
+          },
+          "result_code": "PRESENT",
+          "committed_at": "2026-10-03 17:54:36.359714+00:00"
+        }
+      ],
+      "oracle_result": {
+        "oracle_version": "phase6-truth-oracle-v1",
+        "correction_success": true,
+        "unsupported_confirmation": false,
+        "unsupported_event_ids": [],
+        "stale_confirmation_count": 0,
+        "relevant_claim_count": 1,
+        "duplicate_effect": false,
+        "outcome_coverage": true,
+        "safe_resolution": true,
+        "active_final_truth": [
+          {
+            "status": "CONFIRMED",
+            "ends_at": "2026-11-05T12:00:00+00:00",
+            "version": 0,
+            "timezone": "Asia/Karachi",
+            "starts_at": "2026-11-05T11:00:00+00:00",
+            "resource_key": "property:773194fe-97ed-4581-af28-24dc71bb7124:maintenance",
+            "appointment_id": "2ec17581-b9ff-4c86-98f9-9fc4aa7245e0"
+          }
+        ],
+        "provider_commit_count": 1,
+        "result_hash": "94fcc9006ec34d9abdb62d3174550557269f6bc8d4d980968f9cff3a08c3ad7b"
+      },
+      "metrics": [
+        {
+          "metric_name": "correction_success",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 1,
+          "numerator": 1,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "unsupported_confirmation",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "duplicate_effect",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "safe_resolution",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 1,
+          "numerator": 1,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "outcome_coverage",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 1,
+          "numerator": 1,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        }
+      ],
+      "correction_to_outcome_latency": {
+        "duration_ms": 1055.962,
+        "event_observed": true,
+        "censored": false
+      }
+    }
+  ],
+  "latency_summary": {
+    "B0": {
+      "reference_arm": "B3",
+      "comparison_arm": "B0",
+      "independent_scenarios": 1,
+      "observed_pairs": 1,
+      "censored_pairs": 0,
+      "mean_difference_ms": -248.815,
+      "bootstrap_95_interval_ms": null,
+      "interpretation": "observed_pairs_only; censored_pairs_retained_in_counts"
+    },
+    "B1": {
+      "reference_arm": "B3",
+      "comparison_arm": "B1",
+      "independent_scenarios": 1,
+      "observed_pairs": 1,
+      "censored_pairs": 0,
+      "mean_difference_ms": -213.04200000000003,
+      "bootstrap_95_interval_ms": null,
+      "interpretation": "observed_pairs_only; censored_pairs_retained_in_counts"
+    },
+    "B2": {
+      "reference_arm": "B3",
+      "comparison_arm": "B2",
+      "independent_scenarios": 1,
+      "observed_pairs": 1,
+      "censored_pairs": 0,
+      "mean_difference_ms": -132.02700000000004,
+      "bootstrap_95_interval_ms": null,
+      "interpretation": "observed_pairs_only; censored_pairs_retained_in_counts"
+    },
+    "P1": {
+      "reference_arm": "B3",
+      "comparison_arm": "P1",
+      "independent_scenarios": 1,
+      "observed_pairs": 1,
+      "censored_pairs": 0,
+      "mean_difference_ms": 492.22,
+      "bootstrap_95_interval_ms": null,
+      "interpretation": "observed_pairs_only; censored_pairs_retained_in_counts"
+    },
+    "P2": {
+      "reference_arm": "B3",
+      "comparison_arm": "P2",
+      "independent_scenarios": 1,
+      "observed_pairs": 1,
+      "censored_pairs": 0,
+      "mean_difference_ms": 507.13599999999997,
+      "bootstrap_95_interval_ms": null,
+      "interpretation": "observed_pairs_only; censored_pairs_retained_in_counts"
+    }
+  },
+  "bundle_hash": "c1c901d64c69b6a05a8453e03549d10906301b1967718dc91cd85013b228ec00"
+}

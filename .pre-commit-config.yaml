@@ -1,0 +1,18 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.16.8
+    hooks:
+      - id: ruff
+      - id: ruff-format
+  - repo: local
+    hooks:
+      - id: python-types
+        name: Python strict types
+        entry: uv run mypy
+        language: system
+        pass_filenames: false
+      - id: web-types
+        name: Web strict types
+        entry: pnpm --dir apps/web typecheck
+        language: system
+        pass_filenames: false

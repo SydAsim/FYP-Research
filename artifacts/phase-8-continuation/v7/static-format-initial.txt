@@ -1,0 +1,121 @@
+E501 Line too long (106 > 100)
+   --> E:/p8v7/source/artifacts/phase-8-runner-amendment/v4-complete/controls.py:261:101
+    |
+259 |     if not active and at >= policy.stop_at - timedelta(seconds=policy.admission_cutoff_seconds):
+260 |         raise ValueError("ADMISSION_CUTOFF")
+261 |     if not active and policy.committed_cost(at + timedelta(minutes=30)) >= policy.admission_committed_usd:
+    |                                                                                                     ^^^^^^
+262 |         raise ValueError("ESTIMATED_COMMITTED_COST_STOP")
+263 |     if cloud_bytes + extra_bytes >= policy.cloud_limit_bytes:
+    |
+
+E501 Line too long (114 > 100)
+   --> E:/p8v7/source/artifacts/phase-8-runner-amendment/v4-complete/controls.py:281:101
+    |
+279 |     if (
+280 |         not active
+281 |         and sample.get("backup_bytes", 0) + policy.slot_capacity_reserve_bytes > policy.backup_archive_limit_bytes
+    |                                                                                                     ^^^^^^^^^^^^^^
+282 |     ):
+283 |         raise ValueError("BACKUP_RESERVATION_STOP")
+    |
+
+E501 Line too long (106 > 100)
+   --> E:/p8v7/source/artifacts/phase-8-runner-amendment/v4-complete/handover.py:160:101
+    |
+158 |     kind: Literal["CONTINUATION_ACCEPTED", "CONTINUATION_FREEZE", "CONTINUATION_LAUNCH"]
+159 |     package_hash: str = Field(pattern=r"^[a-f0-9]{64}$")
+160 |     operational_limits_sha256: Literal["60d8dbb2b7f3f6a83bd442ac491316e9a9e17d45a039e4b59d9400821d377791"]
+    |                                                                                                     ^^^^^^
+161 |     predecessor_hash: str = Field(pattern=r"^[a-f0-9]{64}$")
+162 |     policy_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    |
+
+E501 Line too long (106 > 100)
+  --> E:/p8v7/source/artifacts/phase-8-runner-amendment/v4-complete/operational_limits.py:18:101
+   |
+16 |     kind: Literal["PROPOSED_OPERATIONAL_LIMIT_AMENDMENT_NOT_AUTHORIZATION"]
+17 |     version: Literal["phase85-continuation-v7"]
+18 |     qualified_v6_package_hash: Literal["3807d690ad46abdd07da12710ea933e03e3d86fb4440f5933b186db74de76a34"]
+   |                                                                                                     ^^^^^^
+19 |     run_id: Literal["p85-01a116f7-3b82-7a79-8653-3aee62dc99e9"]
+20 |     original_deadline: Literal["2026-10-22T15:24:23.810674Z"]
+   |
+
+E501 Line too long (109 > 100)
+   --> E:/p8v7/source/artifacts/phase-8-runner-amendment/v4-complete/runner.py:524:101
+    |
+522 |                 if (
+523 |                     closed["state"] == "BACKED_UP"
+524 |                     and not (root / "slots" / f"{closed['sequence']:04d}" / "staging-retained.json").exists()
+    |                                                                                                     ^^^^^^^^^
+525 |                 ):
+526 |                     retain_archives_only(journal, cloud, closed)
+    |
+
+E501 Line too long (108 > 100)
+  --> E:/p8v7/source/artifacts/phase-8-runner-amendment/v4-complete/staging_retention.py:30:101
+   |
+28 |     if not staging.exists():
+29 |         return False  # Recovery after removal; verified archive remains.
+30 |     if staging.is_symlink() or not staging.is_dir() or staging.resolve().parent != archive.resolve().parent:
+   |                                                                                                     ^^^^^^^^
+31 |         raise ValueError("STAGING_PATH_REJECTED")
+32 |     with tarfile.open(archive, "r:gz") as incoming:
+   |
+
+E501 Line too long (105 > 100)
+  --> E:/p8v7/source/artifacts/phase-8-runner-amendment/v4-complete/staging_retention.py:87:101
+   |
+85 |         return
+86 |     journal.event("VERIFIED_REDUNDANT_STAGING_REMOVAL_INTENT", **record)
+87 |     removed = remove_redundant_staging(archive, proof["sha256"], Path(config["backup"]), row["sequence"])
+   |                                                                                                     ^^^^^
+88 |     write_new(marker, record)
+89 |     journal.event("VERIFIED_ARCHIVE_RETENTION_COMPLETE", execution_id=row["execution_id"],
+   |
+
+E501 Line too long (118 > 100)
+  --> E:/p8v7/source/artifacts/phase-8-runner-amendment/v4-complete/test_operational_limits.py:27:101
+   |
+25 |         folder.mkdir(parents=True)
+26 |         (folder / "trace.json").write_text('{"calibration_only":true}')
+27 |         (folder / "manifest.json").write_text(json.dumps({"files": {"trace.json": hash_file(folder / "trace.json")}}))
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^
+28 |         archive = folder.parent / (folder.name + ".tar.gz")
+29 |         with tarfile.open(archive, "x:gz") as output:
+   |
+
+E501 Line too long (130 > 100)
+  --> E:/p8v7/source/artifacts/phase-8-runner-amendment/v4-complete/test_operational_limits.py:43:101
+   |
+41 |         limits = verified_limits()
+42 |         p = effective_policy(read(HERE / "original-launch-policy.json"))
+43 |         self.assertEqual((p.admission_committed_usd, p.cloud_limit_bytes, p.backup_archive_limit_bytes), (60, 60 * GIB, 60 * GIB))
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+44 |         self.assertEqual(p.budget_usd, 65)
+45 |         self.assertEqual(p.stop_at, self.original().stop_at)
+   |
+
+E501 Line too long (124 > 100)
+  --> E:/p8v7/source/artifacts/phase-8-runner-amendment/v4-complete/test_operational_limits.py:46:101
+   |
+44 |         self.assertEqual(p.budget_usd, 65)
+45 |         self.assertEqual(p.stop_at, self.original().stop_at)
+46 |         self.assertAlmostEqual(p.committed_cost(p.host_started_at) - self.original().committed_cost(p.host_started_at), 2.0)
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^
+47 |         self.assertEqual(limits.qualified_v6_package_hash, "3807d690ad46abdd07da12710ea933e03e3d86fb4440f5933b186db74de76a34")
+   |
+
+E501 Line too long (126 > 100)
+  --> E:/p8v7/source/artifacts/phase-8-runner-amendment/v4-complete/test_operational_limits.py:47:101
+   |
+45 |         self.assertEqual(p.stop_at, self.original().stop_at)
+46 |         self.assertAlmostEqual(p.committed_cost(p.host_started_at) - self.original().committed_cost(p.host_started_at), 2.0)
+47 |         self.assertEqual(limits.qualified_v6_package_hash, "3807d690ad46abdd07da12710ea933e03e3d86fb4440f5933b186db74de76a34")
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+48 |
+49 |     def test_03_thresholds(self) -> None:
+   |
+
+Found 13 errors (2 fixed, 11 remaining).

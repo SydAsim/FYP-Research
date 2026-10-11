@@ -1,0 +1,20 @@
+................F........                                                [100%]
+================================== FAILURES ===================================
+_________ test_retained_first_original_parity_and_full_window_censor __________
+
+    def test_retained_first_original_parity_and_full_window_censor() -> None:
+        row = original()
+        proof = recognize(row)
+        assert proof is not None and proof["retryable"] is False
+        row["driver_classification"] = proof
+        assert validate_classification(row) and timing_eligible(row)
+        old_case, old_evidence = evidence_for(row, amended=False)
+        new_case, new_evidence = evidence_for(row)
+>       old_grade, old = revised_evaluate(old_case, old_evidence)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: revised_evaluate() missing 1 required keyword-only argument: 'challenge_at'
+
+artifacts\phase-8-runner-amendment\v1\test_amendment.py:100: TypeError
+=========================== short test summary info ===========================
+FAILED artifacts/phase-8-runner-amendment/v1/test_amendment.py::test_retained_first_original_parity_and_full_window_censor
+1 failed, 24 passed in 2.02s

@@ -1,0 +1,44 @@
+FF...F.s                                                                 [100%]
+================================== FAILURES ===================================
+_ test_actual_collector_resume_keeps_driver_once_and_600_second_cutoff[False] _
+artifacts\phase-8-review-freeze\v2\test_collector.py:68: in test_actual_collector_resume_keeps_driver_once_and_600_second_cutoff
+    assert not collector.execute(folder, ledger.rows()[0], checkpoint_once=True)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+artifacts\phase-8-review-freeze\v2\collector.py:388: in execute
+    return collect(trial, checkpoint_once=checkpoint_once)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+artifacts\phase-8-review-freeze\v2\collector.py:229: in collect
+    sample["cpu_load_fraction"] = cpu_fraction(prior, sample) if prior else None
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+research\execution_setup\resources.py:65: in cpu_fraction
+    total = after["cpu_total_ticks"] - before["cpu_total_ticks"]
+            ^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'cpu_total_ticks'
+---------------------------- Captured stdout call -----------------------------
+COLLECT 01a1162f-4505-7656-9d06-c8744da9c5ae P2: 1 polls, 600s remaining
+_ test_actual_collector_resume_keeps_driver_once_and_600_second_cutoff[True] __
+artifacts\phase-8-review-freeze\v2\test_collector.py:68: in test_actual_collector_resume_keeps_driver_once_and_600_second_cutoff
+    assert not collector.execute(folder, ledger.rows()[0], checkpoint_once=True)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+artifacts\phase-8-review-freeze\v2\collector.py:388: in execute
+    return collect(trial, checkpoint_once=checkpoint_once)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+artifacts\phase-8-review-freeze\v2\collector.py:229: in collect
+    sample["cpu_load_fraction"] = cpu_fraction(prior, sample) if prior else None
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+research\execution_setup\resources.py:65: in cpu_fraction
+    total = after["cpu_total_ticks"] - before["cpu_total_ticks"]
+            ^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'cpu_total_ticks'
+---------------------------- Captured stdout call -----------------------------
+COLLECT 01a1162f-4c43-7f9e-8aec-6de7c0e65aa2 P2: 1 polls, 600s remaining
+_______________ test_exact_main_saved_order_and_contract_units ________________
+artifacts\phase-8-review-freeze\v2\test_integrated.py:66: in test_exact_main_saved_order_and_contract_units
+    assert bank["main_inputs"][0]["timeout_budgets"]["reconcile"] == 8
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'timeout_budgets'
+=========================== short test summary info ===========================
+FAILED artifacts/phase-8-review-freeze/v2/test_collector.py::test_actual_collector_resume_keeps_driver_once_and_600_second_cutoff[False]
+FAILED artifacts/phase-8-review-freeze/v2/test_collector.py::test_actual_collector_resume_keeps_driver_once_and_600_second_cutoff[True]
+FAILED artifacts/phase-8-review-freeze/v2/test_integrated.py::test_exact_main_saved_order_and_contract_units
+3 failed, 4 passed, 1 skipped in 7.17s

@@ -1,0 +1,840 @@
+openapi: 3.1.0
+info:
+  title: Commit-Aware Voice Agent API
+  version: 0.1.0
+  description: Starter contract for the research vertical slice. Expand without weakening invariants.
+servers:
+  - url: http://localhost:8000
+paths:
+  /v1/public/config:
+    get:
+      operationId: getPublicConfig
+      responses:
+        '200':
+          description: Synthetic demo identity and media endpoint.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PublicConfig'}
+  /v1/calls/{call_id}:
+    get:
+      operationId: getCall
+      parameters: [{$ref: '#/components/parameters/CallId'}]
+      responses:
+        '200': {description: Media, workflow, operation, and repair dimensions, content: {application/json: {schema: {type: object}}}}
+        '404': {$ref: '#/components/responses/Problem'}
+  /v1/calls/{call_id}/timeline:
+    get:
+      operationId: getCallTimeline
+      parameters: [{$ref: '#/components/parameters/CallId'}]
+      responses:
+        '200': {description: Durable normalized events and raw provider events, content: {application/json: {schema: {type: object}}}}
+        '404': {$ref: '#/components/responses/Problem'}
+  /v1/calls/{call_id}/media-token:
+    get:
+      operationId: getCallMediaToken
+      description: Issue a short-lived room join token for an existing synthetic demo call.
+      parameters: [{$ref: '#/components/parameters/CallId'}]
+      responses:
+        '200': {description: Fresh room join token and independent voice-agent availability, content: {application/json: {schema: {type: object, required: [livekit_url, livekit_token, voice_agent_status], properties: {livekit_url: {type: string}, livekit_token: {type: string}, voice_agent_status: {type: string, enum: [READY, UNAVAILABLE]}}}}}}
+        '404': {$ref: '#/components/responses/Problem'}
+  /v1/appointments/{appointment_id}:
+    get:
+      operationId: getAppointment
+      parameters: [{$ref: '#/components/parameters/AppointmentId'}]
+      responses:
+        '200': {description: Appointment, effect history, and receipts, content: {application/json: {schema: {type: object}}}}
+        '404': {$ref: '#/components/responses/Problem'}
+  /v1/residents:
+    get:
+      operationId: listResidents
+      responses:
+        '200': {description: Paginated synthetic residents, content: {application/json: {schema: {type: array, items: {type: object}}}}}
+  /v1/residents/{resident_id}:
+    get:
+      operationId: getResident
+      parameters: [{name: resident_id, in: path, required: true, schema: {type: string, format: uuid}}]
+      responses:
+        '200': {description: Scoped resident record, content: {application/json: {schema: {type: object}}}}
+        '404': {$ref: '#/components/responses/Problem'}
+  /v1/notes:
+    get:
+      operationId: listNotes
+      responses:
+        '200': {description: Scoped notes, content: {application/json: {schema: {type: array, items: {type: object}}}}}
+    post:
+      operationId: createNote
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/CreateNoteRequest'}}}
+      responses:
+        '201': {description: Validated durable human note}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/handoffs:
+    get:
+      operationId: listHandoffs
+      responses:
+        '200': {description: Durable human handoffs, content: {application/json: {schema: {type: array, items: {type: object}}}}}
+  /v1/handoffs/{handoff_id}/acknowledge:
+    post:
+      operationId: acknowledgeHandoff
+      parameters: [{name: handoff_id, in: path, required: true, schema: {type: string, format: uuid}}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: '#/components/schemas/HandoffCommand'}}}}
+      responses: {'200': {description: Handoff acknowledged}, '409': {$ref: '#/components/responses/Problem'}}
+  /v1/handoffs/{handoff_id}/resolve:
+    post:
+      operationId: administrativelyCloseHandoff
+      parameters: [{name: handoff_id, in: path, required: true, schema: {type: string, format: uuid}}]
+      requestBody: {required: true, content: {application/json: {schema: {$ref: '#/components/schemas/HandoffCommand'}}}}
+      responses: {'200': {description: Evidence backed resolution or administrative closure}, '409': {$ref: '#/components/responses/Problem'}}
+  /v1/dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      responses: {'200': {description: Durable counts without inferred research metrics, content: {application/json: {schema: {type: object}}}}}
+  /v1/evaluation/runs:
+    get:
+      operationId: listEvaluationRuns
+      responses: {'200': {description: Run page, content: {application/json: {schema: {type: array, items: {type: object}}}}}}
+    post:
+      operationId: createEvaluationDraft
+      requestBody: {required: true, content: {application/json: {schema: {$ref: '#/components/schemas/ExperimentDraftRequest'}}}}
+      responses:
+        '201': {description: Durable draft manifest; execution remains unavailable until the Phase 6 harness, content: {application/json: {schema: {type: object}}}}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/evaluation/runs/{run_id}:
+    get:
+      operationId: getEvaluationRun
+      parameters: [{name: run_id, in: path, required: true, schema: {type: string, format: uuid}}]
+      responses: {'200': {description: Run manifest, cases, executions and recorded metrics, content: {application/json: {schema: {type: object}}}}}
+  /v1/settings:
+    get:
+      operationId: getSettings
+      responses: {'200': {description: Safe versioned environment metadata, content: {application/json: {schema: {type: object}}}}}
+  /internal/phase3/verifications:
+    post:
+      operationId: issueVerificationReceipt
+      description: Record a three-valued, revision-bound verification from independent evidence.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/VerifyRequest'}
+      responses:
+        '201': {description: Durable SATISFIED, VIOLATED, or UNKNOWN receipt}
+        '409': {$ref: '#/components/responses/Problem'}
+        '422': {$ref: '#/components/responses/Problem'}
+  /v1/receipts/{receipt_id}:
+    get:
+      operationId: getVerificationReceipt
+      parameters:
+        - {name: receipt_id, in: path, required: true, schema: {type: string, format: uuid}}
+      responses:
+        '200': {description: Receipt with its durable evidence items and source provenance}
+        '404': {$ref: '#/components/responses/Problem'}
+  /internal/phase3/claims:
+    post:
+      operationId: authorizeSemanticClaim
+      description: Issue a single-use permit only for a current applicable SATISFIED receipt.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/AuthorizeClaimRequest'}
+      responses:
+        '201': {description: Typed claim and authorized permit}
+        '409': {$ref: '#/components/responses/Problem'}
+  /internal/phase3/permits/{permit_id}/queue:
+    post:
+      operationId: queueClaimPermit
+      parameters:
+        - {name: permit_id, in: path, required: true, schema: {type: string, format: uuid}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/PermitCommand'}
+      responses:
+        '200': {description: Queued permit, not yet published}
+        '409': {$ref: '#/components/responses/Problem'}
+  /internal/phase3/permits/{permit_id}/publish:
+    post:
+      operationId: publishClaimPermit
+      description: Recheck revision, evidence, freshness and resource version before one decisive text release.
+      parameters:
+        - {name: permit_id, in: path, required: true, schema: {type: string, format: uuid}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/PermitCommand'}
+      responses:
+        '200': {description: Exactly one deterministic text publication}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/permits/{permit_id}:
+    get:
+      operationId: getClaimPermit
+      parameters:
+        - {name: permit_id, in: path, required: true, schema: {type: string, format: uuid}}
+      responses:
+        '200': {description: Durable claim and permit states}
+        '404': {$ref: '#/components/responses/Problem'}
+  /v1/workflows/{workflow_id}/safe-language:
+    get:
+      operationId: getSafeWorkflowLanguage
+      description: Fixed progress or uncertainty language without a decisive claim.
+      parameters:
+        - $ref: '#/components/parameters/WorkflowId'
+      responses:
+        '200': {description: Safe text and language kind}
+        '404': {$ref: '#/components/responses/Problem'}
+  /internal/phase2/operations:
+    post:
+      operationId: prepareExternalAppointment
+      description: Persist a simulator operation and dispatch job without a network write.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/PrepareExternalAppointmentRequest'}
+      responses:
+        '202':
+          description: Stable operation prepared with no attempted provider effect.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/OperationAccepted'}
+        '409': {$ref: '#/components/responses/Problem'}
+        '422': {$ref: '#/components/responses/Problem'}
+  /v1/operations/{operation_id}:
+    get:
+      operationId: getOperationDetail
+      description: Durable operation, attempts, raw and normalized provider events, and jobs.
+      parameters:
+        - $ref: '#/components/parameters/OperationId'
+      responses:
+        '200':
+          description: Current durable operation observations; UNKNOWN is distinct from failure.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/OperationDetail'}
+        '404': {$ref: '#/components/responses/Problem'}
+  /internal/phase1/fixtures:
+    post:
+      operationId: createSyntheticPhase1Fixture
+      description: Deterministic local research fixture; no media or provider is called.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/SyntheticFixtureRequest'}
+      responses:
+        '201':
+          description: Synthetic call, workflow, ticket and two utterances created.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/SyntheticFixture'}
+        '422': {$ref: '#/components/responses/Problem'}
+  /v1/calls:
+    get:
+      operationId: listCalls
+      parameters:
+        - {name: limit, in: query, schema: {type: integer, minimum: 1, maximum: 100}}
+        - {name: offset, in: query, schema: {type: integer, minimum: 0}}
+      responses:
+        '200': {description: Call page with X-Total-Count header, content: {application/json: {schema: {type: array, items: {type: object}}}}}
+    post:
+      operationId: createCall
+      parameters:
+        - {name: Idempotency-Key, in: header, required: true, schema: {type: string, format: uuid}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCallRequest'
+      responses:
+        '201':
+          description: Call created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CallSession'
+        '422': {$ref: '#/components/responses/Problem'}
+  /v1/calls/{call_id}/summary:
+    get:
+      operationId: getCallSummary
+      parameters:
+        - $ref: '#/components/parameters/CallId'
+      responses:
+        '200':
+          description: Evidence-bounded call summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CallSummary'
+        '404': {$ref: '#/components/responses/Problem'}
+  /v1/workflows/{workflow_id}/revisions:
+    post:
+      operationId: acceptIntentRevision
+      parameters:
+        - $ref: '#/components/parameters/WorkflowId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AcceptRevisionRequest'
+      responses:
+        '201':
+          description: Revision accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntentRevision'
+        '409': {$ref: '#/components/responses/Problem'}
+        '422': {$ref: '#/components/responses/Problem'}
+  /v1/workflows/{workflow_id}/history:
+    get:
+      operationId: getWorkflowHistory
+      parameters:
+        - $ref: '#/components/parameters/WorkflowId'
+      responses:
+        '200':
+          description: Ordered revisions, operations, effects, appointments and events.
+          content:
+            application/json:
+              schema: {type: object}
+        '404': {$ref: '#/components/responses/Problem'}
+  /v1/operations/appointments:
+    post:
+      operationId: prepareLocalAppointment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/PrepareLocalAppointmentRequest'}
+      responses:
+        '202':
+          description: Durable local operation prepared; no effect committed yet.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/OperationAccepted'}
+        '409': {$ref: '#/components/responses/Problem'}
+        '422': {$ref: '#/components/responses/Problem'}
+  /v1/operations/{operation_id}/commit-local:
+    post:
+      operationId: commitLocalAppointment
+      parameters:
+        - $ref: '#/components/parameters/OperationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/CommitLocalRequest'}
+      responses:
+        '200':
+          description: Appointment and effect ledger committed atomically.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/LocalCommitResult'}
+        '409': {$ref: '#/components/responses/Problem'}
+        '422': {$ref: '#/components/responses/Problem'}
+  /v1/appointments:
+    get:
+      operationId: listAppointments
+      parameters:
+        - {name: from, in: query, schema: {type: string, format: date-time}}
+        - {name: to, in: query, schema: {type: string, format: date-time}}
+        - {name: status, in: query, schema: {type: string}}
+      responses:
+        '200':
+          description: Appointment page
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {$ref: '#/components/schemas/Appointment'}
+  /v1/appointments/{appointment_id}/reschedule:
+    post:
+      operationId: rescheduleAppointment
+      parameters:
+        - $ref: '#/components/parameters/AppointmentId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RescheduleRequest'
+      responses:
+        '202':
+          description: Operation accepted; outcome may remain unknown
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/OperationAccepted'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/calls/{call_id}/playback-events:
+    post:
+      operationId: recordPlaybackEvent
+      parameters:
+        - $ref: '#/components/parameters/CallId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/PlaybackEventRequest'}
+      responses:
+        '202': {description: Event accepted idempotently}
+        '409': {$ref: '#/components/responses/Problem'}
+        '422': {$ref: '#/components/responses/Problem'}
+  /v1/calls/{call_id}/end:
+    post:
+      operationId: endCallMedia
+      description: End media while retaining durable workflow and repair work.
+      parameters:
+        - $ref: '#/components/parameters/CallId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/MediaEndRequest'}
+      responses:
+        '200': {description: Media ended; workflow work continues}
+        '404': {$ref: '#/components/responses/Problem'}
+  /v1/audio-segments/{segment_id}:
+    get:
+      operationId: getAudioSegment
+      parameters:
+        - $ref: '#/components/parameters/SegmentId'
+      responses:
+        '200': {description: Durable segment state, timing and playback progress}
+        '404': {$ref: '#/components/responses/Problem'}
+  /v1/audio-segments/{segment_id}/audio:
+    get:
+      operationId: getReleasedWav
+      parameters:
+        - $ref: '#/components/parameters/SegmentId'
+      responses:
+        '200':
+          description: Released mono PCM16 WAV; client must still pass the playback start gate.
+          content:
+            audio/wav:
+              schema: {type: string, format: binary}
+        '409': {$ref: '#/components/responses/Problem'}
+  /v1/repairs/{obligation_id}:
+    get:
+      operationId: getRepairObligation
+      parameters:
+        - {name: obligation_id, in: path, required: true, schema: {type: string, format: uuid}}
+      responses:
+        '200': {description: Durable played span and repair state}
+        '404': {$ref: '#/components/responses/Problem'}
+  /internal/phase4/calls/{call_id}/voice-events:
+    post:
+      operationId: recordNormalizedVoiceEvent
+      description: Persist raw provider event beside its normalized form.
+      parameters:
+        - $ref: '#/components/parameters/CallId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/VoiceEventRequest'}
+      responses:
+        '201': {description: Voice event persisted idempotently}
+        '409': {$ref: '#/components/responses/Problem'}
+  /internal/phase4/workflows/{workflow_id}/accept-proposal:
+    post:
+      operationId: acceptTypedVoiceProposal
+      parameters:
+        - $ref: '#/components/parameters/WorkflowId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/AcceptVoiceProposalRequest'}
+      responses:
+        '201': {description: Server-accepted revision from a stored typed proposal}
+        '409': {$ref: '#/components/responses/Problem'}
+  /internal/phase4/permits/{permit_id}/synthesis-input:
+    get:
+      operationId: getDeterministicSynthesisInput
+      parameters:
+        - {name: permit_id, in: path, required: true, schema: {type: string, format: uuid}}
+        - {name: repair_obligation_id, in: query, schema: {type: string, format: uuid}}
+      responses:
+        '200': {description: Controller-authorized deterministic text and hash}
+        '409': {$ref: '#/components/responses/Problem'}
+  /internal/phase4/audio-segments:
+    post:
+      operationId: prepareAudioSegment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/PrepareSegmentRequest'}
+      responses:
+        '201': {description: Hashed WAV stored with the current permit}
+        '409': {$ref: '#/components/responses/Problem'}
+  /internal/phase4/audio-segments/{segment_id}/queue:
+    post:
+      operationId: queueAudioSegment
+      parameters:
+        - $ref: '#/components/parameters/SegmentId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/SegmentCommand'}
+      responses:
+        '200': {description: Current generated audio queued}
+        '409': {$ref: '#/components/responses/Problem'}
+  /internal/phase4/audio-segments/{segment_id}/release:
+    post:
+      operationId: releaseAudioSegment
+      description: Recheck current revision, source evidence and permit before publication.
+      parameters:
+        - $ref: '#/components/parameters/SegmentId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/SegmentCommand'}
+      responses:
+        '200': {description: Evidence-backed audio released}
+        '409': {$ref: '#/components/responses/Problem'}
+  /internal/phase4/audio-segments/{segment_id}/resume:
+    post:
+      operationId: resumeInterruptedAudio
+      description: Recheck current revision and resource evidence before resuming.
+      parameters:
+        - $ref: '#/components/parameters/SegmentId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/SegmentCommand'}
+      responses:
+        '200': {description: Interrupted audio made startable again}
+        '409': {$ref: '#/components/responses/Problem'}
+components:
+  parameters:
+    CallId: {name: call_id, in: path, required: true, schema: {type: string, format: uuid}}
+    SegmentId: {name: segment_id, in: path, required: true, schema: {type: string, format: uuid}}
+    WorkflowId: {name: workflow_id, in: path, required: true, schema: {type: string, format: uuid}}
+    AppointmentId: {name: appointment_id, in: path, required: true, schema: {type: string, format: uuid}}
+    OperationId: {name: operation_id, in: path, required: true, schema: {type: string, format: uuid}}
+  responses:
+    Problem:
+      description: RFC 9457 problem details
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problem'}
+  schemas:
+    PublicConfig:
+      type: object
+      required: [mode, synthetic_resident_id, livekit_url, voice_path, database]
+      properties:
+        mode: {type: string, const: DEMO}
+        synthetic_resident_id: {type: [string, 'null'], format: uuid}
+        livekit_url: {type: string}
+        voice_path: {type: string}
+        database: {type: string}
+    CreateNoteRequest:
+      type: object
+      additionalProperties: false
+      required: [command_id, resident_id, category, note_text, expected_resident_version]
+      properties:
+        command_id: {type: string, format: uuid}
+        resident_id: {type: string, format: uuid}
+        category: {type: string, enum: [SCHEDULING_PREFERENCE, ACCESS_INSTRUCTION, MAINTENANCE_CONTEXT, COMMUNICATION_PREFERENCE, FOLLOW_UP]}
+        note_text: {type: string, minLength: 1, maxLength: 2000}
+        expected_resident_version: {type: integer, minimum: 0}
+    HandoffCommand:
+      type: object
+      additionalProperties: false
+      required: [command_id, expected_state]
+      properties:
+        command_id: {type: string, format: uuid}
+        expected_state: {type: string, enum: [OPEN, ACKNOWLEDGED]}
+        note: {type: [string, 'null'], maxLength: 2000}
+        administrative_closure: {type: boolean}
+    ExperimentDraftRequest:
+      type: object
+      additionalProperties: false
+      required: [command_id, name, fixture_version, final_intent, correction_phase, provider_behavior, fault_family, arms, seeds, oracle_required, model_profile]
+      properties:
+        command_id: {type: string, format: uuid}
+        name: {type: string, minLength: 3, maxLength: 120}
+        fixture_version: {type: string, minLength: 1}
+        final_intent: {type: string, minLength: 3}
+        correction_phase: {type: string, pattern: '^P[0-9]$'}
+        provider_behavior: {type: string, enum: [VISIBLE_COMMIT, HIDDEN_COMMIT, REFUSAL, UNKNOWN_TIMEOUT]}
+        fault_family: {type: string, enum: [NONE, RESPONSE_LOSS, DELAY, REDIS_LOSS, PARTIAL_PLAYBACK]}
+        arms: {type: array, items: {type: string, enum: [B0, B1, B2, B3, P1, P2]}, minItems: 1}
+        seeds: {type: array, items: {type: integer}, minItems: 1}
+        oracle_required: {type: boolean, const: true}
+        model_profile: {type: string}
+    VerifyRequest:
+      type: object
+      additionalProperties: false
+      required: [command_id, operation_id, expected_intent_revision, claim_type]
+      properties:
+        command_id: {type: string, format: uuid}
+        operation_id: {type: string, format: uuid}
+        expected_intent_revision: {type: integer, minimum: 1}
+        claim_type: {type: string, enum: [CURRENT_APPOINTMENT, RESCHEDULED_APPOINTMENT, COMPENSATED_APPOINTMENT, HISTORICAL_EFFECT, HANDOFF_CREATED]}
+    AuthorizeClaimRequest:
+      type: object
+      additionalProperties: false
+      required: [command_id, receipt_id, expected_intent_revision]
+      properties:
+        command_id: {type: string, format: uuid}
+        receipt_id: {type: string, format: uuid}
+        expected_intent_revision: {type: integer, minimum: 1}
+    PermitCommand:
+      type: object
+      additionalProperties: false
+      required: [command_id, expected_intent_revision]
+      properties:
+        command_id: {type: string, format: uuid}
+        expected_intent_revision: {type: integer, minimum: 1}
+    SegmentCommand:
+      type: object
+      additionalProperties: false
+      required: [command_id, expected_intent_revision]
+      properties:
+        command_id: {type: string, format: uuid}
+        expected_intent_revision: {type: integer, minimum: 1}
+    PrepareSegmentRequest:
+      type: object
+      additionalProperties: false
+      required: [command_id, permit_id, expected_intent_revision, audio_base64, audio_hash, text_hash, tts_model_id, tts_config_hash]
+      properties:
+        command_id: {type: string, format: uuid}
+        permit_id: {type: string, format: uuid}
+        expected_intent_revision: {type: integer, minimum: 1}
+        audio_base64: {type: string, contentEncoding: base64}
+        audio_hash: {type: string, pattern: '^[0-9a-f]{64}$'}
+        text_hash: {type: string, pattern: '^[0-9a-f]{64}$'}
+        tts_model_id: {type: string, minLength: 1}
+        tts_config_hash: {type: string, pattern: '^[0-9a-f]{64}$'}
+        repair_obligation_id: {type: [string, 'null'], format: uuid}
+    VoiceEventRequest:
+      type: object
+      additionalProperties: false
+      required: [event_id, source_event_id, event_type, occurred_at, raw, normalized]
+      properties:
+        event_id: {type: string, format: uuid}
+        source_event_id: {type: string, minLength: 1}
+        event_type:
+          type: string
+          enum: [SpeechStarted, TranscriptDelta, TranscriptFinal, PossibleEndOfTurn, ConfirmedEndOfTurn, SpeechResumed, InterruptionCandidate, InterruptionAccepted, AssistantAudioGenerated, AssistantAudioQueued, AssistantAudioPlayed, AssistantAudioStopped, ToolProposalReceived, ClarificationRequired, AgentTurnFailed, AgentTurnUnknown]
+        occurred_at: {type: string, format: date-time}
+        raw: {type: object}
+        normalized: {type: object}
+    AcceptVoiceProposalRequest:
+      type: object
+      additionalProperties: false
+      required: [command_id, source_event_id, expected_revision, change_class]
+      properties:
+        command_id: {type: string, format: uuid}
+        source_event_id: {type: string, minLength: 1}
+        expected_revision: {type: integer, minimum: 0}
+        change_class:
+          type: string
+          enum: [INITIAL, PARAMETER_CORRECTION, REPLACEMENT, RETRACTION, ADDITIVE_COMPATIBLE, CONFLICTING_CHANGE]
+    MediaEndRequest:
+      type: object
+      additionalProperties: false
+      required: [command_id]
+      properties:
+        command_id: {type: string, format: uuid}
+    PrepareExternalAppointmentRequest:
+      type: object
+      additionalProperties: false
+      required: [command_id, workflow_id, scenario_id, expected_intent_revision, expected_resource_version, idempotency_key]
+      properties:
+        command_id: {type: string, format: uuid}
+        workflow_id: {type: string, format: uuid}
+        scenario_id: {type: string, format: uuid}
+        expected_intent_revision: {type: integer, minimum: 1}
+        expected_resource_version: {type: integer, minimum: 0}
+        idempotency_key: {type: string, minLength: 1}
+    OperationDetail:
+      type: object
+      required: [operation, attempts, provider_events, jobs]
+      properties:
+        operation: {type: object}
+        attempts: {type: array, items: {type: object}}
+        provider_events: {type: array, items: {type: object}}
+        jobs: {type: array, items: {type: object}}
+    SyntheticFixtureRequest:
+      type: object
+      additionalProperties: false
+      required: [command_id]
+      properties:
+        command_id: {type: string, format: uuid}
+        timezone: {type: string, default: Asia/Karachi}
+        first_transcript: {type: string}
+        second_transcript: {type: string}
+    SyntheticFixture:
+      type: object
+      required: [call_id, workflow_id, ticket_id, resident_id, property_id, resource_key, utterance_ids]
+      properties:
+        call_id: {type: string, format: uuid}
+        workflow_id: {type: string, format: uuid}
+        ticket_id: {type: string, format: uuid}
+        resident_id: {type: string, format: uuid}
+        property_id: {type: string, format: uuid}
+        resource_key: {type: string}
+        utterance_ids:
+          type: array
+          minItems: 2
+          maxItems: 2
+          items: {type: string, format: uuid}
+    PrepareLocalAppointmentRequest:
+      type: object
+      additionalProperties: false
+      required: [command_id, workflow_id, expected_intent_revision, expected_resource_version, idempotency_key]
+      properties:
+        command_id: {type: string, format: uuid}
+        workflow_id: {type: string, format: uuid}
+        expected_intent_revision: {type: integer, minimum: 1}
+        expected_resource_version: {type: integer, minimum: 0}
+        idempotency_key: {type: string, minLength: 1}
+    CommitLocalRequest:
+      type: object
+      additionalProperties: false
+      required: [command_id]
+      properties:
+        command_id: {type: string, format: uuid}
+    LocalCommitResult:
+      type: object
+      required: [operation_id, appointment_id, appointment_version, processing_phase, effect_knowledge]
+      properties:
+        operation_id: {type: string, format: uuid}
+        appointment_id: {type: string, format: uuid}
+        appointment_version: {type: integer, minimum: 0}
+        processing_phase: {type: string, const: TERMINAL}
+        effect_knowledge: {type: string, const: PRESENT}
+    CreateCallRequest:
+      type: object
+      additionalProperties: false
+      required: [consent, resident_id]
+      properties:
+        consent: {type: boolean, const: true}
+        resident_id: {type: string, format: uuid}
+        experiment_run_id: {type: [string, 'null'], format: uuid}
+    CallSession:
+      type: object
+      required: [call_id, workflow_id, media_status, livekit_room, livekit_token]
+      properties:
+        call_id: {type: string, format: uuid}
+        workflow_id: {type: string, format: uuid}
+        media_status: {type: string, enum: [CREATED, CONNECTING, CONNECTED, ENDED]}
+        livekit_room: {type: string}
+        livekit_token: {type: string}
+    CandidateSource:
+      type: object
+      additionalProperties: false
+      required: [utterance_id, model, prompt_hash, transcript_version]
+      properties:
+        utterance_id: {type: string, format: uuid}
+        model: {type: string}
+        prompt_hash: {type: string}
+        transcript_version: {type: integer, minimum: 1}
+        audio_start_ms: {type: integer, minimum: 0}
+        audio_end_ms: {type: integer, minimum: 0}
+    DesiredAppointment:
+      type: object
+      additionalProperties: false
+      required: [ticket_id, requested_start, requested_end, timezone]
+      properties:
+        ticket_id: {type: string, format: uuid}
+        appointment_id: {type: [string, 'null'], format: uuid}
+        requested_start: {type: string, format: date-time}
+        requested_end: {type: string, format: date-time}
+        timezone: {type: string}
+    AcceptRevisionRequest:
+      type: object
+      additionalProperties: false
+      required: [command_id, expected_revision, change_class, desired_state, candidate_source]
+      properties:
+        command_id: {type: string, format: uuid}
+        expected_revision: {type: integer, minimum: 0}
+        change_class:
+          type: string
+          enum: [INITIAL, PARAMETER_CORRECTION, REPLACEMENT, RETRACTION, ADDITIVE_COMPATIBLE, CONFLICTING_CHANGE]
+        desired_state: {$ref: '#/components/schemas/DesiredAppointment'}
+        candidate_source: {$ref: '#/components/schemas/CandidateSource'}
+    IntentRevision:
+      type: object
+      required: [workflow_id, revision, desired_state, accepted_at]
+      properties:
+        workflow_id: {type: string, format: uuid}
+        revision: {type: integer, minimum: 1}
+        desired_state: {$ref: '#/components/schemas/DesiredAppointment'}
+        accepted_at: {type: string, format: date-time}
+    RescheduleRequest:
+      type: object
+      additionalProperties: false
+      required: [command_id, workflow_id, expected_intent_revision, expected_resource_version, requested_start, requested_end, timezone]
+      properties:
+        command_id: {type: string, format: uuid}
+        workflow_id: {type: string, format: uuid}
+        expected_intent_revision: {type: integer, minimum: 1}
+        expected_resource_version: {type: integer, minimum: 0}
+        requested_start: {type: string, format: date-time}
+        requested_end: {type: string, format: date-time}
+        timezone: {type: string}
+    Appointment:
+      type: object
+      required: [appointment_id, resident_id, ticket_id, starts_at, ends_at, timezone, status, version]
+      properties:
+        appointment_id: {type: string, format: uuid}
+        resident_id: {type: string, format: uuid}
+        ticket_id: {type: string, format: uuid}
+        starts_at: {type: string, format: date-time}
+        ends_at: {type: string, format: date-time}
+        timezone: {type: string}
+        status: {type: string, enum: [HELD, CONFIRMED, CANCELLED, COMPLETED]}
+        version: {type: integer, minimum: 0}
+    OperationAccepted:
+      type: object
+      required: [operation_id, processing_phase, effect_knowledge]
+      properties:
+        operation_id: {type: string, format: uuid}
+        processing_phase: {type: string}
+        effect_knowledge: {type: string}
+    PlaybackEventRequest:
+      type: object
+      additionalProperties: false
+      required: [event_id, segment_id, event_type, client_time]
+      properties:
+        event_id: {type: string, format: uuid}
+        segment_id: {type: string, format: uuid}
+        event_type: {type: string, enum: [RECEIVED, QUEUED, STARTED, PROGRESS, INTERRUPTED, COMPLETED]}
+        client_time: {type: string, format: date-time}
+        played_ms: {type: integer, minimum: 0}
+        last_frame: {type: integer, minimum: 0}
+        last_word_index: {type: integer, minimum: 0}
+    CallSummary:
+      type: object
+      required: [call_id, media_status, business_resolution, latest_revision]
+      properties:
+        call_id: {type: string, format: uuid}
+        media_status: {type: string}
+        business_resolution: {type: string, enum: [RESOLVED_VERIFIED, RESOLVED_REFUSED, UNRESOLVED_RECOVERING, HANDOFF_CREATED, REPAIR_PENDING]}
+        latest_revision: {type: integer, minimum: 0}
+        current_statement: {type: [string, 'null']}
+        receipt_id: {type: [string, 'null'], format: uuid}
+        handoff_id: {type: [string, 'null'], format: uuid}
+    Problem:
+      type: object
+      required: [type, title, status, detail, trace_id]
+      properties:
+        type: {type: string, format: uri}
+        title: {type: string}
+        status: {type: integer}
+        detail: {type: string}
+        instance: {type: string}
+        trace_id: {type: string}
+        retryable: {type: boolean}

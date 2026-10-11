@@ -1,0 +1,78 @@
+{
+  "version": "phase85-preflight-amendment-v2",
+  "status": "DECLARED_NOT_ACCEPTED_NOT_FROZEN",
+  "scope": "LOCAL_CALIBRATION_ONLY",
+  "main_campaign": "PAUSED",
+  "cloud_budget_usd": 0,
+  "planned_live_executions": 9,
+  "concurrency": 1,
+  "observation_seconds_per_execution": 600,
+  "live_wall_budget_seconds": 6600,
+  "cases": [
+    {
+      "id": "cal-v4-preflight-v2-refusal-b3",
+      "arm": "B3",
+      "kind": "refusal",
+      "recipe": "resource-only"
+    },
+    {
+      "id": "cal-v4-preflight-v2-refusal-p1",
+      "arm": "P1",
+      "kind": "refusal",
+      "recipe": "resource-only"
+    },
+    {
+      "id": "cal-v4-preflight-v2-refusal-p2",
+      "arm": "P2",
+      "kind": "refusal",
+      "recipe": "resource-only"
+    },
+    {
+      "id": "cal-v4-preflight-v2-defect-b3",
+      "arm": "B3",
+      "kind": "defect",
+      "recipe": "clean-Asia/Karachi-30"
+    },
+    {
+      "id": "cal-v4-preflight-v2-defect-p1",
+      "arm": "P1",
+      "kind": "defect",
+      "recipe": "clean-Asia/Karachi-30"
+    },
+    {
+      "id": "cal-v4-preflight-v2-defect-p2",
+      "arm": "P2",
+      "kind": "defect",
+      "recipe": "clean-Asia/Karachi-30"
+    },
+    {
+      "id": "cal-v4-preflight-v2-recovery-b3",
+      "arm": "B3",
+      "kind": "recovery",
+      "recipe": "resource-only"
+    },
+    {
+      "id": "cal-v4-preflight-v2-recovery-p1",
+      "arm": "P1",
+      "kind": "recovery",
+      "recipe": "resource-only"
+    },
+    {
+      "id": "cal-v4-preflight-v2-recovery-p2",
+      "arm": "P2",
+      "kind": "recovery",
+      "recipe": "resource-only"
+    }
+  ],
+  "checks": [
+    "three arms exact evidenced refusals; no retry; full window; independent grades",
+    "verified dual local backups before permitted next admission",
+    "three arm technical-defect durable pauses and rejected sentinel admission",
+    "three same-execution/deadline interrupted resumes with unchanged POST count",
+    "negative recognition and corrupted-evidence checks; failed-backup admission stop",
+    "main admission blocked; historical hashes and remaining identity order unchanged"
+  ],
+  "stop": "No new local admission after 110 minutes or unexpected failure. Retain every attempt. An admitted collector finishes its original window and backup; never truncate it.",
+  "evidence": "Scripted tone/client protocol acknowledgements, not human comprehension.",
+  "backup": "Existing qualified OfflineCloud; two retained local roots; not fresh S3 qualification"
+}

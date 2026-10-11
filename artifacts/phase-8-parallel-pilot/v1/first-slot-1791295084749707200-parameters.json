@@ -1,0 +1,5 @@
+{
+  "commands": [
+    "date -u\nsystemctl show fyp-p83-pilot.service -p ActiveState -p SubState -p ExecMainStatus\njournalctl -u fyp-p83-pilot.service --no-pager -n 35\npython3.12 - <<'PY'\nimport pathlib,sqlite3,json\nfor path in pathlib.Path('/srv/fyp-p83-v1').glob('blocks/*/*/run/ledger.sqlite3'):\n with sqlite3.connect(f'file:{path}?mode=ro',uri=True) as conn:\n  print(path,conn.execute('SELECT case_id,arm,state,execution_id,deadline FROM slots').fetchall())\nfor path in pathlib.Path('/srv/fyp-p83-v1').glob('admission-stop-*.json'):print(path.name,path.read_text())\nPY"
+  ]
+}

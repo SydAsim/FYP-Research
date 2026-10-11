@@ -1,0 +1,3075 @@
+{
+  "run_id": "5e475cea-a5ea-482c-a6ba-af41ddda7a7a",
+  "case_id": "0f99df06-12ff-4c0f-9e60-45f0256ce758",
+  "manifest": {
+    "name": "Phase 6 paired P8 B3/P1/P2 repair ablation",
+    "runner_version": "phase6-p8-b3-p1-p2-paired-v2",
+    "scenario": {
+      "fixture_version": "phase6-p8-live-p2-witness-v1",
+      "scenario_key": "maintenance-p8-live-p2-witness",
+      "revision_type": "PARAMETER_CORRECTION",
+      "action_semantics": "CREATE_THEN_RESCHEDULE",
+      "workflow_shape": "ONE_TICKET_ONE_APPOINTMENT",
+      "acoustic_condition": "CLEAN_SCRIPTED_TRANSCRIPT",
+      "provider_capability": "ATOMIC_RESCHEDULE_STATUS_AND_RESOURCE_LOOKUP",
+      "visibility": "IMMEDIATE",
+      "speech_exposure": "PARTIAL",
+      "fault_family": "PARTIAL_PLAYBACK",
+      "correction_barrier": "P8",
+      "seed": 1,
+      "initial_start": "2026-10-01T15:00:00+05:00",
+      "final_start": "2026-10-01T16:00:00+05:00",
+      "timezone": "Asia/Karachi",
+      "initial_transcript": "Please book maintenance at 3 PM.",
+      "correction_transcript": "Actually, make that four PM.",
+      "audio_hash": "96ca029eb97abef12a51320a3de68f84fa3a04c550f10d989f38687299c99032",
+      "repetition": 1
+    },
+    "fixture_hash": "a0b27e287a9f348dbdef1e09f42fe9036614f44630c6aafc1ced8adb221fb2cf",
+    "audio_hash": "96ca029eb97abef12a51320a3de68f84fa3a04c550f10d989f38687299c99032",
+    "source_commit": "uncommitted:0c910d27f0836b7c92f41155e2010f9c045d6e78393a6ff3aef02b17606e7933",
+    "source_tree_hash": "0c910d27f0836b7c92f41155e2010f9c045d6e78393a6ff3aef02b17606e7933",
+    "container_digests": {
+      "api-controller": "sha256:a921862398a82c7044bdd1dd384cdc1aed840f76ba592979c52a62ca9651ed58",
+      "durable-worker": "sha256:3e3751a7cea4fdaac1a63a5ab4aaacb86b231f979e21a6961b8eb0c734240633",
+      "livekit": "sha256:6fd3b7088874c4d119160dd688798dfec852bc014786d392caad15f6f63912a3",
+      "local-llm": "sha256:00bd6c289c590e576948cb3639b8195e4d3e6dd6ba1d761f0e2b871fcd4df24f",
+      "postgres": "sha256:ddfe3e8713e3ee5b8f286082cb12512488dfbf3f5a1ecb0b74a42e6055af0a5f",
+      "provider-simulator": "sha256:8464556e11920144439c073a7d9bbc483014c71728538b78ea216fab09d40a66",
+      "redis": "sha256:bb186d083732f669da90be8b0f975a37812b15e913465bb14d845db72a4e3e08",
+      "simulator-postgres": "sha256:ddfe3e8713e3ee5b8f286082cb12512488dfbf3f5a1ecb0b74a42e6055af0a5f",
+      "voice-worker": "sha256:bcf118f6b14b398574804a3c5a42a3bff4dc8a79ed942a0a4a54b0048ff43042"
+    },
+    "migration_version": "0011_phase6_b3_audio",
+    "model_profile": "phase4-scripted-stt-and-intent",
+    "fault_schedule": {
+      "barrier": "P8",
+      "fault": "PARTIAL_PLAYBACK",
+      "request_index": 1,
+      "target": "P8:1",
+      "hash": "0d542946ba66a31c7d78e79dd3f8ab99fe9dfd3331e3eea39c5444370208d629",
+      "played_ms": 500,
+      "last_frame": 8000
+    },
+    "arms": {
+      "B3": {
+        "arm": "B3",
+        "durable_idempotency": true,
+        "reconcile_before_retry": true,
+        "revision_invalidation": true,
+        "transaction_staging": true,
+        "compensation": true,
+        "playback_tracking": true,
+        "claim_permits": false,
+        "product_state_invariants": false,
+        "durable_played_span_repair": false
+      },
+      "P1": {
+        "arm": "P1",
+        "durable_idempotency": true,
+        "reconcile_before_retry": true,
+        "revision_invalidation": true,
+        "transaction_staging": true,
+        "compensation": true,
+        "playback_tracking": true,
+        "claim_permits": true,
+        "product_state_invariants": true,
+        "durable_played_span_repair": false
+      },
+      "P2": {
+        "arm": "P2",
+        "durable_idempotency": true,
+        "reconcile_before_retry": true,
+        "revision_invalidation": true,
+        "transaction_staging": true,
+        "compensation": true,
+        "playback_tracking": true,
+        "claim_permits": true,
+        "product_state_invariants": true,
+        "durable_played_span_repair": true
+      }
+    },
+    "run_id": "5e475cea-a5ea-482c-a6ba-af41ddda7a7a",
+    "frozen_at_utc": "2026-09-28T16:00:23.256769+00:00"
+  },
+  "manifest_hash": "2ea82a21fba6202d68b1b3e0a1c1e402e7927b1e0a1b3c397507e4edff4c3077",
+  "execution_count": 3,
+  "independent_scenario_count": 1,
+  "paired_summary": {
+    "independent_scenarios": 1,
+    "executions": 3,
+    "by_arm": {
+      "B3": {
+        "scenarios": 1,
+        "successes": 0
+      },
+      "P1": {
+        "scenarios": 1,
+        "successes": 0
+      },
+      "P2": {
+        "scenarios": 1,
+        "successes": 1
+      }
+    }
+  },
+  "executions": [
+    {
+      "execution_id": "aee7cbc6-096b-402a-b981-46c22fd0eaa6",
+      "arm": "B3",
+      "scenario_id": "1e3580e9-b086-4d2c-8b2f-aff0bc0a83f8",
+      "workflow_id": "57a0686f-c2b3-4bae-bc24-8ede85567734",
+      "fault_occurrence_id": "d9ebc9ee-e06e-4212-b7be-5ca4f7c3c6c5",
+      "fault_placement_hash": "0d542946ba66a31c7d78e79dd3f8ab99fe9dfd3331e3eea39c5444370208d629",
+      "playback_acks": [
+        {
+          "event_id": "c71c4416-d164-4c1d-90f8-c9fdfd64ea79",
+          "claim_type": "CURRENT_APPOINTMENT",
+          "claim_start": "2026-10-01T10:00:00Z",
+          "intent_revision": 1,
+          "released_at": "2026-09-28T16:00:24.916227Z",
+          "played_at": "2026-09-28T16:00:25.128636Z",
+          "played_ms": 500,
+          "permit_id": null
+        },
+        {
+          "event_id": "868be511-fd57-429e-9a0f-db5c2a25d5d7",
+          "claim_type": "RESCHEDULED_APPOINTMENT",
+          "claim_start": "2026-10-01T11:00:00Z",
+          "intent_revision": 2,
+          "released_at": "2026-09-28T16:00:28.204332Z",
+          "played_at": "2026-09-28T16:00:28.443567Z",
+          "played_ms": 2160,
+          "permit_id": null
+        }
+      ],
+      "timing_evidence": {
+        "barriers": [
+          {
+            "id": "37ed176f-f228-43b3-a2ea-2f1c2bffbef0",
+            "barrier_name": "P8",
+            "ordinal": 1,
+            "state": "RELEASED",
+            "source_event_id": "c71c4416-d164-4c1d-90f8-c9fdfd64ea79",
+            "reached_at": "2026-09-28 16:00:25.220616+00:00",
+            "released_at": "2026-09-28 16:00:25.309011+00:00"
+          }
+        ],
+        "faults": [
+          {
+            "id": "d9ebc9ee-e06e-4212-b7be-5ca4f7c3c6c5",
+            "barrier_name": "P8",
+            "fault_type": "PARTIAL_PLAYBACK",
+            "scheduled_target": {
+              "fault": "PARTIAL_PLAYBACK",
+              "target": "P8:1",
+              "barrier": "P8",
+              "request_index": 1
+            },
+            "actual_event_id": "37ed176f-f228-43b3-a2ea-2f1c2bffbef0",
+            "injected_at": "2026-09-28 16:00:28.682542+00:00",
+            "parameters": {
+              "placement_hash": "0d542946ba66a31c7d78e79dd3f8ab99fe9dfd3331e3eea39c5444370208d629"
+            }
+          }
+        ]
+      },
+      "trace": {
+        "scenario_id": "1e3580e9-b086-4d2c-8b2f-aff0bc0a83f8",
+        "research_arm": "B3",
+        "workflow_id": "57a0686f-c2b3-4bae-bc24-8ede85567734",
+        "call_id": "43bae32b-a864-485a-a8e1-c81fe048352a",
+        "prerecorded_audio_sha256": "96ca029eb97abef12a51320a3de68f84fa3a04c550f10d989f38687299c99032",
+        "correction_scripted_at": "2026-09-28T16:00:25.434467+00:00",
+        "client_playback_evidence": [
+          {
+            "request": {
+              "event_id": "32a07675-363b-48ce-a30c-88694cd6cfaf",
+              "segment_id": "9e516c0d-2e8c-4ee5-b461-d390abf19f85",
+              "event_type": "STARTED",
+              "client_time": "2026-09-28T16:00:24.916227+00:00",
+              "played_ms": 0,
+              "last_frame": 0,
+              "last_word_index": 0
+            },
+            "response": {
+              "event_id": "32a07675-363b-48ce-a30c-88694cd6cfaf",
+              "segment_id": "9e516c0d-2e8c-4ee5-b461-d390abf19f85",
+              "state": "STARTED",
+              "repair_obligation_id": null
+            }
+          },
+          {
+            "request": {
+              "event_id": "c71c4416-d164-4c1d-90f8-c9fdfd64ea79",
+              "segment_id": "9e516c0d-2e8c-4ee5-b461-d390abf19f85",
+              "event_type": "PROGRESS",
+              "client_time": "2026-09-28T16:00:25.128636+00:00",
+              "played_ms": 500,
+              "last_frame": 8000,
+              "last_word_index": 2
+            },
+            "response": {
+              "event_id": "c71c4416-d164-4c1d-90f8-c9fdfd64ea79",
+              "segment_id": "9e516c0d-2e8c-4ee5-b461-d390abf19f85",
+              "state": "STARTED",
+              "repair_obligation_id": null
+            }
+          },
+          {
+            "request": {
+              "event_id": "76d081b0-b8cb-4550-8eb6-86238236fe41",
+              "segment_id": "9e516c0d-2e8c-4ee5-b461-d390abf19f85",
+              "event_type": "INTERRUPTED",
+              "client_time": "2026-09-28T16:00:25.319201+00:00",
+              "played_ms": 500,
+              "last_frame": 8000,
+              "last_word_index": 2
+            },
+            "response": {
+              "event_id": "76d081b0-b8cb-4550-8eb6-86238236fe41",
+              "segment_id": "9e516c0d-2e8c-4ee5-b461-d390abf19f85",
+              "state": "STOPPED",
+              "repair_obligation_id": null
+            }
+          },
+          {
+            "request": {
+              "event_id": "7b326c0b-443b-4400-878e-8c4805352b1f",
+              "segment_id": "25ef2687-fdf6-47e7-abb9-853c15be2344",
+              "event_type": "STARTED",
+              "client_time": "2026-09-28T16:00:28.204332+00:00",
+              "played_ms": 0,
+              "last_frame": 0,
+              "last_word_index": 0
+            },
+            "response": {
+              "event_id": "7b326c0b-443b-4400-878e-8c4805352b1f",
+              "segment_id": "25ef2687-fdf6-47e7-abb9-853c15be2344",
+              "state": "STARTED",
+              "repair_obligation_id": null
+            }
+          },
+          {
+            "request": {
+              "event_id": "868be511-fd57-429e-9a0f-db5c2a25d5d7",
+              "segment_id": "25ef2687-fdf6-47e7-abb9-853c15be2344",
+              "event_type": "COMPLETED",
+              "client_time": "2026-09-28T16:00:28.443567+00:00",
+              "played_ms": 2160,
+              "last_frame": 34560,
+              "last_word_index": 12
+            },
+            "response": {
+              "event_id": "868be511-fd57-429e-9a0f-db5c2a25d5d7",
+              "segment_id": "25ef2687-fdf6-47e7-abb9-853c15be2344",
+              "state": "COMPLETED",
+              "repair_obligation_id": null
+            }
+          }
+        ],
+        "initial_steps": [
+          {
+            "job_id": "27c9af58-0c03-40fa-a18a-2f86eb9b7944",
+            "action": "dispatch",
+            "state": "DONE",
+            "provider_status": 200,
+            "effect_knowledge": "UNKNOWN"
+          },
+          {
+            "job_id": "417204f2-8768-45c9-8cc7-402c4375ddbb",
+            "action": "reconcile",
+            "outcome": "PRESENT"
+          },
+          {
+            "action": "idle"
+          }
+        ],
+        "first_claim": {
+          "receipt": null,
+          "permit": null,
+          "scheduled": {
+            "segment_id": "9e516c0d-2e8c-4ee5-b461-d390abf19f85",
+            "state": "PUBLISHED",
+            "duration_ms": 1980,
+            "frame_count": 31680,
+            "text_hash": "181cb6f6f20120d03c3c3cd3ec9c4fef2a9c0300891c1f265a94391beeb6733c",
+            "audio_hash": "442261ece88baf652c4a2e6a651bc31e5617ed50db1889bc4de5a3bda9defe38"
+          }
+        },
+        "stale_segment": {
+          "id": "9e516c0d-2e8c-4ee5-b461-d390abf19f85",
+          "call_id": "43bae32b-a864-485a-a8e1-c81fe048352a",
+          "claim_permit_id": null,
+          "segment_class": "OUTCOME",
+          "content_hash": "181cb6f6f20120d03c3c3cd3ec9c4fef2a9c0300891c1f265a94391beeb6733c",
+          "tts_model_id": "deterministic-tone-tts-v1",
+          "tts_config_hash": "7bebfa8598ff7478c7494cbfb1156a80a774f88b4328439c509e10ea325a12f1",
+          "generated_at": "2026-09-28T16:00:24.871428Z",
+          "queued_at": null,
+          "published_at": "2026-09-28T16:00:24.871428Z",
+          "cancelled_at": "2026-09-28T16:00:26.149738Z",
+          "created_at": "2026-09-28T16:00:24.781150Z",
+          "workflow_id": "57a0686f-c2b3-4bae-bc24-8ede85567734",
+          "intent_revision": 1,
+          "claim_id": null,
+          "repair_obligation_id": null,
+          "segment_text": "Your maintenance appointment is confirmed for 3:00 PM on 2026-10-01 (Asia/Karachi).",
+          "audio_hash": "442261ece88baf652c4a2e6a651bc31e5617ed50db1889bc4de5a3bda9defe38",
+          "duration_ms": 1980,
+          "frame_count": 31680,
+          "word_timeline_json": [
+            {
+              "word": "Your",
+              "end_ms": 180,
+              "start_ms": 0
+            },
+            {
+              "word": "maintenance",
+              "end_ms": 360,
+              "start_ms": 180
+            },
+            {
+              "word": "appointment",
+              "end_ms": 540,
+              "start_ms": 360
+            },
+            {
+              "word": "is",
+              "end_ms": 720,
+              "start_ms": 540
+            },
+            {
+              "word": "confirmed",
+              "end_ms": 900,
+              "start_ms": 720
+            },
+            {
+              "word": "for",
+              "end_ms": 1080,
+              "start_ms": 900
+            },
+            {
+              "word": "3:00",
+              "end_ms": 1260,
+              "start_ms": 1080
+            },
+            {
+              "word": "PM",
+              "end_ms": 1440,
+              "start_ms": 1260
+            },
+            {
+              "word": "on",
+              "end_ms": 1620,
+              "start_ms": 1440
+            },
+            {
+              "word": "2026-10-01",
+              "end_ms": 1800,
+              "start_ms": 1620
+            },
+            {
+              "word": "(Asia/Karachi).",
+              "end_ms": 1980,
+              "start_ms": 1800
+            }
+          ],
+          "state": "STOPPED",
+          "started_at": "2026-09-28T16:00:25.048940Z",
+          "stopped_at": "2026-09-28T16:00:26.149738Z",
+          "completed_at": null,
+          "last_played_ms": 500,
+          "last_frame": 8000,
+          "last_word_index": 2,
+          "research_unpermitted": true
+        },
+        "acknowledged_partial_playback": {
+          "event_id": "c71c4416-d164-4c1d-90f8-c9fdfd64ea79",
+          "segment_id": "9e516c0d-2e8c-4ee5-b461-d390abf19f85",
+          "state": "STARTED",
+          "repair_obligation_id": null
+        },
+        "interrupted_playback": {
+          "event_id": "76d081b0-b8cb-4550-8eb6-86238236fe41",
+          "segment_id": "9e516c0d-2e8c-4ee5-b461-d390abf19f85",
+          "state": "STOPPED",
+          "repair_obligation_id": null
+        },
+        "correction": {
+          "call_id": "43bae32b-a864-485a-a8e1-c81fe048352a",
+          "workflow_id": "57a0686f-c2b3-4bae-bc24-8ede85567734",
+          "revision": 2,
+          "audio_hash": "96ca029eb97abef12a51320a3de68f84fa3a04c550f10d989f38687299c99032",
+          "transcript_hash": "bd41e5149e7a1492c87ba932b7a9b73462dc6d669d33e217516ce130f55f8cea",
+          "event_count": 12,
+          "trace_id": "3c7c8c52-ca87-42f0-8bd9-ba90dc722a35"
+        },
+        "repair_open": null,
+        "correction_steps": [
+          {
+            "job_id": "5e126fe6-d95d-46e1-865b-933d5fd501df",
+            "action": "reconcile",
+            "outcome": "PRESENT"
+          },
+          {
+            "job_id": "00551e37-2b19-4ee0-9289-69aa3c7f2f89",
+            "action": "dispatch",
+            "state": "DONE",
+            "provider_status": 200,
+            "effect_knowledge": "UNKNOWN"
+          },
+          {
+            "job_id": "d07129db-34fc-4509-a080-3b60605ddc88",
+            "action": "reconcile",
+            "outcome": "PRESENT"
+          },
+          {
+            "action": "idle"
+          }
+        ],
+        "corrected_claim": {
+          "receipt": null,
+          "permit": null,
+          "scheduled": {
+            "segment_id": "25ef2687-fdf6-47e7-abb9-853c15be2344",
+            "state": "PUBLISHED",
+            "duration_ms": 2160,
+            "frame_count": 34560,
+            "text_hash": "9219cfca1602c2c7bfdf24042fe3ee10a49d944bd54ffea206783cb01c67b311",
+            "audio_hash": "99a2e1349c742e3223ad4b0d1bceb26d2af19fc5eb3db47cb8e125097d06b89a"
+          }
+        },
+        "corrected_segment": {
+          "id": "25ef2687-fdf6-47e7-abb9-853c15be2344",
+          "call_id": "43bae32b-a864-485a-a8e1-c81fe048352a",
+          "claim_permit_id": null,
+          "segment_class": "OUTCOME",
+          "content_hash": "9219cfca1602c2c7bfdf24042fe3ee10a49d944bd54ffea206783cb01c67b311",
+          "tts_model_id": "deterministic-tone-tts-v1",
+          "tts_config_hash": "7bebfa8598ff7478c7494cbfb1156a80a774f88b4328439c509e10ea325a12f1",
+          "generated_at": "2026-09-28T16:00:28.178075Z",
+          "queued_at": null,
+          "published_at": "2026-09-28T16:00:28.178075Z",
+          "cancelled_at": null,
+          "created_at": "2026-09-28T16:00:27.935621Z",
+          "workflow_id": "57a0686f-c2b3-4bae-bc24-8ede85567734",
+          "intent_revision": 2,
+          "claim_id": null,
+          "repair_obligation_id": null,
+          "segment_text": "Your maintenance appointment has been moved to 4:00 PM on 2026-10-01 (Asia/Karachi).",
+          "audio_hash": "99a2e1349c742e3223ad4b0d1bceb26d2af19fc5eb3db47cb8e125097d06b89a",
+          "duration_ms": 2160,
+          "frame_count": 34560,
+          "word_timeline_json": [
+            {
+              "word": "Your",
+              "end_ms": 180,
+              "start_ms": 0
+            },
+            {
+              "word": "maintenance",
+              "end_ms": 360,
+              "start_ms": 180
+            },
+            {
+              "word": "appointment",
+              "end_ms": 540,
+              "start_ms": 360
+            },
+            {
+              "word": "has",
+              "end_ms": 720,
+              "start_ms": 540
+            },
+            {
+              "word": "been",
+              "end_ms": 900,
+              "start_ms": 720
+            },
+            {
+              "word": "moved",
+              "end_ms": 1080,
+              "start_ms": 900
+            },
+            {
+              "word": "to",
+              "end_ms": 1260,
+              "start_ms": 1080
+            },
+            {
+              "word": "4:00",
+              "end_ms": 1440,
+              "start_ms": 1260
+            },
+            {
+              "word": "PM",
+              "end_ms": 1620,
+              "start_ms": 1440
+            },
+            {
+              "word": "on",
+              "end_ms": 1800,
+              "start_ms": 1620
+            },
+            {
+              "word": "2026-10-01",
+              "end_ms": 1980,
+              "start_ms": 1800
+            },
+            {
+              "word": "(Asia/Karachi).",
+              "end_ms": 2160,
+              "start_ms": 1980
+            }
+          ],
+          "state": "STARTED",
+          "started_at": "2026-09-28T16:00:28.329080Z",
+          "stopped_at": null,
+          "completed_at": null,
+          "last_played_ms": 0,
+          "last_frame": 0,
+          "last_word_index": 0,
+          "research_unpermitted": true
+        },
+        "repair_authorized": null,
+        "corrected_playback": {
+          "event_id": "868be511-fd57-429e-9a0f-db5c2a25d5d7",
+          "segment_id": "25ef2687-fdf6-47e7-abb9-853c15be2344",
+          "state": "COMPLETED",
+          "repair_obligation_id": null
+        },
+        "livekit_sent": null,
+        "repair_played": null,
+        "normalized_timeline": [
+          {
+            "workflow_sequence": 1,
+            "event_name": "IntentRevisionAccepted",
+            "intent_revision": 1,
+            "payload": {
+              "revision": 1,
+              "change_class": "INITIAL",
+              "desired_state_hash": "14751ea21fb09c8f161e3938381528fbd84bc8eefbff5b5f2f438eec2d00ef67"
+            }
+          },
+          {
+            "workflow_sequence": 2,
+            "event_name": "OperationReady",
+            "intent_revision": 1,
+            "payload": {
+              "request_hash": "d41186cca21ea8b9c2e3efda2a2a8fbc1da5cdb38adbea4716df7980140143b1"
+            }
+          },
+          {
+            "workflow_sequence": 3,
+            "event_name": "DispatchRecorded",
+            "intent_revision": 1,
+            "payload": {
+              "attempt_id": "fe152185-5fc0-4f36-92c8-2771ef37ecd4"
+            }
+          },
+          {
+            "workflow_sequence": 4,
+            "event_name": "ProviderRequestSent",
+            "intent_revision": 1,
+            "payload": {
+              "attempt_id": "fe152185-5fc0-4f36-92c8-2771ef37ecd4"
+            }
+          },
+          {
+            "workflow_sequence": 5,
+            "event_name": "ProviderResponseReceived",
+            "intent_revision": 1,
+            "payload": {
+              "attempt_id": "fe152185-5fc0-4f36-92c8-2771ef37ecd4"
+            }
+          },
+          {
+            "workflow_sequence": 6,
+            "event_name": "ProviderEffectObserved",
+            "intent_revision": 1,
+            "payload": {
+              "facts_hash": "7af5897558e9baa54406725340a8b0b40b8a322f1eac56bb29fc9dc66864679f"
+            }
+          },
+          {
+            "workflow_sequence": 7,
+            "event_name": "WorkflowResolved",
+            "intent_revision": 1,
+            "payload": {
+              "resource_version": 0
+            }
+          },
+          {
+            "workflow_sequence": 8,
+            "event_name": "ResearchBaselineAudioPublished",
+            "intent_revision": 1,
+            "payload": {
+              "audio_hash": "442261ece88baf652c4a2e6a651bc31e5617ed50db1889bc4de5a3bda9defe38",
+              "segment_id": "9e516c0d-2e8c-4ee5-b461-d390abf19f85",
+              "research_arm": "B3",
+              "claim_permit_id": null
+            }
+          },
+          {
+            "workflow_sequence": 9,
+            "event_name": "PlaybackStarted",
+            "intent_revision": 1,
+            "payload": {
+              "played_ms": 0,
+              "last_frame": 0,
+              "segment_id": "9e516c0d-2e8c-4ee5-b461-d390abf19f85",
+              "last_word_index": 0
+            }
+          },
+          {
+            "workflow_sequence": 10,
+            "event_name": "PlaybackInterrupted",
+            "intent_revision": 1,
+            "payload": {
+              "played_ms": 500,
+              "last_frame": 8000,
+              "segment_id": "9e516c0d-2e8c-4ee5-b461-d390abf19f85",
+              "last_word_index": 2
+            }
+          },
+          {
+            "workflow_sequence": 11,
+            "event_name": "SpeechStarted",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": null,
+              "normalized_hash": "4672eff6534d51ea7f1ad31c56b7eef59ed008acfe668411c8e1087ace175a63",
+              "source_event_id": "p8:f4c431c7-a520-4814-9f38-e8ab3f137cbd:speech"
+            }
+          },
+          {
+            "workflow_sequence": 12,
+            "event_name": "InterruptionCandidate",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": null,
+              "normalized_hash": "7a01fd9531a4ff79e991ead441404936ac3f61a4fecc0c60f9f9cf825f00122a",
+              "source_event_id": "p8:f4c431c7-a520-4814-9f38-e8ab3f137cbd:interrupt-candidate"
+            }
+          },
+          {
+            "workflow_sequence": 13,
+            "event_name": "InterruptionAccepted",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": null,
+              "normalized_hash": "7a01fd9531a4ff79e991ead441404936ac3f61a4fecc0c60f9f9cf825f00122a",
+              "source_event_id": "p8:f4c431c7-a520-4814-9f38-e8ab3f137cbd:interrupt-accepted"
+            }
+          },
+          {
+            "workflow_sequence": 14,
+            "event_name": "TranscriptDelta",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": null,
+              "normalized_hash": "aa0ccf5796ea3e9ac8fdb7236dafa559bee0cc8390c647a450aa20e50ae8595c",
+              "source_event_id": "p8:f4c431c7-a520-4814-9f38-e8ab3f137cbd:delta:0"
+            }
+          },
+          {
+            "workflow_sequence": 15,
+            "event_name": "TranscriptDelta",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": null,
+              "normalized_hash": "79236f3dea347d3e9c64bf2516ffe144cdbf9abf4f748afac9e359fdc445f74a",
+              "source_event_id": "p8:f4c431c7-a520-4814-9f38-e8ab3f137cbd:delta:1"
+            }
+          },
+          {
+            "workflow_sequence": 16,
+            "event_name": "TranscriptDelta",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": null,
+              "normalized_hash": "ac4b93fd9c5e91703cb2935988e587f77372b806c49a269d716de9a6826c83d9",
+              "source_event_id": "p8:f4c431c7-a520-4814-9f38-e8ab3f137cbd:delta:2"
+            }
+          },
+          {
+            "workflow_sequence": 17,
+            "event_name": "TranscriptDelta",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": null,
+              "normalized_hash": "2ea66f8caf980e79cee491aac682682722267a27e0e5208d5d247df866bcf961",
+              "source_event_id": "p8:f4c431c7-a520-4814-9f38-e8ab3f137cbd:delta:3"
+            }
+          },
+          {
+            "workflow_sequence": 18,
+            "event_name": "TranscriptDelta",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": null,
+              "normalized_hash": "62038728db3ceda37cec048031a9eaecc41d0c1cf703ca3fca051dd5198cd06f",
+              "source_event_id": "p8:f4c431c7-a520-4814-9f38-e8ab3f137cbd:delta:4"
+            }
+          },
+          {
+            "workflow_sequence": 19,
+            "event_name": "PossibleEndOfTurn",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": null,
+              "normalized_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+              "source_event_id": "p8:f4c431c7-a520-4814-9f38-e8ab3f137cbd:possible-end"
+            }
+          },
+          {
+            "workflow_sequence": 20,
+            "event_name": "ConfirmedEndOfTurn",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": null,
+              "normalized_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+              "source_event_id": "p8:f4c431c7-a520-4814-9f38-e8ab3f137cbd:confirmed-end"
+            }
+          },
+          {
+            "workflow_sequence": 21,
+            "event_name": "TranscriptFinal",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": "d9dce94d-2aae-500a-b83d-671f18c4f3ef",
+              "normalized_hash": "56753d4ac71530c83c777e6a9db923e64de48a34a43f861ebf344300d8edbb57",
+              "source_event_id": "p8:f4c431c7-a520-4814-9f38-e8ab3f137cbd:final"
+            }
+          },
+          {
+            "workflow_sequence": 22,
+            "event_name": "ToolProposalReceived",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": null,
+              "normalized_hash": "e37ea8d959e0d0bc609fd67d01cd8394c4e39058ec9a7c77578cd27b9f6a327c",
+              "source_event_id": "p8:f4c431c7-a520-4814-9f38-e8ab3f137cbd:proposal"
+            }
+          },
+          {
+            "workflow_sequence": 23,
+            "event_name": "ReconciliationScheduled",
+            "intent_revision": 2,
+            "payload": {
+              "reason": "accepted_correction"
+            }
+          },
+          {
+            "workflow_sequence": 24,
+            "event_name": "OperationSuperseded",
+            "intent_revision": 2,
+            "payload": {
+              "effect_knowledge": "PRESENT",
+              "previous_revision": 1
+            }
+          },
+          {
+            "workflow_sequence": 25,
+            "event_name": "IntentRevisionAccepted",
+            "intent_revision": 2,
+            "payload": {
+              "revision": 2,
+              "change_class": "PARAMETER_CORRECTION",
+              "desired_state_hash": "1e3e3289ae80c1f9128b4b501af855dd0afd478790820ced3c77d636060216d9"
+            }
+          },
+          {
+            "workflow_sequence": 26,
+            "event_name": "AssistantAudioStopped",
+            "intent_revision": 2,
+            "payload": {
+              "reason": "accepted_revision",
+              "last_frame": 8000,
+              "segment_id": "9e516c0d-2e8c-4ee5-b461-d390abf19f85",
+              "last_word_index": 2
+            }
+          },
+          {
+            "workflow_sequence": 27,
+            "event_name": "ProviderEffectObserved",
+            "intent_revision": 1,
+            "payload": {
+              "facts_hash": "7af5897558e9baa54406725340a8b0b40b8a322f1eac56bb29fc9dc66864679f"
+            }
+          },
+          {
+            "workflow_sequence": 28,
+            "event_name": "OperationReady",
+            "intent_revision": 2,
+            "payload": {
+              "action": "RESCHEDULE",
+              "parent_operation_id": "9757eb43-d598-44a5-b755-a12ab0049e83"
+            }
+          },
+          {
+            "workflow_sequence": 29,
+            "event_name": "DispatchRecorded",
+            "intent_revision": 2,
+            "payload": {
+              "attempt_id": "b442051c-e731-43ee-8190-1a8364c89261"
+            }
+          },
+          {
+            "workflow_sequence": 30,
+            "event_name": "ProviderRequestSent",
+            "intent_revision": 2,
+            "payload": {
+              "attempt_id": "b442051c-e731-43ee-8190-1a8364c89261"
+            }
+          },
+          {
+            "workflow_sequence": 31,
+            "event_name": "ProviderResponseReceived",
+            "intent_revision": 2,
+            "payload": {
+              "attempt_id": "b442051c-e731-43ee-8190-1a8364c89261"
+            }
+          },
+          {
+            "workflow_sequence": 32,
+            "event_name": "ProviderEffectObserved",
+            "intent_revision": 2,
+            "payload": {
+              "facts_hash": "28ecfca82dae625af715e7c3ca47be4902db68cb3c94cf34d9aaa9fcab2b37b3"
+            }
+          },
+          {
+            "workflow_sequence": 33,
+            "event_name": "WorkflowResolved",
+            "intent_revision": 2,
+            "payload": {
+              "resource_version": 1
+            }
+          }
+        ],
+        "simulator_truth_log": [
+          {
+            "sequence": 1195,
+            "scenario_id": "1e3580e9-b086-4d2c-8b2f-aff0bc0a83f8",
+            "operation_id": "9757eb43-d598-44a5-b755-a12ab0049e83",
+            "request_hash": "d41186cca21ea8b9c2e3efda2a2a8fbc1da5cdb38adbea4716df7980140143b1",
+            "idempotency_key": "phase4-p8:62c9ba93-5eae-4754-a520-2aa54266c2ae",
+            "action": "CREATE",
+            "appointment_id": "9448664e-7653-4298-ba10-a32a601fdd70",
+            "resource_key": "property:1308c2bc-edaf-4a29-a5de-ee76c7abf814:maintenance",
+            "before_facts": null,
+            "after_facts": {
+              "status": "CONFIRMED",
+              "ends_at": "2026-10-01T11:00:00+00:00",
+              "version": 0,
+              "timezone": "Asia/Karachi",
+              "starts_at": "2026-10-01T10:00:00+00:00",
+              "resource_key": "property:1308c2bc-edaf-4a29-a5de-ee76c7abf814:maintenance",
+              "appointment_id": "9448664e-7653-4298-ba10-a32a601fdd70"
+            },
+            "result_code": "PRESENT",
+            "committed_at": "2026-09-28T16:00:24.003074Z"
+          },
+          {
+            "sequence": 1196,
+            "scenario_id": "1e3580e9-b086-4d2c-8b2f-aff0bc0a83f8",
+            "operation_id": "01ac38c8-3204-4e76-92f7-6f7ac8c0d5a7",
+            "request_hash": "fbf546cc209576b4d074a74adce727dfade39d92531eae0e3ac379bf04c05af9",
+            "idempotency_key": "linked:57a0686f-c2b3-4bae-bc24-8ede85567734:2:RESCHEDULE",
+            "action": "RESCHEDULE",
+            "appointment_id": "9448664e-7653-4298-ba10-a32a601fdd70",
+            "resource_key": "property:1308c2bc-edaf-4a29-a5de-ee76c7abf814:maintenance",
+            "before_facts": {
+              "status": "CONFIRMED",
+              "ends_at": "2026-10-01T11:00:00+00:00",
+              "version": 0,
+              "timezone": "Asia/Karachi",
+              "starts_at": "2026-10-01T10:00:00+00:00",
+              "resource_key": "property:1308c2bc-edaf-4a29-a5de-ee76c7abf814:maintenance",
+              "appointment_id": "9448664e-7653-4298-ba10-a32a601fdd70"
+            },
+            "after_facts": {
+              "status": "CONFIRMED",
+              "ends_at": "2026-10-01T12:00:00+00:00",
+              "version": 1,
+              "timezone": "Asia/Karachi",
+              "starts_at": "2026-10-01T11:00:00+00:00",
+              "resource_key": "property:1308c2bc-edaf-4a29-a5de-ee76c7abf814:maintenance",
+              "appointment_id": "9448664e-7653-4298-ba10-a32a601fdd70"
+            },
+            "result_code": "PRESENT",
+            "committed_at": "2026-09-28T16:00:26.954960Z"
+          }
+        ]
+      },
+      "oracle_result": {
+        "oracle_version": "phase6-p8-paired-truth-v1",
+        "partial_stale_span_acknowledged": true,
+        "partial_played_ms": 500,
+        "partial_last_frame": 8000,
+        "corrected_audio_fully_acknowledged": true,
+        "corrected_audio_states_final_intent": true,
+        "correction_success": true,
+        "unsupported_confirmation": false,
+        "played_span_repair_complete": false,
+        "truth_result_hash": "533fc9b1de09753089b0e4e5dcf24900dcfc95c01e67ef82bb429afb439a9b04",
+        "duplicate_effect": false,
+        "outcome_coverage": true,
+        "safe_resolution": false,
+        "result_hash": "43ec49e7994ee50cb0308b05c47aab294418cdc2011e855b2920ce56f2e32756"
+      },
+      "metrics": [
+        {
+          "metric_name": "correction_success",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 1,
+          "numerator": 1,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "unsupported_confirmation",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "duplicate_effect",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "safe_resolution",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "outcome_coverage",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 1,
+          "numerator": 1,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "played_span_repair_complete",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        }
+      ]
+    },
+    {
+      "execution_id": "1cc69bc3-4517-4152-b35e-927e5d21feba",
+      "arm": "P1",
+      "scenario_id": "356fcb8a-a986-4009-9230-d37ead5c5888",
+      "workflow_id": "a2402810-15a3-4651-81fe-5bf532a3a101",
+      "fault_occurrence_id": "d1ce9ee6-dd54-425f-9229-d1bffe96df5c",
+      "fault_placement_hash": "0d542946ba66a31c7d78e79dd3f8ab99fe9dfd3331e3eea39c5444370208d629",
+      "playback_acks": [
+        {
+          "event_id": "99b627a9-4761-45b2-85b8-ae3e76c04370",
+          "claim_type": "CURRENT_APPOINTMENT",
+          "claim_start": "2026-10-01T10:00:00Z",
+          "intent_revision": 1,
+          "released_at": "2026-09-28T16:00:30.949629Z",
+          "played_at": "2026-09-28T16:00:31.213304Z",
+          "played_ms": 500,
+          "permit_id": "7718b137-1e6f-4c55-a54f-13a9c6069e1e"
+        },
+        {
+          "event_id": "e478a845-97c3-4b11-bf5d-5fc89e95f4f1",
+          "claim_type": "RESCHEDULED_APPOINTMENT",
+          "claim_start": "2026-10-01T11:00:00Z",
+          "intent_revision": 2,
+          "released_at": "2026-09-28T16:00:34.803767Z",
+          "played_at": "2026-09-28T16:00:35.259514Z",
+          "played_ms": 2160,
+          "permit_id": "f9acf903-d224-4679-879d-3d0c98feeb26"
+        }
+      ],
+      "timing_evidence": {
+        "barriers": [
+          {
+            "id": "7d249fe3-111a-4dfc-ada9-e52de95d5f1b",
+            "barrier_name": "P8",
+            "ordinal": 1,
+            "state": "RELEASED",
+            "source_event_id": "99b627a9-4761-45b2-85b8-ae3e76c04370",
+            "reached_at": "2026-09-28 16:00:31.322240+00:00",
+            "released_at": "2026-09-28 16:00:31.429993+00:00"
+          }
+        ],
+        "faults": [
+          {
+            "id": "d1ce9ee6-dd54-425f-9229-d1bffe96df5c",
+            "barrier_name": "P8",
+            "fault_type": "PARTIAL_PLAYBACK",
+            "scheduled_target": {
+              "fault": "PARTIAL_PLAYBACK",
+              "target": "P8:1",
+              "barrier": "P8",
+              "request_index": 1
+            },
+            "actual_event_id": "7d249fe3-111a-4dfc-ada9-e52de95d5f1b",
+            "injected_at": "2026-09-28 16:00:35.524984+00:00",
+            "parameters": {
+              "placement_hash": "0d542946ba66a31c7d78e79dd3f8ab99fe9dfd3331e3eea39c5444370208d629"
+            }
+          }
+        ]
+      },
+      "trace": {
+        "scenario_id": "356fcb8a-a986-4009-9230-d37ead5c5888",
+        "research_arm": "P1",
+        "workflow_id": "a2402810-15a3-4651-81fe-5bf532a3a101",
+        "call_id": "4542f84a-5f65-4674-9aaf-bb5f40f9cc67",
+        "prerecorded_audio_sha256": "96ca029eb97abef12a51320a3de68f84fa3a04c550f10d989f38687299c99032",
+        "correction_scripted_at": "2026-09-28T16:00:31.539208+00:00",
+        "client_playback_evidence": [
+          {
+            "request": {
+              "event_id": "caa74230-f07a-4074-833c-8731df117359",
+              "segment_id": "4ab989f8-ada2-4c66-ab51-4a1104aacda0",
+              "event_type": "STARTED",
+              "client_time": "2026-09-28T16:00:30.949629+00:00",
+              "played_ms": 0,
+              "last_frame": 0,
+              "last_word_index": 0
+            },
+            "response": {
+              "event_id": "caa74230-f07a-4074-833c-8731df117359",
+              "segment_id": "4ab989f8-ada2-4c66-ab51-4a1104aacda0",
+              "state": "STARTED",
+              "repair_obligation_id": null
+            }
+          },
+          {
+            "request": {
+              "event_id": "99b627a9-4761-45b2-85b8-ae3e76c04370",
+              "segment_id": "4ab989f8-ada2-4c66-ab51-4a1104aacda0",
+              "event_type": "PROGRESS",
+              "client_time": "2026-09-28T16:00:31.213304+00:00",
+              "played_ms": 500,
+              "last_frame": 8000,
+              "last_word_index": 2
+            },
+            "response": {
+              "event_id": "99b627a9-4761-45b2-85b8-ae3e76c04370",
+              "segment_id": "4ab989f8-ada2-4c66-ab51-4a1104aacda0",
+              "state": "STARTED",
+              "repair_obligation_id": null
+            }
+          },
+          {
+            "request": {
+              "event_id": "a5ca685a-7aca-46e3-a996-84cd65fe5cf1",
+              "segment_id": "4ab989f8-ada2-4c66-ab51-4a1104aacda0",
+              "event_type": "INTERRUPTED",
+              "client_time": "2026-09-28T16:00:31.442667+00:00",
+              "played_ms": 500,
+              "last_frame": 8000,
+              "last_word_index": 2
+            },
+            "response": {
+              "event_id": "a5ca685a-7aca-46e3-a996-84cd65fe5cf1",
+              "segment_id": "4ab989f8-ada2-4c66-ab51-4a1104aacda0",
+              "state": "STOPPED",
+              "repair_obligation_id": null
+            }
+          },
+          {
+            "request": {
+              "event_id": "560a3ffb-8df1-4f3f-842a-97d671ca5a98",
+              "segment_id": "8caea017-1727-4e81-a2b5-04a77e9ca24c",
+              "event_type": "STARTED",
+              "client_time": "2026-09-28T16:00:34.803767+00:00",
+              "played_ms": 0,
+              "last_frame": 0,
+              "last_word_index": 0
+            },
+            "response": {
+              "event_id": "560a3ffb-8df1-4f3f-842a-97d671ca5a98",
+              "segment_id": "8caea017-1727-4e81-a2b5-04a77e9ca24c",
+              "state": "STARTED",
+              "repair_obligation_id": null
+            }
+          },
+          {
+            "request": {
+              "event_id": "e478a845-97c3-4b11-bf5d-5fc89e95f4f1",
+              "segment_id": "8caea017-1727-4e81-a2b5-04a77e9ca24c",
+              "event_type": "COMPLETED",
+              "client_time": "2026-09-28T16:00:35.259514+00:00",
+              "played_ms": 2160,
+              "last_frame": 34560,
+              "last_word_index": 12
+            },
+            "response": {
+              "event_id": "e478a845-97c3-4b11-bf5d-5fc89e95f4f1",
+              "segment_id": "8caea017-1727-4e81-a2b5-04a77e9ca24c",
+              "state": "COMPLETED",
+              "repair_obligation_id": null
+            }
+          }
+        ],
+        "initial_steps": [
+          {
+            "job_id": "5a03d014-9abe-4b44-acb5-0e65ee17efba",
+            "action": "dispatch",
+            "state": "DONE",
+            "provider_status": 200,
+            "effect_knowledge": "UNKNOWN"
+          },
+          {
+            "job_id": "f1769fb6-61af-4a84-9fb8-398d02e6572a",
+            "action": "reconcile",
+            "outcome": "PRESENT"
+          },
+          {
+            "action": "idle"
+          }
+        ],
+        "first_claim": {
+          "receipt": {
+            "receipt_id": "15d74234-f1cc-4ab0-b245-712f26068d04",
+            "result": "SATISFIED",
+            "claim_type": "CURRENT_APPOINTMENT",
+            "intent_revision": 1,
+            "observed_resource_version": "0",
+            "valid_until": "2026-09-28T16:01:00.420531+00:00"
+          },
+          "permit": {
+            "claim_id": "c3528489-f96d-4520-877f-46b87bbac072",
+            "permit_id": "7718b137-1e6f-4c55-a54f-13a9c6069e1e",
+            "claim_type": "CURRENT_APPOINTMENT",
+            "content_hash": "181cb6f6f20120d03c3c3cd3ec9c4fef2a9c0300891c1f265a94391beeb6733c",
+            "expires_at": "2026-09-28T16:01:00.420531+00:00",
+            "state": "AUTHORIZED"
+          },
+          "scheduled": {
+            "segment_id": "4ab989f8-ada2-4c66-ab51-4a1104aacda0",
+            "state": "PUBLISHED",
+            "audio_url": "/v1/audio-segments/4ab989f8-ada2-4c66-ab51-4a1104aacda0/audio",
+            "duration_ms": 1980,
+            "frame_count": 31680,
+            "text_hash": "181cb6f6f20120d03c3c3cd3ec9c4fef2a9c0300891c1f265a94391beeb6733c",
+            "audio_hash": "442261ece88baf652c4a2e6a651bc31e5617ed50db1889bc4de5a3bda9defe38"
+          }
+        },
+        "stale_segment": {
+          "id": "4ab989f8-ada2-4c66-ab51-4a1104aacda0",
+          "call_id": "4542f84a-5f65-4674-9aaf-bb5f40f9cc67",
+          "claim_permit_id": "7718b137-1e6f-4c55-a54f-13a9c6069e1e",
+          "segment_class": "OUTCOME",
+          "content_hash": "181cb6f6f20120d03c3c3cd3ec9c4fef2a9c0300891c1f265a94391beeb6733c",
+          "tts_model_id": "deterministic-tone-tts-v1",
+          "tts_config_hash": "7bebfa8598ff7478c7494cbfb1156a80a774f88b4328439c509e10ea325a12f1",
+          "generated_at": "2026-09-28T16:00:30.700271Z",
+          "queued_at": "2026-09-28T16:00:30.749832Z",
+          "published_at": "2026-09-28T16:00:30.921974Z",
+          "cancelled_at": "2026-09-28T16:00:32.317660Z",
+          "created_at": "2026-09-28T16:00:30.700271Z",
+          "workflow_id": "a2402810-15a3-4651-81fe-5bf532a3a101",
+          "intent_revision": 1,
+          "claim_id": "c3528489-f96d-4520-877f-46b87bbac072",
+          "repair_obligation_id": null,
+          "segment_text": "Your maintenance appointment is confirmed for 3:00 PM on 2026-10-01 (Asia/Karachi).",
+          "audio_hash": "442261ece88baf652c4a2e6a651bc31e5617ed50db1889bc4de5a3bda9defe38",
+          "duration_ms": 1980,
+          "frame_count": 31680,
+          "word_timeline_json": [
+            {
+              "word": "Your",
+              "end_ms": 180,
+              "start_ms": 0
+            },
+            {
+              "word": "maintenance",
+              "end_ms": 360,
+              "start_ms": 180
+            },
+            {
+              "word": "appointment",
+              "end_ms": 540,
+              "start_ms": 360
+            },
+            {
+              "word": "is",
+              "end_ms": 720,
+              "start_ms": 540
+            },
+            {
+              "word": "confirmed",
+              "end_ms": 900,
+              "start_ms": 720
+            },
+            {
+              "word": "for",
+              "end_ms": 1080,
+              "start_ms": 900
+            },
+            {
+              "word": "3:00",
+              "end_ms": 1260,
+              "start_ms": 1080
+            },
+            {
+              "word": "PM",
+              "end_ms": 1440,
+              "start_ms": 1260
+            },
+            {
+              "word": "on",
+              "end_ms": 1620,
+              "start_ms": 1440
+            },
+            {
+              "word": "2026-10-01",
+              "end_ms": 1800,
+              "start_ms": 1620
+            },
+            {
+              "word": "(Asia/Karachi).",
+              "end_ms": 1980,
+              "start_ms": 1800
+            }
+          ],
+          "state": "STOPPED",
+          "started_at": "2026-09-28T16:00:31.114929Z",
+          "stopped_at": "2026-09-28T16:00:32.317660Z",
+          "completed_at": null,
+          "last_played_ms": 500,
+          "last_frame": 8000,
+          "last_word_index": 2,
+          "research_unpermitted": false
+        },
+        "acknowledged_partial_playback": {
+          "event_id": "99b627a9-4761-45b2-85b8-ae3e76c04370",
+          "segment_id": "4ab989f8-ada2-4c66-ab51-4a1104aacda0",
+          "state": "STARTED",
+          "repair_obligation_id": null
+        },
+        "interrupted_playback": {
+          "event_id": "a5ca685a-7aca-46e3-a996-84cd65fe5cf1",
+          "segment_id": "4ab989f8-ada2-4c66-ab51-4a1104aacda0",
+          "state": "STOPPED",
+          "repair_obligation_id": null
+        },
+        "correction": {
+          "call_id": "4542f84a-5f65-4674-9aaf-bb5f40f9cc67",
+          "workflow_id": "a2402810-15a3-4651-81fe-5bf532a3a101",
+          "revision": 2,
+          "audio_hash": "96ca029eb97abef12a51320a3de68f84fa3a04c550f10d989f38687299c99032",
+          "transcript_hash": "bd41e5149e7a1492c87ba932b7a9b73462dc6d669d33e217516ce130f55f8cea",
+          "event_count": 12,
+          "trace_id": "c0645bb4-1ead-4515-84ef-e61b11f6f36d"
+        },
+        "repair_open": null,
+        "correction_steps": [
+          {
+            "job_id": "76d35a30-d904-49f4-92ca-53b37a5b4abf",
+            "action": "reconcile",
+            "outcome": "PRESENT"
+          },
+          {
+            "job_id": "188576c7-730d-4043-bf07-e1f8c9abc7bb",
+            "action": "dispatch",
+            "state": "DONE",
+            "provider_status": 200,
+            "effect_knowledge": "UNKNOWN"
+          },
+          {
+            "job_id": "8d063a17-ee0b-47ea-9b8a-0616670ee2e2",
+            "action": "reconcile",
+            "outcome": "PRESENT"
+          },
+          {
+            "action": "idle"
+          }
+        ],
+        "corrected_claim": {
+          "receipt": {
+            "receipt_id": "c0169c35-b84e-45da-b1e8-ce06a2c0470d",
+            "result": "SATISFIED",
+            "claim_type": "RESCHEDULED_APPOINTMENT",
+            "intent_revision": 2,
+            "observed_resource_version": "1",
+            "valid_until": "2026-09-28T16:01:03.941084+00:00"
+          },
+          "permit": {
+            "claim_id": "bcb87ec9-9918-45ac-9bc3-c84ff13b935f",
+            "permit_id": "f9acf903-d224-4679-879d-3d0c98feeb26",
+            "claim_type": "RESCHEDULED_APPOINTMENT",
+            "content_hash": "9219cfca1602c2c7bfdf24042fe3ee10a49d944bd54ffea206783cb01c67b311",
+            "expires_at": "2026-09-28T16:01:03.941084+00:00",
+            "state": "AUTHORIZED"
+          },
+          "scheduled": {
+            "segment_id": "8caea017-1727-4e81-a2b5-04a77e9ca24c",
+            "state": "PUBLISHED",
+            "audio_url": "/v1/audio-segments/8caea017-1727-4e81-a2b5-04a77e9ca24c/audio",
+            "duration_ms": 2160,
+            "frame_count": 34560,
+            "text_hash": "9219cfca1602c2c7bfdf24042fe3ee10a49d944bd54ffea206783cb01c67b311",
+            "audio_hash": "99a2e1349c742e3223ad4b0d1bceb26d2af19fc5eb3db47cb8e125097d06b89a"
+          }
+        },
+        "corrected_segment": {
+          "id": "8caea017-1727-4e81-a2b5-04a77e9ca24c",
+          "call_id": "4542f84a-5f65-4674-9aaf-bb5f40f9cc67",
+          "claim_permit_id": "f9acf903-d224-4679-879d-3d0c98feeb26",
+          "segment_class": "OUTCOME",
+          "content_hash": "9219cfca1602c2c7bfdf24042fe3ee10a49d944bd54ffea206783cb01c67b311",
+          "tts_model_id": "deterministic-tone-tts-v1",
+          "tts_config_hash": "7bebfa8598ff7478c7494cbfb1156a80a774f88b4328439c509e10ea325a12f1",
+          "generated_at": "2026-09-28T16:00:34.291634Z",
+          "queued_at": "2026-09-28T16:00:34.358547Z",
+          "published_at": "2026-09-28T16:00:34.775731Z",
+          "cancelled_at": null,
+          "created_at": "2026-09-28T16:00:34.291634Z",
+          "workflow_id": "a2402810-15a3-4651-81fe-5bf532a3a101",
+          "intent_revision": 2,
+          "claim_id": "bcb87ec9-9918-45ac-9bc3-c84ff13b935f",
+          "repair_obligation_id": null,
+          "segment_text": "Your maintenance appointment has been moved to 4:00 PM on 2026-10-01 (Asia/Karachi).",
+          "audio_hash": "99a2e1349c742e3223ad4b0d1bceb26d2af19fc5eb3db47cb8e125097d06b89a",
+          "duration_ms": 2160,
+          "frame_count": 34560,
+          "word_timeline_json": [
+            {
+              "word": "Your",
+              "end_ms": 180,
+              "start_ms": 0
+            },
+            {
+              "word": "maintenance",
+              "end_ms": 360,
+              "start_ms": 180
+            },
+            {
+              "word": "appointment",
+              "end_ms": 540,
+              "start_ms": 360
+            },
+            {
+              "word": "has",
+              "end_ms": 720,
+              "start_ms": 540
+            },
+            {
+              "word": "been",
+              "end_ms": 900,
+              "start_ms": 720
+            },
+            {
+              "word": "moved",
+              "end_ms": 1080,
+              "start_ms": 900
+            },
+            {
+              "word": "to",
+              "end_ms": 1260,
+              "start_ms": 1080
+            },
+            {
+              "word": "4:00",
+              "end_ms": 1440,
+              "start_ms": 1260
+            },
+            {
+              "word": "PM",
+              "end_ms": 1620,
+              "start_ms": 1440
+            },
+            {
+              "word": "on",
+              "end_ms": 1800,
+              "start_ms": 1620
+            },
+            {
+              "word": "2026-10-01",
+              "end_ms": 1980,
+              "start_ms": 1800
+            },
+            {
+              "word": "(Asia/Karachi).",
+              "end_ms": 2160,
+              "start_ms": 1980
+            }
+          ],
+          "state": "STARTED",
+          "started_at": "2026-09-28T16:00:35.175368Z",
+          "stopped_at": null,
+          "completed_at": null,
+          "last_played_ms": 0,
+          "last_frame": 0,
+          "last_word_index": 0,
+          "research_unpermitted": false
+        },
+        "repair_authorized": null,
+        "corrected_playback": {
+          "event_id": "e478a845-97c3-4b11-bf5d-5fc89e95f4f1",
+          "segment_id": "8caea017-1727-4e81-a2b5-04a77e9ca24c",
+          "state": "COMPLETED",
+          "repair_obligation_id": null
+        },
+        "livekit_sent": null,
+        "repair_played": null,
+        "normalized_timeline": [
+          {
+            "workflow_sequence": 1,
+            "event_name": "IntentRevisionAccepted",
+            "intent_revision": 1,
+            "payload": {
+              "revision": 1,
+              "change_class": "INITIAL",
+              "desired_state_hash": "d5941162e10ec7e88f7f4eef88def6ca21520247da17f569a8113a0968a6d8b3"
+            }
+          },
+          {
+            "workflow_sequence": 2,
+            "event_name": "OperationReady",
+            "intent_revision": 1,
+            "payload": {
+              "request_hash": "65168cd82485abb6f5f5ee5a626c9969507b7323c60ee04b213db65d005dd18c"
+            }
+          },
+          {
+            "workflow_sequence": 3,
+            "event_name": "DispatchRecorded",
+            "intent_revision": 1,
+            "payload": {
+              "attempt_id": "020c753b-a9c6-4052-b483-030199dbc5f9"
+            }
+          },
+          {
+            "workflow_sequence": 4,
+            "event_name": "ProviderRequestSent",
+            "intent_revision": 1,
+            "payload": {
+              "attempt_id": "020c753b-a9c6-4052-b483-030199dbc5f9"
+            }
+          },
+          {
+            "workflow_sequence": 5,
+            "event_name": "ProviderResponseReceived",
+            "intent_revision": 1,
+            "payload": {
+              "attempt_id": "020c753b-a9c6-4052-b483-030199dbc5f9"
+            }
+          },
+          {
+            "workflow_sequence": 6,
+            "event_name": "ProviderEffectObserved",
+            "intent_revision": 1,
+            "payload": {
+              "facts_hash": "8d06c7238aca6a65d2735cee5b2a893ff10fa4b6930039e99b08ddc386888398"
+            }
+          },
+          {
+            "workflow_sequence": 7,
+            "event_name": "WorkflowResolved",
+            "intent_revision": 1,
+            "payload": {
+              "resource_version": 0
+            }
+          },
+          {
+            "workflow_sequence": 8,
+            "event_name": "VerificationSatisfied",
+            "intent_revision": 1,
+            "payload": {
+              "result": "SATISFIED",
+              "receipt_id": "15d74234-f1cc-4ab0-b245-712f26068d04"
+            }
+          },
+          {
+            "workflow_sequence": 9,
+            "event_name": "ReceiptIssued",
+            "intent_revision": 1,
+            "payload": {
+              "receipt_id": "15d74234-f1cc-4ab0-b245-712f26068d04",
+              "receipt_hash": "78ad9e17eccc91ba702bfde0574a66ad0f13dd9b8e806f7b4f23b27ca0b97dbd"
+            }
+          },
+          {
+            "workflow_sequence": 10,
+            "event_name": "ClaimPrepared",
+            "intent_revision": 1,
+            "payload": {
+              "claim_id": "c3528489-f96d-4520-877f-46b87bbac072",
+              "content_hash": "181cb6f6f20120d03c3c3cd3ec9c4fef2a9c0300891c1f265a94391beeb6733c"
+            }
+          },
+          {
+            "workflow_sequence": 11,
+            "event_name": "ClaimAuthorized",
+            "intent_revision": 1,
+            "payload": {
+              "permit_id": "7718b137-1e6f-4c55-a54f-13a9c6069e1e",
+              "receipt_id": "15d74234-f1cc-4ab0-b245-712f26068d04"
+            }
+          },
+          {
+            "workflow_sequence": 12,
+            "event_name": "ClaimQueued",
+            "intent_revision": 1,
+            "payload": {
+              "permit_id": "7718b137-1e6f-4c55-a54f-13a9c6069e1e"
+            }
+          },
+          {
+            "workflow_sequence": 13,
+            "event_name": "AudioGenerated",
+            "intent_revision": 1,
+            "payload": {
+              "audio_hash": "442261ece88baf652c4a2e6a651bc31e5617ed50db1889bc4de5a3bda9defe38",
+              "segment_id": "4ab989f8-ada2-4c66-ab51-4a1104aacda0",
+              "segment_class": "OUTCOME"
+            }
+          },
+          {
+            "workflow_sequence": 14,
+            "event_name": "AssistantAudioQueued",
+            "intent_revision": 1,
+            "payload": {
+              "segment_id": "4ab989f8-ada2-4c66-ab51-4a1104aacda0"
+            }
+          },
+          {
+            "workflow_sequence": 15,
+            "event_name": "ClaimPublished",
+            "intent_revision": 1,
+            "payload": {
+              "claim_id": "c3528489-f96d-4520-877f-46b87bbac072",
+              "permit_id": "7718b137-1e6f-4c55-a54f-13a9c6069e1e",
+              "content_hash": "181cb6f6f20120d03c3c3cd3ec9c4fef2a9c0300891c1f265a94391beeb6733c"
+            }
+          },
+          {
+            "workflow_sequence": 16,
+            "event_name": "AudioPublished",
+            "intent_revision": 1,
+            "payload": {
+              "audio_hash": "442261ece88baf652c4a2e6a651bc31e5617ed50db1889bc4de5a3bda9defe38",
+              "segment_id": "4ab989f8-ada2-4c66-ab51-4a1104aacda0"
+            }
+          },
+          {
+            "workflow_sequence": 17,
+            "event_name": "PlaybackStarted",
+            "intent_revision": 1,
+            "payload": {
+              "played_ms": 0,
+              "last_frame": 0,
+              "segment_id": "4ab989f8-ada2-4c66-ab51-4a1104aacda0",
+              "last_word_index": 0
+            }
+          },
+          {
+            "workflow_sequence": 18,
+            "event_name": "PlaybackInterrupted",
+            "intent_revision": 1,
+            "payload": {
+              "played_ms": 500,
+              "last_frame": 8000,
+              "segment_id": "4ab989f8-ada2-4c66-ab51-4a1104aacda0",
+              "last_word_index": 2
+            }
+          },
+          {
+            "workflow_sequence": 19,
+            "event_name": "SpeechStarted",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": null,
+              "normalized_hash": "4672eff6534d51ea7f1ad31c56b7eef59ed008acfe668411c8e1087ace175a63",
+              "source_event_id": "p8:00a1743a-9038-4438-8197-29a8c91f15d8:speech"
+            }
+          },
+          {
+            "workflow_sequence": 20,
+            "event_name": "InterruptionCandidate",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": null,
+              "normalized_hash": "ee232231cd1076424587c442a34c5647fa8137a486f31b55de146dc1c3f8818c",
+              "source_event_id": "p8:00a1743a-9038-4438-8197-29a8c91f15d8:interrupt-candidate"
+            }
+          },
+          {
+            "workflow_sequence": 21,
+            "event_name": "InterruptionAccepted",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": null,
+              "normalized_hash": "ee232231cd1076424587c442a34c5647fa8137a486f31b55de146dc1c3f8818c",
+              "source_event_id": "p8:00a1743a-9038-4438-8197-29a8c91f15d8:interrupt-accepted"
+            }
+          },
+          {
+            "workflow_sequence": 22,
+            "event_name": "TranscriptDelta",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": null,
+              "normalized_hash": "aa0ccf5796ea3e9ac8fdb7236dafa559bee0cc8390c647a450aa20e50ae8595c",
+              "source_event_id": "p8:00a1743a-9038-4438-8197-29a8c91f15d8:delta:0"
+            }
+          },
+          {
+            "workflow_sequence": 23,
+            "event_name": "TranscriptDelta",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": null,
+              "normalized_hash": "79236f3dea347d3e9c64bf2516ffe144cdbf9abf4f748afac9e359fdc445f74a",
+              "source_event_id": "p8:00a1743a-9038-4438-8197-29a8c91f15d8:delta:1"
+            }
+          },
+          {
+            "workflow_sequence": 24,
+            "event_name": "TranscriptDelta",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": null,
+              "normalized_hash": "ac4b93fd9c5e91703cb2935988e587f77372b806c49a269d716de9a6826c83d9",
+              "source_event_id": "p8:00a1743a-9038-4438-8197-29a8c91f15d8:delta:2"
+            }
+          },
+          {
+            "workflow_sequence": 25,
+            "event_name": "TranscriptDelta",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": null,
+              "normalized_hash": "2ea66f8caf980e79cee491aac682682722267a27e0e5208d5d247df866bcf961",
+              "source_event_id": "p8:00a1743a-9038-4438-8197-29a8c91f15d8:delta:3"
+            }
+          },
+          {
+            "workflow_sequence": 26,
+            "event_name": "TranscriptDelta",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": null,
+              "normalized_hash": "62038728db3ceda37cec048031a9eaecc41d0c1cf703ca3fca051dd5198cd06f",
+              "source_event_id": "p8:00a1743a-9038-4438-8197-29a8c91f15d8:delta:4"
+            }
+          },
+          {
+            "workflow_sequence": 27,
+            "event_name": "PossibleEndOfTurn",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": null,
+              "normalized_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+              "source_event_id": "p8:00a1743a-9038-4438-8197-29a8c91f15d8:possible-end"
+            }
+          },
+          {
+            "workflow_sequence": 28,
+            "event_name": "ConfirmedEndOfTurn",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": null,
+              "normalized_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+              "source_event_id": "p8:00a1743a-9038-4438-8197-29a8c91f15d8:confirmed-end"
+            }
+          },
+          {
+            "workflow_sequence": 29,
+            "event_name": "TranscriptFinal",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": "11c3601e-64fa-5ae8-a859-4f101ae0dc07",
+              "normalized_hash": "56753d4ac71530c83c777e6a9db923e64de48a34a43f861ebf344300d8edbb57",
+              "source_event_id": "p8:00a1743a-9038-4438-8197-29a8c91f15d8:final"
+            }
+          },
+          {
+            "workflow_sequence": 30,
+            "event_name": "ToolProposalReceived",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": null,
+              "normalized_hash": "f7b8814c754951e537bc5886e23b26f1c7f9f5cc5859eb3e17ed33b2ee31d6c6",
+              "source_event_id": "p8:00a1743a-9038-4438-8197-29a8c91f15d8:proposal"
+            }
+          },
+          {
+            "workflow_sequence": 31,
+            "event_name": "ReconciliationScheduled",
+            "intent_revision": 2,
+            "payload": {
+              "reason": "accepted_correction"
+            }
+          },
+          {
+            "workflow_sequence": 32,
+            "event_name": "OperationSuperseded",
+            "intent_revision": 2,
+            "payload": {
+              "effect_knowledge": "PRESENT",
+              "previous_revision": 1
+            }
+          },
+          {
+            "workflow_sequence": 33,
+            "event_name": "IntentRevisionAccepted",
+            "intent_revision": 2,
+            "payload": {
+              "revision": 2,
+              "change_class": "PARAMETER_CORRECTION",
+              "desired_state_hash": "76d4ad4e8df9f03e194fe840b95fc5ab5f03df8bf007cd37646134f6ab66a38a"
+            }
+          },
+          {
+            "workflow_sequence": 34,
+            "event_name": "ReceiptInvalidated",
+            "intent_revision": 2,
+            "payload": {
+              "reason": "new_accepted_revision",
+              "receipt_id": "15d74234-f1cc-4ab0-b245-712f26068d04"
+            }
+          },
+          {
+            "workflow_sequence": 35,
+            "event_name": "AssistantAudioStopped",
+            "intent_revision": 2,
+            "payload": {
+              "reason": "accepted_revision",
+              "last_frame": 8000,
+              "segment_id": "4ab989f8-ada2-4c66-ab51-4a1104aacda0",
+              "last_word_index": 2
+            }
+          },
+          {
+            "workflow_sequence": 36,
+            "event_name": "ProviderEffectObserved",
+            "intent_revision": 1,
+            "payload": {
+              "facts_hash": "8d06c7238aca6a65d2735cee5b2a893ff10fa4b6930039e99b08ddc386888398"
+            }
+          },
+          {
+            "workflow_sequence": 37,
+            "event_name": "OperationReady",
+            "intent_revision": 2,
+            "payload": {
+              "action": "RESCHEDULE",
+              "parent_operation_id": "733d63ff-460e-4598-b8cd-54047ddbcfc2"
+            }
+          },
+          {
+            "workflow_sequence": 38,
+            "event_name": "DispatchRecorded",
+            "intent_revision": 2,
+            "payload": {
+              "attempt_id": "3635bb26-c170-49ee-843b-f10c13a11e67"
+            }
+          },
+          {
+            "workflow_sequence": 39,
+            "event_name": "ProviderRequestSent",
+            "intent_revision": 2,
+            "payload": {
+              "attempt_id": "3635bb26-c170-49ee-843b-f10c13a11e67"
+            }
+          },
+          {
+            "workflow_sequence": 40,
+            "event_name": "ProviderResponseReceived",
+            "intent_revision": 2,
+            "payload": {
+              "attempt_id": "3635bb26-c170-49ee-843b-f10c13a11e67"
+            }
+          },
+          {
+            "workflow_sequence": 41,
+            "event_name": "ProviderEffectObserved",
+            "intent_revision": 2,
+            "payload": {
+              "facts_hash": "6dd851f60f6837bce3af98d2c0012146b44aba3d80f90d8143bc7e7e1bfbfcc2"
+            }
+          },
+          {
+            "workflow_sequence": 42,
+            "event_name": "WorkflowResolved",
+            "intent_revision": 2,
+            "payload": {
+              "resource_version": 1
+            }
+          }
+        ],
+        "simulator_truth_log": [
+          {
+            "sequence": 1197,
+            "scenario_id": "356fcb8a-a986-4009-9230-d37ead5c5888",
+            "operation_id": "733d63ff-460e-4598-b8cd-54047ddbcfc2",
+            "request_hash": "65168cd82485abb6f5f5ee5a626c9969507b7323c60ee04b213db65d005dd18c",
+            "idempotency_key": "phase4-p8:ff7ef488-bd38-4b18-8785-cb71ac34e051",
+            "action": "CREATE",
+            "appointment_id": "8370fcd1-9754-4454-bfc4-032c0d228ba5",
+            "resource_key": "property:c75efafc-a2c2-4307-a229-53098701c67e:maintenance",
+            "before_facts": null,
+            "after_facts": {
+              "status": "CONFIRMED",
+              "ends_at": "2026-10-01T11:00:00+00:00",
+              "version": 0,
+              "timezone": "Asia/Karachi",
+              "starts_at": "2026-10-01T10:00:00+00:00",
+              "resource_key": "property:c75efafc-a2c2-4307-a229-53098701c67e:maintenance",
+              "appointment_id": "8370fcd1-9754-4454-bfc4-032c0d228ba5"
+            },
+            "result_code": "PRESENT",
+            "committed_at": "2026-09-28T16:00:29.854353Z"
+          },
+          {
+            "sequence": 1198,
+            "scenario_id": "356fcb8a-a986-4009-9230-d37ead5c5888",
+            "operation_id": "8a023d73-2a04-4b8e-8f30-d7cf0fb3f4cf",
+            "request_hash": "1931c0b977fce62150e938cda4f94f582c5b6d978366959ed4b5cfb89f92fe9f",
+            "idempotency_key": "linked:a2402810-15a3-4651-81fe-5bf532a3a101:2:RESCHEDULE",
+            "action": "RESCHEDULE",
+            "appointment_id": "8370fcd1-9754-4454-bfc4-032c0d228ba5",
+            "resource_key": "property:c75efafc-a2c2-4307-a229-53098701c67e:maintenance",
+            "before_facts": {
+              "status": "CONFIRMED",
+              "ends_at": "2026-10-01T11:00:00+00:00",
+              "version": 0,
+              "timezone": "Asia/Karachi",
+              "starts_at": "2026-10-01T10:00:00+00:00",
+              "resource_key": "property:c75efafc-a2c2-4307-a229-53098701c67e:maintenance",
+              "appointment_id": "8370fcd1-9754-4454-bfc4-032c0d228ba5"
+            },
+            "after_facts": {
+              "status": "CONFIRMED",
+              "ends_at": "2026-10-01T12:00:00+00:00",
+              "version": 1,
+              "timezone": "Asia/Karachi",
+              "starts_at": "2026-10-01T11:00:00+00:00",
+              "resource_key": "property:c75efafc-a2c2-4307-a229-53098701c67e:maintenance",
+              "appointment_id": "8370fcd1-9754-4454-bfc4-032c0d228ba5"
+            },
+            "result_code": "PRESENT",
+            "committed_at": "2026-09-28T16:00:33.072700Z"
+          }
+        ]
+      },
+      "oracle_result": {
+        "oracle_version": "phase6-p8-paired-truth-v1",
+        "partial_stale_span_acknowledged": true,
+        "partial_played_ms": 500,
+        "partial_last_frame": 8000,
+        "corrected_audio_fully_acknowledged": true,
+        "corrected_audio_states_final_intent": true,
+        "correction_success": true,
+        "unsupported_confirmation": false,
+        "played_span_repair_complete": false,
+        "truth_result_hash": "6b253f8be0464ad2557b9f2910c1f29744de2bfc6eff84643df2e9c64930b552",
+        "duplicate_effect": false,
+        "outcome_coverage": true,
+        "safe_resolution": false,
+        "result_hash": "cfe7fde659e0f68fec0762961e114a6fac1fb9b6428865924b3ecf417286f79d"
+      },
+      "metrics": [
+        {
+          "metric_name": "correction_success",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 1,
+          "numerator": 1,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "unsupported_confirmation",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "duplicate_effect",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "safe_resolution",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "outcome_coverage",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 1,
+          "numerator": 1,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "played_span_repair_complete",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        }
+      ]
+    },
+    {
+      "execution_id": "42b65910-f670-4238-914b-7854af3d448a",
+      "arm": "P2",
+      "scenario_id": "8e3fdb97-4fe0-4a91-9085-3f23fb62c33b",
+      "workflow_id": "b9f5356f-64df-4dc3-b97c-5771c55a0b2d",
+      "fault_occurrence_id": "5db9cc60-0ac1-4bd9-b294-89e7105154e4",
+      "fault_placement_hash": "0d542946ba66a31c7d78e79dd3f8ab99fe9dfd3331e3eea39c5444370208d629",
+      "playback_acks": [
+        {
+          "event_id": "fe9d3df8-6751-4d31-948b-d7cb8f75aea8",
+          "claim_type": "CURRENT_APPOINTMENT",
+          "claim_start": "2026-10-01T10:00:00Z",
+          "intent_revision": 1,
+          "released_at": "2026-09-28T16:00:37.697321Z",
+          "played_at": "2026-09-28T16:00:37.881875Z",
+          "played_ms": 500,
+          "permit_id": "4f248488-527d-4b8e-a98b-872ffe952b88"
+        },
+        {
+          "event_id": "b82e92b4-3423-4023-a809-d7ae3a6ffc2d",
+          "claim_type": "RESCHEDULED_APPOINTMENT",
+          "claim_start": "2026-10-01T11:00:00Z",
+          "intent_revision": 2,
+          "released_at": "2026-09-28T16:00:41.515187Z",
+          "played_at": "2026-09-28T16:00:41.930730Z",
+          "played_ms": 3240,
+          "permit_id": "7daab649-b802-438c-a5e9-6cf555717919"
+        }
+      ],
+      "timing_evidence": {
+        "barriers": [
+          {
+            "id": "ad453e9e-76f9-4285-9742-56d5aa411b53",
+            "barrier_name": "P8",
+            "ordinal": 1,
+            "state": "RELEASED",
+            "source_event_id": "fe9d3df8-6751-4d31-948b-d7cb8f75aea8",
+            "reached_at": "2026-09-28 16:00:37.965027+00:00",
+            "released_at": "2026-09-28 16:00:38.061793+00:00"
+          }
+        ],
+        "faults": [
+          {
+            "id": "5db9cc60-0ac1-4bd9-b294-89e7105154e4",
+            "barrier_name": "P8",
+            "fault_type": "PARTIAL_PLAYBACK",
+            "scheduled_target": {
+              "fault": "PARTIAL_PLAYBACK",
+              "target": "P8:1",
+              "barrier": "P8",
+              "request_index": 1
+            },
+            "actual_event_id": "ad453e9e-76f9-4285-9742-56d5aa411b53",
+            "injected_at": "2026-09-28 16:00:42.284697+00:00",
+            "parameters": {
+              "placement_hash": "0d542946ba66a31c7d78e79dd3f8ab99fe9dfd3331e3eea39c5444370208d629"
+            }
+          }
+        ]
+      },
+      "trace": {
+        "scenario_id": "8e3fdb97-4fe0-4a91-9085-3f23fb62c33b",
+        "research_arm": "P2",
+        "workflow_id": "b9f5356f-64df-4dc3-b97c-5771c55a0b2d",
+        "call_id": "2733eed8-a0ee-4987-9d68-dd23b9e9a4ef",
+        "prerecorded_audio_sha256": "96ca029eb97abef12a51320a3de68f84fa3a04c550f10d989f38687299c99032",
+        "correction_scripted_at": "2026-09-28T16:00:38.168442+00:00",
+        "client_playback_evidence": [
+          {
+            "request": {
+              "event_id": "78f59a21-3875-4993-88f4-413763fd51a0",
+              "segment_id": "51ee77e9-02e8-4c16-8bb4-ab03e5556bd5",
+              "event_type": "STARTED",
+              "client_time": "2026-09-28T16:00:37.697321+00:00",
+              "played_ms": 0,
+              "last_frame": 0,
+              "last_word_index": 0
+            },
+            "response": {
+              "event_id": "78f59a21-3875-4993-88f4-413763fd51a0",
+              "segment_id": "51ee77e9-02e8-4c16-8bb4-ab03e5556bd5",
+              "state": "STARTED",
+              "repair_obligation_id": null
+            }
+          },
+          {
+            "request": {
+              "event_id": "fe9d3df8-6751-4d31-948b-d7cb8f75aea8",
+              "segment_id": "51ee77e9-02e8-4c16-8bb4-ab03e5556bd5",
+              "event_type": "PROGRESS",
+              "client_time": "2026-09-28T16:00:37.881875+00:00",
+              "played_ms": 500,
+              "last_frame": 8000,
+              "last_word_index": 2
+            },
+            "response": {
+              "event_id": "fe9d3df8-6751-4d31-948b-d7cb8f75aea8",
+              "segment_id": "51ee77e9-02e8-4c16-8bb4-ab03e5556bd5",
+              "state": "STARTED",
+              "repair_obligation_id": null
+            }
+          },
+          {
+            "request": {
+              "event_id": "8bcc83c3-d0c5-4ebb-980b-39ec74f402a9",
+              "segment_id": "51ee77e9-02e8-4c16-8bb4-ab03e5556bd5",
+              "event_type": "INTERRUPTED",
+              "client_time": "2026-09-28T16:00:38.076095+00:00",
+              "played_ms": 500,
+              "last_frame": 8000,
+              "last_word_index": 2
+            },
+            "response": {
+              "event_id": "8bcc83c3-d0c5-4ebb-980b-39ec74f402a9",
+              "segment_id": "51ee77e9-02e8-4c16-8bb4-ab03e5556bd5",
+              "state": "STOPPED",
+              "repair_obligation_id": null
+            }
+          },
+          {
+            "request": {
+              "event_id": "34e156dd-4def-487a-b33a-8d07d6406313",
+              "segment_id": "267a479f-ae15-4022-a2e1-a7e8be1b42c5",
+              "event_type": "STARTED",
+              "client_time": "2026-09-28T16:00:41.515187+00:00",
+              "played_ms": 0,
+              "last_frame": 0,
+              "last_word_index": 0
+            },
+            "response": {
+              "event_id": "34e156dd-4def-487a-b33a-8d07d6406313",
+              "segment_id": "267a479f-ae15-4022-a2e1-a7e8be1b42c5",
+              "state": "STARTED",
+              "repair_obligation_id": null
+            }
+          },
+          {
+            "request": {
+              "event_id": "b82e92b4-3423-4023-a809-d7ae3a6ffc2d",
+              "segment_id": "267a479f-ae15-4022-a2e1-a7e8be1b42c5",
+              "event_type": "COMPLETED",
+              "client_time": "2026-09-28T16:00:41.930730+00:00",
+              "played_ms": 3240,
+              "last_frame": 51840,
+              "last_word_index": 18
+            },
+            "response": {
+              "event_id": "b82e92b4-3423-4023-a809-d7ae3a6ffc2d",
+              "segment_id": "267a479f-ae15-4022-a2e1-a7e8be1b42c5",
+              "state": "COMPLETED",
+              "repair_obligation_id": null
+            }
+          }
+        ],
+        "initial_steps": [
+          {
+            "job_id": "d1aa60f8-aa6a-465a-9df5-254cd2ab8e49",
+            "action": "dispatch",
+            "state": "DONE",
+            "provider_status": 200,
+            "effect_knowledge": "UNKNOWN"
+          },
+          {
+            "job_id": "f3d1082a-f1f0-4e44-8ea2-cda71766e9c5",
+            "action": "reconcile",
+            "outcome": "PRESENT"
+          },
+          {
+            "action": "idle"
+          }
+        ],
+        "first_claim": {
+          "receipt": {
+            "receipt_id": "ce363302-5556-424e-a2d9-9183ea18ad34",
+            "result": "SATISFIED",
+            "claim_type": "CURRENT_APPOINTMENT",
+            "intent_revision": 1,
+            "observed_resource_version": "0",
+            "valid_until": "2026-09-28T16:01:06.951799+00:00"
+          },
+          "permit": {
+            "claim_id": "e7f2d293-9a86-4acc-ba45-52625247ab84",
+            "permit_id": "4f248488-527d-4b8e-a98b-872ffe952b88",
+            "claim_type": "CURRENT_APPOINTMENT",
+            "content_hash": "181cb6f6f20120d03c3c3cd3ec9c4fef2a9c0300891c1f265a94391beeb6733c",
+            "expires_at": "2026-09-28T16:01:06.951799+00:00",
+            "state": "AUTHORIZED"
+          },
+          "scheduled": {
+            "segment_id": "51ee77e9-02e8-4c16-8bb4-ab03e5556bd5",
+            "state": "PUBLISHED",
+            "audio_url": "/v1/audio-segments/51ee77e9-02e8-4c16-8bb4-ab03e5556bd5/audio",
+            "duration_ms": 1980,
+            "frame_count": 31680,
+            "text_hash": "181cb6f6f20120d03c3c3cd3ec9c4fef2a9c0300891c1f265a94391beeb6733c",
+            "audio_hash": "442261ece88baf652c4a2e6a651bc31e5617ed50db1889bc4de5a3bda9defe38"
+          }
+        },
+        "stale_segment": {
+          "id": "51ee77e9-02e8-4c16-8bb4-ab03e5556bd5",
+          "call_id": "2733eed8-a0ee-4987-9d68-dd23b9e9a4ef",
+          "claim_permit_id": "4f248488-527d-4b8e-a98b-872ffe952b88",
+          "segment_class": "OUTCOME",
+          "content_hash": "181cb6f6f20120d03c3c3cd3ec9c4fef2a9c0300891c1f265a94391beeb6733c",
+          "tts_model_id": "deterministic-tone-tts-v1",
+          "tts_config_hash": "7bebfa8598ff7478c7494cbfb1156a80a774f88b4328439c509e10ea325a12f1",
+          "generated_at": "2026-09-28T16:00:37.372680Z",
+          "queued_at": "2026-09-28T16:00:37.487728Z",
+          "published_at": "2026-09-28T16:00:37.676496Z",
+          "cancelled_at": "2026-09-28T16:00:38.927300Z",
+          "created_at": "2026-09-28T16:00:37.372680Z",
+          "workflow_id": "b9f5356f-64df-4dc3-b97c-5771c55a0b2d",
+          "intent_revision": 1,
+          "claim_id": "e7f2d293-9a86-4acc-ba45-52625247ab84",
+          "repair_obligation_id": null,
+          "segment_text": "Your maintenance appointment is confirmed for 3:00 PM on 2026-10-01 (Asia/Karachi).",
+          "audio_hash": "442261ece88baf652c4a2e6a651bc31e5617ed50db1889bc4de5a3bda9defe38",
+          "duration_ms": 1980,
+          "frame_count": 31680,
+          "word_timeline_json": [
+            {
+              "word": "Your",
+              "end_ms": 180,
+              "start_ms": 0
+            },
+            {
+              "word": "maintenance",
+              "end_ms": 360,
+              "start_ms": 180
+            },
+            {
+              "word": "appointment",
+              "end_ms": 540,
+              "start_ms": 360
+            },
+            {
+              "word": "is",
+              "end_ms": 720,
+              "start_ms": 540
+            },
+            {
+              "word": "confirmed",
+              "end_ms": 900,
+              "start_ms": 720
+            },
+            {
+              "word": "for",
+              "end_ms": 1080,
+              "start_ms": 900
+            },
+            {
+              "word": "3:00",
+              "end_ms": 1260,
+              "start_ms": 1080
+            },
+            {
+              "word": "PM",
+              "end_ms": 1440,
+              "start_ms": 1260
+            },
+            {
+              "word": "on",
+              "end_ms": 1620,
+              "start_ms": 1440
+            },
+            {
+              "word": "2026-10-01",
+              "end_ms": 1800,
+              "start_ms": 1620
+            },
+            {
+              "word": "(Asia/Karachi).",
+              "end_ms": 1980,
+              "start_ms": 1800
+            }
+          ],
+          "state": "STOPPED",
+          "started_at": "2026-09-28T16:00:37.804513Z",
+          "stopped_at": "2026-09-28T16:00:38.927300Z",
+          "completed_at": null,
+          "last_played_ms": 500,
+          "last_frame": 8000,
+          "last_word_index": 2,
+          "research_unpermitted": false
+        },
+        "acknowledged_partial_playback": {
+          "event_id": "fe9d3df8-6751-4d31-948b-d7cb8f75aea8",
+          "segment_id": "51ee77e9-02e8-4c16-8bb4-ab03e5556bd5",
+          "state": "STARTED",
+          "repair_obligation_id": null
+        },
+        "interrupted_playback": {
+          "event_id": "8bcc83c3-d0c5-4ebb-980b-39ec74f402a9",
+          "segment_id": "51ee77e9-02e8-4c16-8bb4-ab03e5556bd5",
+          "state": "STOPPED",
+          "repair_obligation_id": null
+        },
+        "correction": {
+          "call_id": "2733eed8-a0ee-4987-9d68-dd23b9e9a4ef",
+          "workflow_id": "b9f5356f-64df-4dc3-b97c-5771c55a0b2d",
+          "revision": 2,
+          "audio_hash": "96ca029eb97abef12a51320a3de68f84fa3a04c550f10d989f38687299c99032",
+          "transcript_hash": "bd41e5149e7a1492c87ba932b7a9b73462dc6d669d33e217516ce130f55f8cea",
+          "event_count": 12,
+          "trace_id": "b94bb1f7-7bb6-455c-b154-230ddcb03647"
+        },
+        "repair_open": {
+          "id": "cb769f79-b3fa-4950-b2ed-99dde444e2d4",
+          "workflow_id": "b9f5356f-64df-4dc3-b97c-5771c55a0b2d",
+          "stale_claim_id": "e7f2d293-9a86-4acc-ba45-52625247ab84",
+          "stale_segment_id": "51ee77e9-02e8-4c16-8bb4-ab03e5556bd5",
+          "triggering_revision": 2,
+          "played_span_json": {
+            "words": [
+              "Your",
+              "maintenance"
+            ],
+            "played_ms": 500,
+            "audio_hash": "442261ece88baf652c4a2e6a651bc31e5617ed50db1889bc4de5a3bda9defe38",
+            "last_frame": 8000,
+            "content_hash": "181cb6f6f20120d03c3c3cd3ec9c4fef2a9c0300891c1f265a94391beeb6733c",
+            "last_word_index": 2
+          },
+          "required_predicates_json": {
+            "current_revision": 2,
+            "correction_of_claim_id": "e7f2d293-9a86-4acc-ba45-52625247ab84"
+          },
+          "state": "OPEN",
+          "deadline_at": "2026-09-28T17:00:38.975656Z",
+          "repair_claim_id": null,
+          "satisfied_at": null,
+          "created_at": "2026-09-28T16:00:38.927300Z",
+          "updated_at": "2026-09-28T16:00:38.927300Z"
+        },
+        "correction_steps": [
+          {
+            "job_id": "c078a557-af00-4529-a830-beaceb72cc82",
+            "action": "reconcile",
+            "outcome": "PRESENT"
+          },
+          {
+            "job_id": "5339a83a-ce59-4d11-85da-1f20459cc828",
+            "action": "dispatch",
+            "state": "DONE",
+            "provider_status": 200,
+            "effect_knowledge": "UNKNOWN"
+          },
+          {
+            "job_id": "f232499d-dd83-41d5-87d7-d6de2a831511",
+            "action": "reconcile",
+            "outcome": "PRESENT"
+          },
+          {
+            "action": "idle"
+          }
+        ],
+        "corrected_claim": {
+          "receipt": {
+            "receipt_id": "0ceb6807-d813-4a40-954b-6a5f2143a577",
+            "result": "SATISFIED",
+            "claim_type": "RESCHEDULED_APPOINTMENT",
+            "intent_revision": 2,
+            "observed_resource_version": "1",
+            "valid_until": "2026-09-28T16:01:10.547601+00:00"
+          },
+          "permit": {
+            "claim_id": "4f704b1f-61bb-4404-bb1d-ab540686b0a4",
+            "permit_id": "7daab649-b802-438c-a5e9-6cf555717919",
+            "claim_type": "RESCHEDULED_APPOINTMENT",
+            "content_hash": "9219cfca1602c2c7bfdf24042fe3ee10a49d944bd54ffea206783cb01c67b311",
+            "expires_at": "2026-09-28T16:01:10.547601+00:00",
+            "state": "AUTHORIZED"
+          },
+          "scheduled": {
+            "segment_id": "267a479f-ae15-4022-a2e1-a7e8be1b42c5",
+            "state": "PUBLISHED",
+            "audio_url": "/v1/audio-segments/267a479f-ae15-4022-a2e1-a7e8be1b42c5/audio",
+            "duration_ms": 3240,
+            "frame_count": 51840,
+            "text_hash": "2afcf0b053b711865ee85e8326febcd55aa06c6822ea945e964b83de3203e327",
+            "audio_hash": "ad3404913160e86b68e16876caae92f1567e6520aa8186ac3ea39eb0cdd178ce"
+          }
+        },
+        "corrected_segment": {
+          "id": "267a479f-ae15-4022-a2e1-a7e8be1b42c5",
+          "call_id": "2733eed8-a0ee-4987-9d68-dd23b9e9a4ef",
+          "claim_permit_id": "7daab649-b802-438c-a5e9-6cf555717919",
+          "segment_class": "REPAIR",
+          "content_hash": "2afcf0b053b711865ee85e8326febcd55aa06c6822ea945e964b83de3203e327",
+          "tts_model_id": "deterministic-tone-tts-v1",
+          "tts_config_hash": "7bebfa8598ff7478c7494cbfb1156a80a774f88b4328439c509e10ea325a12f1",
+          "generated_at": "2026-09-28T16:00:41.028153Z",
+          "queued_at": "2026-09-28T16:00:41.115988Z",
+          "published_at": "2026-09-28T16:00:41.457733Z",
+          "cancelled_at": null,
+          "created_at": "2026-09-28T16:00:41.028153Z",
+          "workflow_id": "b9f5356f-64df-4dc3-b97c-5771c55a0b2d",
+          "intent_revision": 2,
+          "claim_id": "4f704b1f-61bb-4404-bb1d-ab540686b0a4",
+          "repair_obligation_id": "cb769f79-b3fa-4950-b2ed-99dde444e2d4",
+          "segment_text": "Correction: my earlier confirmation was outdated. Your maintenance appointment has been moved to 4:00 PM on 2026-10-01 (Asia/Karachi).",
+          "audio_hash": "ad3404913160e86b68e16876caae92f1567e6520aa8186ac3ea39eb0cdd178ce",
+          "duration_ms": 3240,
+          "frame_count": 51840,
+          "word_timeline_json": [
+            {
+              "word": "Correction:",
+              "end_ms": 180,
+              "start_ms": 0
+            },
+            {
+              "word": "my",
+              "end_ms": 360,
+              "start_ms": 180
+            },
+            {
+              "word": "earlier",
+              "end_ms": 540,
+              "start_ms": 360
+            },
+            {
+              "word": "confirmation",
+              "end_ms": 720,
+              "start_ms": 540
+            },
+            {
+              "word": "was",
+              "end_ms": 900,
+              "start_ms": 720
+            },
+            {
+              "word": "outdated.",
+              "end_ms": 1080,
+              "start_ms": 900
+            },
+            {
+              "word": "Your",
+              "end_ms": 1260,
+              "start_ms": 1080
+            },
+            {
+              "word": "maintenance",
+              "end_ms": 1440,
+              "start_ms": 1260
+            },
+            {
+              "word": "appointment",
+              "end_ms": 1620,
+              "start_ms": 1440
+            },
+            {
+              "word": "has",
+              "end_ms": 1800,
+              "start_ms": 1620
+            },
+            {
+              "word": "been",
+              "end_ms": 1980,
+              "start_ms": 1800
+            },
+            {
+              "word": "moved",
+              "end_ms": 2160,
+              "start_ms": 1980
+            },
+            {
+              "word": "to",
+              "end_ms": 2340,
+              "start_ms": 2160
+            },
+            {
+              "word": "4:00",
+              "end_ms": 2520,
+              "start_ms": 2340
+            },
+            {
+              "word": "PM",
+              "end_ms": 2700,
+              "start_ms": 2520
+            },
+            {
+              "word": "on",
+              "end_ms": 2880,
+              "start_ms": 2700
+            },
+            {
+              "word": "2026-10-01",
+              "end_ms": 3060,
+              "start_ms": 2880
+            },
+            {
+              "word": "(Asia/Karachi).",
+              "end_ms": 3240,
+              "start_ms": 3060
+            }
+          ],
+          "state": "STARTED",
+          "started_at": "2026-09-28T16:00:41.818333Z",
+          "stopped_at": null,
+          "completed_at": null,
+          "last_played_ms": 0,
+          "last_frame": 0,
+          "last_word_index": 0,
+          "research_unpermitted": false
+        },
+        "repair_authorized": {
+          "id": "cb769f79-b3fa-4950-b2ed-99dde444e2d4",
+          "workflow_id": "b9f5356f-64df-4dc3-b97c-5771c55a0b2d",
+          "stale_claim_id": "e7f2d293-9a86-4acc-ba45-52625247ab84",
+          "stale_segment_id": "51ee77e9-02e8-4c16-8bb4-ab03e5556bd5",
+          "triggering_revision": 2,
+          "played_span_json": {
+            "words": [
+              "Your",
+              "maintenance"
+            ],
+            "played_ms": 500,
+            "audio_hash": "442261ece88baf652c4a2e6a651bc31e5617ed50db1889bc4de5a3bda9defe38",
+            "last_frame": 8000,
+            "content_hash": "181cb6f6f20120d03c3c3cd3ec9c4fef2a9c0300891c1f265a94391beeb6733c",
+            "last_word_index": 2
+          },
+          "required_predicates_json": {
+            "current_revision": 2,
+            "correction_of_claim_id": "e7f2d293-9a86-4acc-ba45-52625247ab84"
+          },
+          "state": "REPAIR_AUTHORIZED",
+          "deadline_at": "2026-09-28T17:00:38.975656Z",
+          "repair_claim_id": "4f704b1f-61bb-4404-bb1d-ab540686b0a4",
+          "satisfied_at": null,
+          "created_at": "2026-09-28T16:00:38.927300Z",
+          "updated_at": "2026-09-28T16:00:41.028153Z"
+        },
+        "corrected_playback": {
+          "event_id": "b82e92b4-3423-4023-a809-d7ae3a6ffc2d",
+          "segment_id": "267a479f-ae15-4022-a2e1-a7e8be1b42c5",
+          "state": "COMPLETED",
+          "repair_obligation_id": null
+        },
+        "livekit_sent": null,
+        "repair_played": {
+          "id": "cb769f79-b3fa-4950-b2ed-99dde444e2d4",
+          "workflow_id": "b9f5356f-64df-4dc3-b97c-5771c55a0b2d",
+          "stale_claim_id": "e7f2d293-9a86-4acc-ba45-52625247ab84",
+          "stale_segment_id": "51ee77e9-02e8-4c16-8bb4-ab03e5556bd5",
+          "triggering_revision": 2,
+          "played_span_json": {
+            "words": [
+              "Your",
+              "maintenance"
+            ],
+            "played_ms": 500,
+            "audio_hash": "442261ece88baf652c4a2e6a651bc31e5617ed50db1889bc4de5a3bda9defe38",
+            "last_frame": 8000,
+            "content_hash": "181cb6f6f20120d03c3c3cd3ec9c4fef2a9c0300891c1f265a94391beeb6733c",
+            "last_word_index": 2
+          },
+          "required_predicates_json": {
+            "current_revision": 2,
+            "correction_of_claim_id": "e7f2d293-9a86-4acc-ba45-52625247ab84"
+          },
+          "state": "REPAIR_PLAYED",
+          "deadline_at": "2026-09-28T17:00:38.975656Z",
+          "repair_claim_id": "4f704b1f-61bb-4404-bb1d-ab540686b0a4",
+          "satisfied_at": "2026-09-28T16:00:42.035213Z",
+          "created_at": "2026-09-28T16:00:38.927300Z",
+          "updated_at": "2026-09-28T16:00:42.035213Z"
+        },
+        "normalized_timeline": [
+          {
+            "workflow_sequence": 1,
+            "event_name": "IntentRevisionAccepted",
+            "intent_revision": 1,
+            "payload": {
+              "revision": 1,
+              "change_class": "INITIAL",
+              "desired_state_hash": "7f4fe919e42e52663986936e23b06cad08508ccd2cfcc89d7fa6931a25b751da"
+            }
+          },
+          {
+            "workflow_sequence": 2,
+            "event_name": "OperationReady",
+            "intent_revision": 1,
+            "payload": {
+              "request_hash": "24b3d9ff51d94005185922f608d9e1cddd00a80982970aae1648d3721392b136"
+            }
+          },
+          {
+            "workflow_sequence": 3,
+            "event_name": "DispatchRecorded",
+            "intent_revision": 1,
+            "payload": {
+              "attempt_id": "6311eda6-99c3-4daf-a332-131811cb09d8"
+            }
+          },
+          {
+            "workflow_sequence": 4,
+            "event_name": "ProviderRequestSent",
+            "intent_revision": 1,
+            "payload": {
+              "attempt_id": "6311eda6-99c3-4daf-a332-131811cb09d8"
+            }
+          },
+          {
+            "workflow_sequence": 5,
+            "event_name": "ProviderResponseReceived",
+            "intent_revision": 1,
+            "payload": {
+              "attempt_id": "6311eda6-99c3-4daf-a332-131811cb09d8"
+            }
+          },
+          {
+            "workflow_sequence": 6,
+            "event_name": "ProviderEffectObserved",
+            "intent_revision": 1,
+            "payload": {
+              "facts_hash": "d65c2f1b0621936816f4c7503e3cba96423cef7cc798355aad4ca906adbc5c42"
+            }
+          },
+          {
+            "workflow_sequence": 7,
+            "event_name": "WorkflowResolved",
+            "intent_revision": 1,
+            "payload": {
+              "resource_version": 0
+            }
+          },
+          {
+            "workflow_sequence": 8,
+            "event_name": "VerificationSatisfied",
+            "intent_revision": 1,
+            "payload": {
+              "result": "SATISFIED",
+              "receipt_id": "ce363302-5556-424e-a2d9-9183ea18ad34"
+            }
+          },
+          {
+            "workflow_sequence": 9,
+            "event_name": "ReceiptIssued",
+            "intent_revision": 1,
+            "payload": {
+              "receipt_id": "ce363302-5556-424e-a2d9-9183ea18ad34",
+              "receipt_hash": "fd80a97fdbc5db624c05a2cf6d7475ed60e24b58a1b68b0b8eef70a79a4fa28f"
+            }
+          },
+          {
+            "workflow_sequence": 10,
+            "event_name": "ClaimPrepared",
+            "intent_revision": 1,
+            "payload": {
+              "claim_id": "e7f2d293-9a86-4acc-ba45-52625247ab84",
+              "content_hash": "181cb6f6f20120d03c3c3cd3ec9c4fef2a9c0300891c1f265a94391beeb6733c"
+            }
+          },
+          {
+            "workflow_sequence": 11,
+            "event_name": "ClaimAuthorized",
+            "intent_revision": 1,
+            "payload": {
+              "permit_id": "4f248488-527d-4b8e-a98b-872ffe952b88",
+              "receipt_id": "ce363302-5556-424e-a2d9-9183ea18ad34"
+            }
+          },
+          {
+            "workflow_sequence": 12,
+            "event_name": "ClaimQueued",
+            "intent_revision": 1,
+            "payload": {
+              "permit_id": "4f248488-527d-4b8e-a98b-872ffe952b88"
+            }
+          },
+          {
+            "workflow_sequence": 13,
+            "event_name": "AudioGenerated",
+            "intent_revision": 1,
+            "payload": {
+              "audio_hash": "442261ece88baf652c4a2e6a651bc31e5617ed50db1889bc4de5a3bda9defe38",
+              "segment_id": "51ee77e9-02e8-4c16-8bb4-ab03e5556bd5",
+              "segment_class": "OUTCOME"
+            }
+          },
+          {
+            "workflow_sequence": 14,
+            "event_name": "AssistantAudioQueued",
+            "intent_revision": 1,
+            "payload": {
+              "segment_id": "51ee77e9-02e8-4c16-8bb4-ab03e5556bd5"
+            }
+          },
+          {
+            "workflow_sequence": 15,
+            "event_name": "ClaimPublished",
+            "intent_revision": 1,
+            "payload": {
+              "claim_id": "e7f2d293-9a86-4acc-ba45-52625247ab84",
+              "permit_id": "4f248488-527d-4b8e-a98b-872ffe952b88",
+              "content_hash": "181cb6f6f20120d03c3c3cd3ec9c4fef2a9c0300891c1f265a94391beeb6733c"
+            }
+          },
+          {
+            "workflow_sequence": 16,
+            "event_name": "AudioPublished",
+            "intent_revision": 1,
+            "payload": {
+              "audio_hash": "442261ece88baf652c4a2e6a651bc31e5617ed50db1889bc4de5a3bda9defe38",
+              "segment_id": "51ee77e9-02e8-4c16-8bb4-ab03e5556bd5"
+            }
+          },
+          {
+            "workflow_sequence": 17,
+            "event_name": "PlaybackStarted",
+            "intent_revision": 1,
+            "payload": {
+              "played_ms": 0,
+              "last_frame": 0,
+              "segment_id": "51ee77e9-02e8-4c16-8bb4-ab03e5556bd5",
+              "last_word_index": 0
+            }
+          },
+          {
+            "workflow_sequence": 18,
+            "event_name": "PlaybackInterrupted",
+            "intent_revision": 1,
+            "payload": {
+              "played_ms": 500,
+              "last_frame": 8000,
+              "segment_id": "51ee77e9-02e8-4c16-8bb4-ab03e5556bd5",
+              "last_word_index": 2
+            }
+          },
+          {
+            "workflow_sequence": 19,
+            "event_name": "SpeechStarted",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": null,
+              "normalized_hash": "4672eff6534d51ea7f1ad31c56b7eef59ed008acfe668411c8e1087ace175a63",
+              "source_event_id": "p8:1434e7e7-b901-44fd-b323-1278dd04982f:speech"
+            }
+          },
+          {
+            "workflow_sequence": 20,
+            "event_name": "InterruptionCandidate",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": null,
+              "normalized_hash": "11a5eb11dd1bfec4871e3555ea7fffe1de637abfe0bb71cc0d88bb6674f97bff",
+              "source_event_id": "p8:1434e7e7-b901-44fd-b323-1278dd04982f:interrupt-candidate"
+            }
+          },
+          {
+            "workflow_sequence": 21,
+            "event_name": "InterruptionAccepted",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": null,
+              "normalized_hash": "11a5eb11dd1bfec4871e3555ea7fffe1de637abfe0bb71cc0d88bb6674f97bff",
+              "source_event_id": "p8:1434e7e7-b901-44fd-b323-1278dd04982f:interrupt-accepted"
+            }
+          },
+          {
+            "workflow_sequence": 22,
+            "event_name": "TranscriptDelta",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": null,
+              "normalized_hash": "aa0ccf5796ea3e9ac8fdb7236dafa559bee0cc8390c647a450aa20e50ae8595c",
+              "source_event_id": "p8:1434e7e7-b901-44fd-b323-1278dd04982f:delta:0"
+            }
+          },
+          {
+            "workflow_sequence": 23,
+            "event_name": "TranscriptDelta",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": null,
+              "normalized_hash": "79236f3dea347d3e9c64bf2516ffe144cdbf9abf4f748afac9e359fdc445f74a",
+              "source_event_id": "p8:1434e7e7-b901-44fd-b323-1278dd04982f:delta:1"
+            }
+          },
+          {
+            "workflow_sequence": 24,
+            "event_name": "TranscriptDelta",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": null,
+              "normalized_hash": "ac4b93fd9c5e91703cb2935988e587f77372b806c49a269d716de9a6826c83d9",
+              "source_event_id": "p8:1434e7e7-b901-44fd-b323-1278dd04982f:delta:2"
+            }
+          },
+          {
+            "workflow_sequence": 25,
+            "event_name": "TranscriptDelta",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": null,
+              "normalized_hash": "2ea66f8caf980e79cee491aac682682722267a27e0e5208d5d247df866bcf961",
+              "source_event_id": "p8:1434e7e7-b901-44fd-b323-1278dd04982f:delta:3"
+            }
+          },
+          {
+            "workflow_sequence": 26,
+            "event_name": "TranscriptDelta",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": null,
+              "normalized_hash": "62038728db3ceda37cec048031a9eaecc41d0c1cf703ca3fca051dd5198cd06f",
+              "source_event_id": "p8:1434e7e7-b901-44fd-b323-1278dd04982f:delta:4"
+            }
+          },
+          {
+            "workflow_sequence": 27,
+            "event_name": "PossibleEndOfTurn",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": null,
+              "normalized_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+              "source_event_id": "p8:1434e7e7-b901-44fd-b323-1278dd04982f:possible-end"
+            }
+          },
+          {
+            "workflow_sequence": 28,
+            "event_name": "ConfirmedEndOfTurn",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": null,
+              "normalized_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+              "source_event_id": "p8:1434e7e7-b901-44fd-b323-1278dd04982f:confirmed-end"
+            }
+          },
+          {
+            "workflow_sequence": 29,
+            "event_name": "TranscriptFinal",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": "0058f0c3-629a-5763-8fe7-df37fab99f3d",
+              "normalized_hash": "56753d4ac71530c83c777e6a9db923e64de48a34a43f861ebf344300d8edbb57",
+              "source_event_id": "p8:1434e7e7-b901-44fd-b323-1278dd04982f:final"
+            }
+          },
+          {
+            "workflow_sequence": 30,
+            "event_name": "ToolProposalReceived",
+            "intent_revision": 1,
+            "payload": {
+              "utterance_id": null,
+              "normalized_hash": "8a5fded9e9c3ba6e6f654ec7c6045c5f79b236a638efb0f38da1310cdea44fd1",
+              "source_event_id": "p8:1434e7e7-b901-44fd-b323-1278dd04982f:proposal"
+            }
+          },
+          {
+            "workflow_sequence": 31,
+            "event_name": "ReconciliationScheduled",
+            "intent_revision": 2,
+            "payload": {
+              "reason": "accepted_correction"
+            }
+          },
+          {
+            "workflow_sequence": 32,
+            "event_name": "OperationSuperseded",
+            "intent_revision": 2,
+            "payload": {
+              "effect_knowledge": "PRESENT",
+              "previous_revision": 1
+            }
+          },
+          {
+            "workflow_sequence": 33,
+            "event_name": "IntentRevisionAccepted",
+            "intent_revision": 2,
+            "payload": {
+              "revision": 2,
+              "change_class": "PARAMETER_CORRECTION",
+              "desired_state_hash": "e69bf85ba81b1c64f8ed05cdce1012260db4c22ba5098e4cfbc68b7577508e1c"
+            }
+          },
+          {
+            "workflow_sequence": 34,
+            "event_name": "ReceiptInvalidated",
+            "intent_revision": 2,
+            "payload": {
+              "reason": "new_accepted_revision",
+              "receipt_id": "ce363302-5556-424e-a2d9-9183ea18ad34"
+            }
+          },
+          {
+            "workflow_sequence": 35,
+            "event_name": "AssistantAudioStopped",
+            "intent_revision": 2,
+            "payload": {
+              "reason": "accepted_revision",
+              "last_frame": 8000,
+              "segment_id": "51ee77e9-02e8-4c16-8bb4-ab03e5556bd5",
+              "last_word_index": 2
+            }
+          },
+          {
+            "workflow_sequence": 36,
+            "event_name": "RepairRequired",
+            "intent_revision": 2,
+            "payload": {
+              "played_span": {
+                "words": [
+                  "Your",
+                  "maintenance"
+                ],
+                "played_ms": 500,
+                "audio_hash": "442261ece88baf652c4a2e6a651bc31e5617ed50db1889bc4de5a3bda9defe38",
+                "last_frame": 8000,
+                "content_hash": "181cb6f6f20120d03c3c3cd3ec9c4fef2a9c0300891c1f265a94391beeb6733c",
+                "last_word_index": 2
+              },
+              "stale_segment_id": "51ee77e9-02e8-4c16-8bb4-ab03e5556bd5",
+              "repair_obligation_id": "cb769f79-b3fa-4950-b2ed-99dde444e2d4"
+            }
+          },
+          {
+            "workflow_sequence": 37,
+            "event_name": "ProviderEffectObserved",
+            "intent_revision": 1,
+            "payload": {
+              "facts_hash": "d65c2f1b0621936816f4c7503e3cba96423cef7cc798355aad4ca906adbc5c42"
+            }
+          },
+          {
+            "workflow_sequence": 38,
+            "event_name": "OperationReady",
+            "intent_revision": 2,
+            "payload": {
+              "action": "RESCHEDULE",
+              "parent_operation_id": "613b1521-13d5-456f-9369-237d664d3324"
+            }
+          },
+          {
+            "workflow_sequence": 39,
+            "event_name": "DispatchRecorded",
+            "intent_revision": 2,
+            "payload": {
+              "attempt_id": "2ad0a1d8-33d3-4b50-ad2c-74d773e556f0"
+            }
+          },
+          {
+            "workflow_sequence": 40,
+            "event_name": "ProviderRequestSent",
+            "intent_revision": 2,
+            "payload": {
+              "attempt_id": "2ad0a1d8-33d3-4b50-ad2c-74d773e556f0"
+            }
+          },
+          {
+            "workflow_sequence": 41,
+            "event_name": "ProviderResponseReceived",
+            "intent_revision": 2,
+            "payload": {
+              "attempt_id": "2ad0a1d8-33d3-4b50-ad2c-74d773e556f0"
+            }
+          },
+          {
+            "workflow_sequence": 42,
+            "event_name": "ProviderEffectObserved",
+            "intent_revision": 2,
+            "payload": {
+              "facts_hash": "6e819d1641e3fdde84c57cfbca060151a0051723f1c4b1611a63064d8284aad9"
+            }
+          },
+          {
+            "workflow_sequence": 43,
+            "event_name": "WorkflowResolved",
+            "intent_revision": 2,
+            "payload": {
+              "resource_version": 1
+            }
+          }
+        ],
+        "simulator_truth_log": [
+          {
+            "sequence": 1199,
+            "scenario_id": "8e3fdb97-4fe0-4a91-9085-3f23fb62c33b",
+            "operation_id": "613b1521-13d5-456f-9369-237d664d3324",
+            "request_hash": "24b3d9ff51d94005185922f608d9e1cddd00a80982970aae1648d3721392b136",
+            "idempotency_key": "phase4-p8:7796cc51-e31c-45db-9193-9620358a7eb8",
+            "action": "CREATE",
+            "appointment_id": "1168e39f-ac57-4a9c-9c78-375ac4789b1e",
+            "resource_key": "property:653a26a6-47f9-47a1-9bb5-b7564da1236f:maintenance",
+            "before_facts": null,
+            "after_facts": {
+              "status": "CONFIRMED",
+              "ends_at": "2026-10-01T11:00:00+00:00",
+              "version": 0,
+              "timezone": "Asia/Karachi",
+              "starts_at": "2026-10-01T10:00:00+00:00",
+              "resource_key": "property:653a26a6-47f9-47a1-9bb5-b7564da1236f:maintenance",
+              "appointment_id": "1168e39f-ac57-4a9c-9c78-375ac4789b1e"
+            },
+            "result_code": "PRESENT",
+            "committed_at": "2026-09-28T16:00:36.382678Z"
+          },
+          {
+            "sequence": 1200,
+            "scenario_id": "8e3fdb97-4fe0-4a91-9085-3f23fb62c33b",
+            "operation_id": "e9c5de2f-ca83-4fd7-a8f9-fd057cdf5d21",
+            "request_hash": "a0495a51a579748e7252d75ac49c79de00636f5f0ffe3d50a5ec853f79673e6d",
+            "idempotency_key": "linked:b9f5356f-64df-4dc3-b97c-5771c55a0b2d:2:RESCHEDULE",
+            "action": "RESCHEDULE",
+            "appointment_id": "1168e39f-ac57-4a9c-9c78-375ac4789b1e",
+            "resource_key": "property:653a26a6-47f9-47a1-9bb5-b7564da1236f:maintenance",
+            "before_facts": {
+              "status": "CONFIRMED",
+              "ends_at": "2026-10-01T11:00:00+00:00",
+              "version": 0,
+              "timezone": "Asia/Karachi",
+              "starts_at": "2026-10-01T10:00:00+00:00",
+              "resource_key": "property:653a26a6-47f9-47a1-9bb5-b7564da1236f:maintenance",
+              "appointment_id": "1168e39f-ac57-4a9c-9c78-375ac4789b1e"
+            },
+            "after_facts": {
+              "status": "CONFIRMED",
+              "ends_at": "2026-10-01T12:00:00+00:00",
+              "version": 1,
+              "timezone": "Asia/Karachi",
+              "starts_at": "2026-10-01T11:00:00+00:00",
+              "resource_key": "property:653a26a6-47f9-47a1-9bb5-b7564da1236f:maintenance",
+              "appointment_id": "1168e39f-ac57-4a9c-9c78-375ac4789b1e"
+            },
+            "result_code": "PRESENT",
+            "committed_at": "2026-09-28T16:00:39.715074Z"
+          }
+        ]
+      },
+      "oracle_result": {
+        "oracle_version": "phase6-p8-paired-truth-v1",
+        "partial_stale_span_acknowledged": true,
+        "partial_played_ms": 500,
+        "partial_last_frame": 8000,
+        "corrected_audio_fully_acknowledged": true,
+        "corrected_audio_states_final_intent": true,
+        "correction_success": true,
+        "unsupported_confirmation": false,
+        "played_span_repair_complete": true,
+        "truth_result_hash": "6db20d94b6c3d1c138baf238757676a6706d022d7af2f84bd6b545a6b1f1c037",
+        "duplicate_effect": false,
+        "outcome_coverage": true,
+        "safe_resolution": true,
+        "result_hash": "b7a9310f1e88436b1589155fe2771a0cd49cb35e194e7013507397b4b3678f4f"
+      },
+      "metrics": [
+        {
+          "metric_name": "correction_success",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 1,
+          "numerator": 1,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "unsupported_confirmation",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "duplicate_effect",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "safe_resolution",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 1,
+          "numerator": 1,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "outcome_coverage",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 1,
+          "numerator": 1,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "played_span_repair_complete",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 1,
+          "numerator": 1,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        }
+      ]
+    }
+  ],
+  "bundle_hash": "b4a2698c01ced78e696081c150f15e013cd561619e659339c7fccbac1efd9f46"
+}

@@ -1,0 +1,73 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: voice_agent
+      POSTGRES_USER: voice_agent
+      POSTGRES_PASSWORD: change-me
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U voice_agent -d voice_agent"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    profiles: ["redis"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  api-controller:
+    build: ../../apps/api_controller
+    env_file: .env
+    depends_on:
+      postgres: {condition: service_healthy}
+    ports: ["8000:8000"]
+
+  durable-worker:
+    build: ../../apps/durable_worker
+    env_file: .env
+    depends_on:
+      postgres: {condition: service_healthy}
+
+  voice-worker:
+    build: ../../apps/voice_worker
+    env_file: .env
+    depends_on:
+      api-controller: {condition: service_started}
+
+  provider-simulator:
+    build: ../../research/provider_simulator
+    env_file: .env
+    depends_on:
+      postgres: {condition: service_healthy}
+    ports: ["8010:8010"]
+
+  web:
+    build: ../../apps/web
+    env_file: .env
+    depends_on:
+      api-controller: {condition: service_started}
+    ports: ["3000:3000"]
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    profiles: ["observability"]
+
+  prometheus:
+    image: prom/prometheus:latest
+    profiles: ["observability"]
+
+  grafana:
+    image: grafana/grafana:latest
+    profiles: ["observability"]
+    ports: ["3001:3000"]
+
+volumes:
+  postgres_data:
+

@@ -1,0 +1,26 @@
+dependencies={}
+lock=tomllib.loads(Path('uv.lock').read_text());locked={}
+for package in lock['package']:locked.setdefault(package['name'].lower().replace('_','-'),set()).add(package['version'])
+for label,environment in (('application',Path('.venv')),('analysis',Path('.venv-analysis')),('transport',Path('.venv-transport'))):
+ packages={};site=environment/'lib/python3.12/site-packages';file_count=0
+ for dist in importlib.metadata.distributions(path=[str(site)]):
+  name=dist.metadata['Name'].lower().replace('_','-');packages[name]=dist.version
+  if label=='application' and name not in ('pip','setuptools','wheel') and dist.version not in locked.get(name,set()):raise ValueError('INSTALLED_LOCK_VERSION_DRIFT: '+name)
+  for line in csv.reader((dist.read_text('RECORD') or '').splitlines()):
+   if not line or not line[1]:continue
+   algorithm,digest=line[1].split('=',1);target=Path(dist.locate_file(line[0]))
+   if algorithm!='sha256' or not target.is_file():raise ValueError('DEPENDENCY_RECORD_MISSING')
+   got=base64.urlsafe_b64encode(hashlib.sha256(target.read_bytes()).digest()).decode().rstrip('=')
+   if got!=digest:raise ValueError('DEPENDENCY_RECORD_HASH_DRIFT: '+name)
+   file_count+=1
+ if label!='application':
+  requirements=Path('research/study/requirements.txt') if label=='analysis' else Path('artifacts/phase-8-review-freeze/v2/requirements.txt')
+  for line in requirements.read_text().splitlines():
+   if '==' in line and not line.startswith('#'):
+    name,version=line.split('==');name=name.lower().replace('_','-')
+    if packages.get(name)!=version:raise ValueError('REQUIREMENT_VERSION_DRIFT: '+name)
+ dependencies[label]={'packages':packages,'record_hashed_files':file_count,'installed_versions_sha256':hashlib.sha256(canonical(packages)).hexdigest()}
+if sys.version_info[:3]!=(3,12,13):raise ValueError('PYTHON_RUNTIME_DRIFT')
+for tag,digest in IMAGE_DIGESTS.items():
+ image=json.loads(subprocess.run(['docker','image','inspect',tag],check=True,capture_output=True,text=True,timeout=10).stdout)[0]
+ if digest not in image['RepoDigests']:raise ValueError('IMAGE_DIGEST_DRIFT')

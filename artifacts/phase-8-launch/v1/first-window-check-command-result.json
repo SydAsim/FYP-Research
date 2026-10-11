@@ -1,0 +1,60 @@
+{
+  "status": "success",
+  "stdout": "",
+  "return_value": {
+    "Command": {
+      "CommandId": "39b95ebf-f304-4799-8161-8eea9cced7aa",
+      "DocumentName": "AWS-RunShellScript",
+      "DocumentVersion": "$DEFAULT",
+      "Comment": "Read authoritative first checkpoint and actual request/window anchors only",
+      "ExpiresAfter": "2026-10-07T16:50:02.975000+00:00",
+      "Parameters": {
+        "commands": [
+          "set -eu\npython3 - <<'PY'\nimport hashlib,json,sqlite3,datetime\nfrom pathlib import Path\nroot=Path('/var/lib/p8/run/slots/0001')\nwith sqlite3.connect('file:'+str(root/'ledger.sqlite3')+'?mode=ro',uri=True) as db:\n body,digest=db.execute('SELECT body,hash FROM checkpoints WHERE execution_id=?',('01a11705-11f0-79f1-9293-78f7f8207f70',)).fetchone()\nif hashlib.sha256(body.encode()).hexdigest()!=digest:raise ValueError('CHECKPOINT_DRIFT')\nrow=json.loads(body)\npolls=row.get('polls',[])\ngaps=[(datetime.datetime.fromisoformat(b['at'])-datetime.datetime.fromisoformat(a['at'])).total_seconds() for a,b in zip(polls,polls[1:])]\nprint(json.dumps({'execution_id':row['execution_id'],'driver_started_at':row.get('started_at'),'driver_finished_at':row.get('driver_finished_at'),'driver_status':row.get('status'),'failure':row.get('failure'),'external_requests':row.get('external_requests'),'original_deadline':row.get('original_deadline'),'missing_final_anchor':row.get('missing_final_anchor'),'poll_count':len(polls),'first_poll_at':polls[0]['at'] if polls else None,'last_poll_at':polls[-1]['at'] if polls else None,'maximum_poll_start_gap_seconds':max(gaps) if gaps else None,'collection_errors':row.get('collection_errors',[]),'checkpoint_sha256':digest}))\nPY\n"
+        ],
+        "executionTimeout": [
+          "60"
+        ]
+      },
+      "InstanceIds": [
+        "i-0a6196aff6f8098ac"
+      ],
+      "Targets": [],
+      "RequestedDateTime": "2026-10-07T15:49:02.975000+00:00",
+      "Status": "Pending",
+      "StatusDetails": "Pending",
+      "OutputS3Region": "ap-southeast-2",
+      "OutputS3BucketName": "fyp-p82-20261005-018da1d6-803656589923",
+      "OutputS3KeyPrefix": "exports/phase8/p85-01a116f7-3b82-7a79-8653-3aee62dc99e9/deployment/first-window-check",
+      "MaxConcurrency": "50",
+      "MaxErrors": "0",
+      "TargetCount": 1,
+      "CompletedCount": 0,
+      "ErrorCount": 0,
+      "DeliveryTimedOutCount": 0,
+      "ServiceRole": "",
+      "NotificationConfig": {
+        "NotificationArn": "",
+        "NotificationEvents": [],
+        "NotificationType": ""
+      },
+      "CloudWatchOutputConfig": {
+        "CloudWatchLogGroupName": "",
+        "CloudWatchOutputEnabled": false
+      },
+      "TimeoutSeconds": 3600,
+      "AlarmConfiguration": {
+        "IgnorePollAlarmFailure": false,
+        "Alarms": []
+      },
+      "TriggeredAlarms": []
+    }
+  },
+  "api_calls": [
+    {
+      "service": "ssm",
+      "operation": "SendCommand",
+      "status": "success"
+    }
+  ]
+}

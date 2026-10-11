@@ -1,0 +1,126 @@
+--- accepted-v3/handover.py
++++ candidate-v4/handover.py
+@@ -50,9 +50,10 @@
+ 
+ 
+ def ro_rows(master: Path) -> list[dict[str, Any]]:
+-    uri = master.joinpath("campaign.sqlite3").resolve().as_uri() + "?mode=ro&immutable=1"
++    uri = master.joinpath("campaign.sqlite3").resolve().as_uri() + "?mode=ro"
+     with sqlite3.connect(uri, uri=True) as db:
+         db.row_factory = sqlite3.Row
++        db.execute("BEGIN")
+         if db.execute("PRAGMA integrity_check").fetchone()[0] != "ok":
+             raise ValueError("IMPORTED_LEDGER_CORRUPTION")
+         previous = "GENESIS"
+@@ -74,9 +75,9 @@
+ 
+ 
+ def closed_boundary(rows: list[dict[str, Any]], saved: list[dict[str, Any]]) -> None:
+-    from two_originals import boundary
+-
+-    pinned = read(HERE / "saved-identities.json")["rows"]
++    from closed_prefix import boundary
++
++    pinned = read(HERE / "saved-boundary.json")["rows"]
+     # Verify frozen schedule columns as well as every existing execution identity.
+     if len(saved) != 1500 or any(
+         any(a[k] != b[k] for k in ("sequence", "case_id", "arm", "attempt", "fixture_hash"))
+@@ -98,23 +99,15 @@
+     return policy
+ 
+ 
+-def stage(
+-    master: Path,
+-    first: Path,
+-    destination: Path,
+-    *,
+-    second: Path,
+-    first_archive: Path,
+-    second_archive: Path,
+-) -> dict[str, Any]:
+-    from two_originals import stage as import_two
+-
+-    return import_two(master, first, second, first_archive, second_archive, destination)
++def stage(master: Path, destination: Path) -> dict[str, Any]:
++    from closed_prefix import stage as import_closed
++
++    return import_closed(master, destination)
+ 
+ 
+ def verify_imported_first(root: Path) -> None:
+-    """Compatibility entry point now verifies BOTH immutable originals."""
+-    from two_originals import verify
++    """Compatibility entry point verifies all 38 imported originals."""
++    from closed_prefix import verify
+ 
+     verify(root)
+ 
+@@ -125,7 +118,7 @@
+     config = read(root / "run.json")
+     inventory = read(Path(config["source"]) / config["continuation"]["manifest"])
+     value = {
+-        "version": "phase85-combined-amendment-v3",
++        "version": "phase85-complete-continuation-v4",
+         "execution_id": execution_id,
+         "run_id": RUN,
+         "parent_freeze_sha256": PARENT_FREEZE,
+@@ -136,6 +129,8 @@
+         "refusal_sha256": hash_file(HERE / "refusal.py"),
+         "response_guard_sha256": hash_file(HERE / "response_guard.py"),
+         "two_originals_sha256": hash_file(HERE / "two_originals.py"),
++        "closed_prefix_sha256": hash_file(HERE / "closed_prefix.py"),
++        "controls_sha256": hash_file(HERE / "controls.py"),
+         "handover_sha256": hash_file(root / "handover.json"),
+         "boot_anchor_sha256": hash_file(root / "host-clock.json"),
+         "readiness_sha256": hash_file(root / "continuation-readiness.json"),
+@@ -165,7 +160,7 @@
+         "bd4d32f4968eaff243d65d9cfe8fad36c603cd709c09ee7fdebd29746e90da42"
+     ]
+     immediate_parent_freeze_sha256: Literal[
+-        "4b921d416b9111594531ca33f26b1b307e04b22241ef995b6e571ce96a21f3e7"
++        "49ec78e719d9d28e017f62e6a40dd69cc236a45c5406d5be1a209ef59b9d2c86"
+     ]
+     expires_at: datetime
+     signer: str
+@@ -244,7 +239,7 @@
+             path = (self.source / name).resolve()
+             if self.source.resolve() not in path.parents or hash_file(path) != digest:
+                 raise ValueError("CONTINUATION_SOURCE_DRIFT: " + name)
+-        prefix = "artifacts/phase-8-runner-amendment/v3/"
++        prefix = "artifacts/phase-8-runner-amendment/v4-complete/"
+         scripts = {
+             p.relative_to(self.source).as_posix() for p in (self.source / prefix).glob("*.py")
+         }
+@@ -271,7 +266,8 @@
+         ready = read(readiness)
+         if (
+             ready["instance_id"] != launch.instance_id
+-            or ready["instance_id"] == ("i-0a6196aff6f8098ac")
++            or ready["instance_id"]
++            in ("i-0a6196aff6f8098ac", "i-034252c3e9b083abf", "i-002b63326e1566005")
+             or ready["run_id"] != RUN
+             or ready["policy_sha256"] != launch.policy_sha256
+             or (ready["handover_sha256"] != hash_file(self.root / "handover.json"))
+@@ -347,19 +343,9 @@
+     parser.add_argument("--second-archive", type=Path)
+     args = parser.parse_args()
+     if args.action == "stage":
+-        if any(
+-            p is None
+-            for p in (args.master, args.first, args.second, args.first_archive, args.second_archive)
+-        ):
+-            parser.error("stage requires retained master and first-slot directories")
+-        stage(
+-            args.master.resolve(),
+-            args.first.resolve(),
+-            args.root.resolve(),
+-            second=args.second.resolve(),
+-            first_archive=args.first_archive.resolve(),
+-            second_archive=args.second_archive.resolve(),
+-        )
++        if args.master is None:
++            parser.error("stage requires the authoritative stopped-boundary metadata")
++        stage(args.master.resolve(), args.root.resolve())
+     elif args.action == "verify-import":
+         verify_imported_first(args.root.resolve())
+     elif args.action == "bind-host":

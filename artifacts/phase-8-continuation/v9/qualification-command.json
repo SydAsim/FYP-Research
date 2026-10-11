@@ -1,0 +1,27 @@
+{
+  "command": [
+    "docker",
+    "run",
+    "--name",
+    "p85-v9-storage-controls-attempt1",
+    "--network",
+    "none",
+    "--memory",
+    "1g",
+    "--cpus",
+    "1",
+    "--mount",
+    "type=bind,source=E:\\p8v9\\source,target=/source,readonly",
+    "-e",
+    "PYTHONPATH=/source:/source/artifacts/phase-8-runner-amendment/v4-complete:/opt/fyp-phase8-linux-v1/.venv-analysis/lib/python3.12/site-packages:/opt/fyp-phase8-linux-v1/.venv-transport/lib/python3.12/site-packages",
+    "--entrypoint",
+    "python",
+    "sha256:5faee27d3793882b26aa166de48fc26d7939710ac9435b0fe7f988c8765497d8",
+    "-B",
+    "-c",
+    "import platform,sys;print('PINNED_RUNTIME',platform.platform(),sys.version);import pytest;raise SystemExit(pytest.main(['-vv','-p','no:cacheprovider','--basetemp=/tmp/v9-controls','/source/artifacts/phase-8-continuation/v9/test_storage_v9.py']))"
+  ],
+  "checks": 8,
+  "wall_limit_seconds": 120,
+  "research_executions": 0
+}

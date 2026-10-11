@@ -1,0 +1,10 @@
+--- accepted-v3/controls.py
++++ candidate-v4/controls.py
+@@ -459,6 +459,7 @@
+ 
+     def verify(self) -> None:
+         with self.connect() as db:
++            db.execute("BEGIN")
+             if db.execute("PRAGMA integrity_check").fetchone()[0] != "ok":
+                 raise ValueError("LEDGER_CORRUPTION")
+             previous = "GENESIS"

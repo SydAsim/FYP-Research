@@ -1,0 +1,5 @@
+{
+  "commands": [
+    "systemctl show fyp-p82-qualification-v2.service fyp-p82-finish-v2.service -p ActiveState -p Result -p ExecMainStatus\ncat /srv/fyp-p82-v2/qualification-success.json 2>/dev/null | head -c 1800\ncat /srv/fyp-p82-v2-control/parallel-attempt1.log 2>/dev/null | tail -n 15\nfind /srv/fyp-p82-v2/parallel-v2 -maxdepth 2 -name '*failure.json' -exec cat {} \\;\nfind /srv/fyp-p82-v2/parallel-v2 -name 'checkpoint.json' -exec python3.12 -c 'import json,sys;x=json.load(open(sys.argv[1]));print(x[\"execution_id\"],x[\"arm\"],x[\"status\"],x.get(\"original_deadline\"),len(x.get(\"polls\",[])),x.get(\"failure\"))' {} \\;\n"
+  ]
+}

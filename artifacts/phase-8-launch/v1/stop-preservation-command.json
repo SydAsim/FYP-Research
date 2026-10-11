@@ -1,0 +1,60 @@
+{
+  "status": "success",
+  "stdout": "",
+  "return_value": {
+    "Command": {
+      "CommandId": "cbf5f472-ae31-4092-8213-1cd7d92f0668",
+      "DocumentName": "AWS-RunShellScript",
+      "DocumentVersion": "$DEFAULT",
+      "Comment": "",
+      "ExpiresAfter": "2026-10-07T16:59:00.521000+00:00",
+      "Parameters": {
+        "commands": [
+          "#!/bin/bash\nset -euo pipefail\numask 077\ncd /opt/fyp-phase8-linux-v1\nexport PYTHONPATH=\"$PWD:$PWD/.venv-analysis/lib/python3.12/site-packages:$PWD/.venv-transport/lib/python3.12/site-packages\"\nexport PYTHONDONTWRITEBYTECODE=1\n.venv/bin/python -B - <<'PY'\nimport json,shutil,sqlite3,subprocess,tarfile\nfrom pathlib import Path\nimport sys\nsys.path.insert(0,str(Path.cwd()/'artifacts/phase-8-review-freeze/v2'))\nfrom controls import Journal,hash_file,read,utc,write_new\nfrom runner import cloud_for,verify_run\nfrom storage import final_backup,upload,verify_local\nroot=Path('/var/lib/p8/run');journal=Journal(root);authority=verify_run(root,readonly=True);cloud=cloud_for(root)\nrows=journal.rows(); started=[r for r in rows if r['state']!='PLANNED']\nif len(started)!=1 or started[0]['state']!='BACKED_UP':raise ValueError('STOP_PRESERVATION_REQUIRES_FIRST_ORIGINAL_BACKED_UP')\nif not (root/'pause.json').exists():raise ValueError('FAILURE_PAUSE_MISSING')\nif subprocess.run(['systemctl','is-active','--quiet','fyp-phase8-campaign.service']).returncode==0:raise ValueError('CAMPAIGN_STILL_ACTIVE')\nproofs=[read(p) for p in (root/'backups').glob('*.json')]\nfor proof in proofs:\n    from storage import ObjectProof\n    verify_local(Path(proof['local']),proof['sha256']);cloud.verify(ObjectProof.model_validate(proof['cloud']))\nops=Path('/var/lib/p8/backup/stop-evidence-attempt1');ops.mkdir(exist_ok=False)\nfor src in [root/'pause.json',root/'host-clock.json',root/'cloud-reservations.json']:\n    if src.exists():shutil.copyfile(src,ops/src.name)\nslot=root/'slots/0001'\nfor src in list(slot.glob('*.log'))+[slot/'pause.json',slot/'retired.json',slot/'retirement-intent.json']:\n    if src.exists():shutil.copyfile(src,ops/('slot-'+src.name))\nfor src in Path('/var/lib/p8-deployment').glob('*.json'):\n    shutil.copyfile(src,ops/('deployment-'+src.name))\nlog=subprocess.run(['journalctl','-u','fyp-phase8-campaign.service','--no-pager'],capture_output=True,check=True,text=True)\n(ops/'campaign-journal.txt').write_text(log.stdout)\nwith journal.connect() as db:\n    integrity=db.execute('PRAGMA integrity_check').fetchone()[0]\n    if integrity!='ok':raise ValueError('CAMPAIGN_SQLITE_INTEGRITY')\n    events=[json.loads(r[0]) for r in db.execute('SELECT body FROM notices ORDER BY n')]\nwrite_new(ops/'stop-state.json',{'kind':'FAILURE_STOP_NOT_QUEUE_COMPLETION','at':utc().isoformat(),'pause':read(root/'pause.json'),'counts':{s:sum(r['state']==s for r in rows) for s in sorted({r['state'] for r in rows})},'events':events,'first_original':started[0]})\nwrite_new(ops/'manifest.json',{'kind':'STOP_OPERATIONAL_EVIDENCE','postgres_dumps':False,'files':{p.name:hash_file(p) for p in ops.iterdir() if p.is_file()}})\narchive=ops.with_suffix('.tar.gz')\nwith tarfile.open(archive,'x:gz') as out:out.add(ops,arcname='slot')\nverify_local(archive,hash_file(archive));op=upload(journal,cloud,authority.policy,archive);cloud.verify(op)\nmaster=final_backup(journal,Path('/var/lib/p8/backup'));mp=upload(journal,cloud,authority.policy,master);cloud.verify(mp)\nresult={'status':'PRESERVED_FAILURE_PAUSE_NO_NEW_ADMISSIONS','at':utc().isoformat(),'first_original':started[0],'original_proofs':proofs,'stop_evidence':op.model_dump(),'master_metadata':mp.model_dump(),'pause':read(root/'pause.json'),'cloud_bytes':cloud.inventory(),'source_freeze_launch_chain':'PASS','main_driver_replays':0,'queue_complete':False}\nwrite_new(Path('/var/lib/p8-deployment/stop-preservation.json'),result)\nprint(json.dumps(result))\nPY\n"
+        ],
+        "executionTimeout": [
+          "120"
+        ]
+      },
+      "InstanceIds": [
+        "i-0a6196aff6f8098ac"
+      ],
+      "Targets": [],
+      "RequestedDateTime": "2026-10-07T15:57:00.521000+00:00",
+      "Status": "Pending",
+      "StatusDetails": "Pending",
+      "OutputS3Region": "ap-southeast-2",
+      "OutputS3BucketName": "fyp-p82-20261005-018da1d6-803656589923",
+      "OutputS3KeyPrefix": "exports/phase8/p85-01a116f7-3b82-7a79-8653-3aee62dc99e9/deployment/stop-preservation-attempt1",
+      "MaxConcurrency": "50",
+      "MaxErrors": "0",
+      "TargetCount": 1,
+      "CompletedCount": 0,
+      "ErrorCount": 0,
+      "DeliveryTimedOutCount": 0,
+      "ServiceRole": "",
+      "NotificationConfig": {
+        "NotificationArn": "",
+        "NotificationEvents": [],
+        "NotificationType": ""
+      },
+      "CloudWatchOutputConfig": {
+        "CloudWatchLogGroupName": "",
+        "CloudWatchOutputEnabled": false
+      },
+      "TimeoutSeconds": 3600,
+      "AlarmConfiguration": {
+        "IgnorePollAlarmFailure": false,
+        "Alarms": []
+      },
+      "TriggeredAlarms": []
+    }
+  },
+  "api_calls": [
+    {
+      "service": "ssm",
+      "operation": "SendCommand",
+      "status": "success"
+    }
+  ]
+}

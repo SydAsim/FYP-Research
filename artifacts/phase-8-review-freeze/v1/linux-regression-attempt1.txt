@@ -1,0 +1,27 @@
+........F.......                                                         [100%]
+=================================== FAILURES ===================================
+_ test_missing_owned_container_message_compatibility[error: no such object: ] __
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x739e46c7a240>
+prefix = 'error: no such object: '
+
+>   ???
+
+C:\Users\syeda\OneDrive\ドキュメント\ChatGPT\Final Year Project\artifacts\phase-8-linux-setup\v1\test_linux.py:148: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'dedicated-new', owner = 'owner'
+
+    def inspect_owned(name: str, owner: str) -> dict[str, Any] | None:
+        result = subprocess.run(["docker", "inspect", name], capture_output=True, text=True, timeout=10)
+        if result.returncode:
+            # A broken daemon must not be mistaken for an absent named resource.
+            subprocess.run(["docker", "info"], capture_output=True, check=True, timeout=10)
+            if "No such" not in result.stderr:
+>               raise RuntimeError(f"Docker inspection failed: {result.stderr}")
+E               RuntimeError: Docker inspection failed: error: no such object: dedicated-new
+
+research/execution_linux_v1/runtime.py:50: RuntimeError
+=========================== short test summary info ============================
+FAILED ../../qualification/test_linux.py::test_missing_owned_container_message_compatibility[error: no such object: ]
+1 failed, 15 passed in 7.64s

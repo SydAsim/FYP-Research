@@ -1,0 +1,5 @@
+{
+  "commands": [
+    "date -u\njournalctl -u fyp-p83-pilot.service --no-pager -n 40\npython3.12 - <<'PY'\nimport pathlib,json,sqlite3\nroot=pathlib.Path('/srv/fyp-p83-v1')\nfor path in root.glob('blocks/*/result.json'):\n row=json.loads(path.read_text()); print('COMPLETED_BLOCK',path.parent.name,{k:row[k] for k in ('slots','peak_used_memory_bytes','minimum_available_memory_bytes','maximum_cpu_fraction')})\nfor path in root.glob('blocks/*/*/run/ledger.sqlite3'):\n with sqlite3.connect(f'file:{path}?mode=ro',uri=True) as conn: print('SLOT',conn.execute('SELECT arm,state,execution_id,deadline FROM slots').fetchall())\nfor path in root.glob('admission-stop-*.json'):print('STOP',path.name,path.read_text())\nPY"
+  ]
+}

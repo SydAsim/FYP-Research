@@ -1,0 +1,28 @@
+{
+  "exit": 0,
+  "stdout": "PASS: 2 missing-handover copier rejections; pinned Linux; no archives or research executions\n",
+  "stderr": "",
+  "args": [
+    "docker",
+    "run",
+    "--pull=never",
+    "--name",
+    "p85-v6-final-metadata-guards",
+    "--network",
+    "none",
+    "--memory",
+    "512m",
+    "--cpus",
+    "1",
+    "-v",
+    "E:\\p8v6\\source:/candidate:ro",
+    "-e",
+    "PYTHONDONTWRITEBYTECODE=1",
+    "-e",
+    "PYTHONPATH=/candidate:/candidate/artifacts/phase-8-runner-amendment/v4-complete:/opt/fyp-phase8-linux-v1/.venv-analysis/lib/python3.12/site-packages:/opt/fyp-phase8-linux-v1/.venv-transport/lib/python3.12/site-packages",
+    "sha256:5faee27d3793882b26aa166de48fc26d7939710ac9435b0fe7f988c8765497d8",
+    "python",
+    "-c",
+    "from pathlib import Path\nimport tempfile,json,sys,sqlite3\nfrom storage import copy_continuation_metadata\nassert sys.version_info[:3]==(3,12,13)\nwith tempfile.TemporaryDirectory(prefix='cal-missing-handover-') as temp:\n    source=Path(temp)/'in';source.mkdir();(source/'run.json').write_text(json.dumps({'continuation':{'kind':'CALIBRATION_ONLY'}}))\n    for mode in (False,True):\n        try: copy_continuation_metadata(source,Path(temp)/'out',prelaunch=mode)\n        except ValueError as error: assert str(error)=='PRELAUNCH_CONTINUATION_REQUIRED'\n        else: raise AssertionError('MISSING_HANDOVER_ACCEPTED')\nprint('PASS: 2 missing-handover copier rejections; pinned Linux; no archives or research executions')\n"
+  ]
+}

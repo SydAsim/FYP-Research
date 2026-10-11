@@ -1,0 +1,919 @@
+FFFFFFFFFFFFFFF                                                          [100%]
+================================== FAILURES ===================================
+___________ test_valid_calibration_admission_identity_and_deadline ____________
+
+tmp_path = WindowsPath('C:/Users/syeda/AppData/Local/Temp/pytest-of-syeda/pytest-166/test_valid_calibration_admissi0')
+
+    def test_valid_calibration_admission_identity_and_deadline(tmp_path: Path) -> None:
+>       root, authority = calibration(tmp_path)
+                          ^^^^^^^^^^^^^^^^^^^^^
+
+artifacts\phase-8-review-freeze\v2\test_controls.py:65: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+artifacts\phase-8-review-freeze\v2\test_controls.py:59: in calibration
+    initialize(root, source, manifest, policy, receipt_root, key, schedule, tmp / "backup")
+artifacts\phase-8-review-freeze\v2\runner.py:87: in initialize
+    authority.verify()  # No ledger creation or resource operation before all approvals.
+    ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <controls.Authority object at 0x0000013325E36300>
+at = datetime.datetime(2026, 10, 7, 11, 28, 1, 236900, tzinfo=datetime.timezone.utc)
+
+    def verify(self, at: datetime | None = None) -> str:
+        at = at or utc()
+        inventory = read(self.manifest)
+        if inventory["kind"] != "REVIEW_INVENTORY" or inventory["scope"] != self.policy.scope:
+            raise ValueError("PACKAGE_SCOPE_DRIFT")
+        files = inventory["files"]
+        if hashlib.sha256(canonical(files)).hexdigest() != inventory["package_hash"]:
+            raise ValueError("MANIFEST_HASH_DRIFT")
+        for name, expected in files.items():
+            path = (self.source / name).resolve()
+            if self.source.resolve() not in path.parents or hash_file(path) != expected:
+                raise ValueError(f"SOURCE_DRIFT: {name}")
+        if self.source.resolve() in self.key.resolve().parents:
+            raise ValueError("SIGNING_KEY_MUST_BE_OUTSIDE_SOURCE")
+        secret = self.key.read_bytes()
+        if len(secret) < 32:
+            raise ValueError("INVALID_OWNER_KEY")
+        previous: str | None = None
+        for kind in ("REVIEW_ACCEPTED", "FREEZE", "LAUNCH"):
+            receipt = Receipt.model_validate(read(self.receipts / f"{kind}.json"))
+            body = receipt.model_dump(mode="json", exclude={"signature"})
+            expected = hmac.new(secret, canonical(body), "sha256").hexdigest()
+            if (
+                not hmac.compare_digest(expected, receipt.signature)
+                or receipt.kind != kind
+                or receipt.scope != self.policy.scope
+                or receipt.package_hash != inventory["package_hash"]
+                or receipt.policy_hash
+                != hashlib.sha256(canonical(self.policy.model_dump(mode="json"))).hexdigest()
+                or receipt.schedule_hash != self.schedule_hash
+                or receipt.predecessor_hash != previous
+                or receipt.expires_at <= at
+                or receipt.expires_at < self.policy.stop_at
+            ):
+>               raise ValueError("INVALID_OR_EXPIRED_AUTHORIZATION_CHAIN")
+E               ValueError: INVALID_OR_EXPIRED_AUTHORIZATION_CHAIN
+
+artifacts\phase-8-review-freeze\v2\controls.py:179: ValueError
+_________ test_missing_authorization_stops_admission[REVIEW_ACCEPTED] _________
+
+tmp_path = WindowsPath('C:/Users/syeda/AppData/Local/Temp/pytest-of-syeda/pytest-166/test_missing_authorization_sto0')
+kind = 'REVIEW_ACCEPTED'
+
+    @pytest.mark.parametrize("kind", ["REVIEW_ACCEPTED", "FREEZE", "LAUNCH"])
+    def test_missing_authorization_stops_admission(tmp_path: Path, kind: str) -> None:
+>       root, authority = calibration(tmp_path)
+                          ^^^^^^^^^^^^^^^^^^^^^
+
+artifacts\phase-8-review-freeze\v2\test_controls.py:83: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+artifacts\phase-8-review-freeze\v2\test_controls.py:59: in calibration
+    initialize(root, source, manifest, policy, receipt_root, key, schedule, tmp / "backup")
+artifacts\phase-8-review-freeze\v2\runner.py:87: in initialize
+    authority.verify()  # No ledger creation or resource operation before all approvals.
+    ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <controls.Authority object at 0x0000013326124DD0>
+at = datetime.datetime(2026, 10, 7, 11, 28, 1, 954867, tzinfo=datetime.timezone.utc)
+
+    def verify(self, at: datetime | None = None) -> str:
+        at = at or utc()
+        inventory = read(self.manifest)
+        if inventory["kind"] != "REVIEW_INVENTORY" or inventory["scope"] != self.policy.scope:
+            raise ValueError("PACKAGE_SCOPE_DRIFT")
+        files = inventory["files"]
+        if hashlib.sha256(canonical(files)).hexdigest() != inventory["package_hash"]:
+            raise ValueError("MANIFEST_HASH_DRIFT")
+        for name, expected in files.items():
+            path = (self.source / name).resolve()
+            if self.source.resolve() not in path.parents or hash_file(path) != expected:
+                raise ValueError(f"SOURCE_DRIFT: {name}")
+        if self.source.resolve() in self.key.resolve().parents:
+            raise ValueError("SIGNING_KEY_MUST_BE_OUTSIDE_SOURCE")
+        secret = self.key.read_bytes()
+        if len(secret) < 32:
+            raise ValueError("INVALID_OWNER_KEY")
+        previous: str | None = None
+        for kind in ("REVIEW_ACCEPTED", "FREEZE", "LAUNCH"):
+            receipt = Receipt.model_validate(read(self.receipts / f"{kind}.json"))
+            body = receipt.model_dump(mode="json", exclude={"signature"})
+            expected = hmac.new(secret, canonical(body), "sha256").hexdigest()
+            if (
+                not hmac.compare_digest(expected, receipt.signature)
+                or receipt.kind != kind
+                or receipt.scope != self.policy.scope
+                or receipt.package_hash != inventory["package_hash"]
+                or receipt.policy_hash
+                != hashlib.sha256(canonical(self.policy.model_dump(mode="json"))).hexdigest()
+                or receipt.schedule_hash != self.schedule_hash
+                or receipt.predecessor_hash != previous
+                or receipt.expires_at <= at
+                or receipt.expires_at < self.policy.stop_at
+            ):
+>               raise ValueError("INVALID_OR_EXPIRED_AUTHORIZATION_CHAIN")
+E               ValueError: INVALID_OR_EXPIRED_AUTHORIZATION_CHAIN
+
+artifacts\phase-8-review-freeze\v2\controls.py:179: ValueError
+_____________ test_missing_authorization_stops_admission[FREEZE] ______________
+
+tmp_path = WindowsPath('C:/Users/syeda/AppData/Local/Temp/pytest-of-syeda/pytest-166/test_missing_authorization_sto1')
+kind = 'FREEZE'
+
+    @pytest.mark.parametrize("kind", ["REVIEW_ACCEPTED", "FREEZE", "LAUNCH"])
+    def test_missing_authorization_stops_admission(tmp_path: Path, kind: str) -> None:
+>       root, authority = calibration(tmp_path)
+                          ^^^^^^^^^^^^^^^^^^^^^
+
+artifacts\phase-8-review-freeze\v2\test_controls.py:83: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+artifacts\phase-8-review-freeze\v2\test_controls.py:59: in calibration
+    initialize(root, source, manifest, policy, receipt_root, key, schedule, tmp / "backup")
+artifacts\phase-8-review-freeze\v2\runner.py:87: in initialize
+    authority.verify()  # No ledger creation or resource operation before all approvals.
+    ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <controls.Authority object at 0x0000013326105430>
+at = datetime.datetime(2026, 10, 7, 11, 28, 2, 367274, tzinfo=datetime.timezone.utc)
+
+    def verify(self, at: datetime | None = None) -> str:
+        at = at or utc()
+        inventory = read(self.manifest)
+        if inventory["kind"] != "REVIEW_INVENTORY" or inventory["scope"] != self.policy.scope:
+            raise ValueError("PACKAGE_SCOPE_DRIFT")
+        files = inventory["files"]
+        if hashlib.sha256(canonical(files)).hexdigest() != inventory["package_hash"]:
+            raise ValueError("MANIFEST_HASH_DRIFT")
+        for name, expected in files.items():
+            path = (self.source / name).resolve()
+            if self.source.resolve() not in path.parents or hash_file(path) != expected:
+                raise ValueError(f"SOURCE_DRIFT: {name}")
+        if self.source.resolve() in self.key.resolve().parents:
+            raise ValueError("SIGNING_KEY_MUST_BE_OUTSIDE_SOURCE")
+        secret = self.key.read_bytes()
+        if len(secret) < 32:
+            raise ValueError("INVALID_OWNER_KEY")
+        previous: str | None = None
+        for kind in ("REVIEW_ACCEPTED", "FREEZE", "LAUNCH"):
+            receipt = Receipt.model_validate(read(self.receipts / f"{kind}.json"))
+            body = receipt.model_dump(mode="json", exclude={"signature"})
+            expected = hmac.new(secret, canonical(body), "sha256").hexdigest()
+            if (
+                not hmac.compare_digest(expected, receipt.signature)
+                or receipt.kind != kind
+                or receipt.scope != self.policy.scope
+                or receipt.package_hash != inventory["package_hash"]
+                or receipt.policy_hash
+                != hashlib.sha256(canonical(self.policy.model_dump(mode="json"))).hexdigest()
+                or receipt.schedule_hash != self.schedule_hash
+                or receipt.predecessor_hash != previous
+                or receipt.expires_at <= at
+                or receipt.expires_at < self.policy.stop_at
+            ):
+>               raise ValueError("INVALID_OR_EXPIRED_AUTHORIZATION_CHAIN")
+E               ValueError: INVALID_OR_EXPIRED_AUTHORIZATION_CHAIN
+
+artifacts\phase-8-review-freeze\v2\controls.py:179: ValueError
+_____________ test_missing_authorization_stops_admission[LAUNCH] ______________
+
+tmp_path = WindowsPath('C:/Users/syeda/AppData/Local/Temp/pytest-of-syeda/pytest-166/test_missing_authorization_sto2')
+kind = 'LAUNCH'
+
+    @pytest.mark.parametrize("kind", ["REVIEW_ACCEPTED", "FREEZE", "LAUNCH"])
+    def test_missing_authorization_stops_admission(tmp_path: Path, kind: str) -> None:
+>       root, authority = calibration(tmp_path)
+                          ^^^^^^^^^^^^^^^^^^^^^
+
+artifacts\phase-8-review-freeze\v2\test_controls.py:83: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+artifacts\phase-8-review-freeze\v2\test_controls.py:59: in calibration
+    initialize(root, source, manifest, policy, receipt_root, key, schedule, tmp / "backup")
+artifacts\phase-8-review-freeze\v2\runner.py:87: in initialize
+    authority.verify()  # No ledger creation or resource operation before all approvals.
+    ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <controls.Authority object at 0x000001332606FA40>
+at = datetime.datetime(2026, 10, 7, 11, 28, 2, 702721, tzinfo=datetime.timezone.utc)
+
+    def verify(self, at: datetime | None = None) -> str:
+        at = at or utc()
+        inventory = read(self.manifest)
+        if inventory["kind"] != "REVIEW_INVENTORY" or inventory["scope"] != self.policy.scope:
+            raise ValueError("PACKAGE_SCOPE_DRIFT")
+        files = inventory["files"]
+        if hashlib.sha256(canonical(files)).hexdigest() != inventory["package_hash"]:
+            raise ValueError("MANIFEST_HASH_DRIFT")
+        for name, expected in files.items():
+            path = (self.source / name).resolve()
+            if self.source.resolve() not in path.parents or hash_file(path) != expected:
+                raise ValueError(f"SOURCE_DRIFT: {name}")
+        if self.source.resolve() in self.key.resolve().parents:
+            raise ValueError("SIGNING_KEY_MUST_BE_OUTSIDE_SOURCE")
+        secret = self.key.read_bytes()
+        if len(secret) < 32:
+            raise ValueError("INVALID_OWNER_KEY")
+        previous: str | None = None
+        for kind in ("REVIEW_ACCEPTED", "FREEZE", "LAUNCH"):
+            receipt = Receipt.model_validate(read(self.receipts / f"{kind}.json"))
+            body = receipt.model_dump(mode="json", exclude={"signature"})
+            expected = hmac.new(secret, canonical(body), "sha256").hexdigest()
+            if (
+                not hmac.compare_digest(expected, receipt.signature)
+                or receipt.kind != kind
+                or receipt.scope != self.policy.scope
+                or receipt.package_hash != inventory["package_hash"]
+                or receipt.policy_hash
+                != hashlib.sha256(canonical(self.policy.model_dump(mode="json"))).hexdigest()
+                or receipt.schedule_hash != self.schedule_hash
+                or receipt.predecessor_hash != previous
+                or receipt.expires_at <= at
+                or receipt.expires_at < self.policy.stop_at
+            ):
+>               raise ValueError("INVALID_OR_EXPIRED_AUTHORIZATION_CHAIN")
+E               ValueError: INVALID_OR_EXPIRED_AUTHORIZATION_CHAIN
+
+artifacts\phase-8-review-freeze\v2\controls.py:179: ValueError
+__________________ test_signature_chain_and_scope_rejection ___________________
+
+tmp_path = WindowsPath('C:/Users/syeda/AppData/Local/Temp/pytest-of-syeda/pytest-166/test_signature_chain_and_scope0')
+
+    def test_signature_chain_and_scope_rejection(tmp_path: Path) -> None:
+>       root, authority = calibration(tmp_path)
+                          ^^^^^^^^^^^^^^^^^^^^^
+
+artifacts\phase-8-review-freeze\v2\test_controls.py:91: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+artifacts\phase-8-review-freeze\v2\test_controls.py:59: in calibration
+    initialize(root, source, manifest, policy, receipt_root, key, schedule, tmp / "backup")
+artifacts\phase-8-review-freeze\v2\runner.py:87: in initialize
+    authority.verify()  # No ledger creation or resource operation before all approvals.
+    ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <controls.Authority object at 0x0000013325C6AF60>
+at = datetime.datetime(2026, 10, 7, 11, 28, 3, 43898, tzinfo=datetime.timezone.utc)
+
+    def verify(self, at: datetime | None = None) -> str:
+        at = at or utc()
+        inventory = read(self.manifest)
+        if inventory["kind"] != "REVIEW_INVENTORY" or inventory["scope"] != self.policy.scope:
+            raise ValueError("PACKAGE_SCOPE_DRIFT")
+        files = inventory["files"]
+        if hashlib.sha256(canonical(files)).hexdigest() != inventory["package_hash"]:
+            raise ValueError("MANIFEST_HASH_DRIFT")
+        for name, expected in files.items():
+            path = (self.source / name).resolve()
+            if self.source.resolve() not in path.parents or hash_file(path) != expected:
+                raise ValueError(f"SOURCE_DRIFT: {name}")
+        if self.source.resolve() in self.key.resolve().parents:
+            raise ValueError("SIGNING_KEY_MUST_BE_OUTSIDE_SOURCE")
+        secret = self.key.read_bytes()
+        if len(secret) < 32:
+            raise ValueError("INVALID_OWNER_KEY")
+        previous: str | None = None
+        for kind in ("REVIEW_ACCEPTED", "FREEZE", "LAUNCH"):
+            receipt = Receipt.model_validate(read(self.receipts / f"{kind}.json"))
+            body = receipt.model_dump(mode="json", exclude={"signature"})
+            expected = hmac.new(secret, canonical(body), "sha256").hexdigest()
+            if (
+                not hmac.compare_digest(expected, receipt.signature)
+                or receipt.kind != kind
+                or receipt.scope != self.policy.scope
+                or receipt.package_hash != inventory["package_hash"]
+                or receipt.policy_hash
+                != hashlib.sha256(canonical(self.policy.model_dump(mode="json"))).hexdigest()
+                or receipt.schedule_hash != self.schedule_hash
+                or receipt.predecessor_hash != previous
+                or receipt.expires_at <= at
+                or receipt.expires_at < self.policy.stop_at
+            ):
+>               raise ValueError("INVALID_OR_EXPIRED_AUTHORIZATION_CHAIN")
+E               ValueError: INVALID_OR_EXPIRED_AUTHORIZATION_CHAIN
+
+artifacts\phase-8-review-freeze\v2\controls.py:179: ValueError
+_____________________ test_source_and_binding_drift_stop ______________________
+
+tmp_path = WindowsPath('C:/Users/syeda/AppData/Local/Temp/pytest-of-syeda/pytest-166/test_source_and_binding_drift_0')
+
+    def test_source_and_binding_drift_stop(tmp_path: Path) -> None:
+>       root, authority = calibration(tmp_path)
+                          ^^^^^^^^^^^^^^^^^^^^^
+
+artifacts\phase-8-review-freeze\v2\test_controls.py:105: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+artifacts\phase-8-review-freeze\v2\test_controls.py:59: in calibration
+    initialize(root, source, manifest, policy, receipt_root, key, schedule, tmp / "backup")
+artifacts\phase-8-review-freeze\v2\runner.py:87: in initialize
+    authority.verify()  # No ledger creation or resource operation before all approvals.
+    ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <controls.Authority object at 0x0000013325C68800>
+at = datetime.datetime(2026, 10, 7, 11, 28, 3, 373485, tzinfo=datetime.timezone.utc)
+
+    def verify(self, at: datetime | None = None) -> str:
+        at = at or utc()
+        inventory = read(self.manifest)
+        if inventory["kind"] != "REVIEW_INVENTORY" or inventory["scope"] != self.policy.scope:
+            raise ValueError("PACKAGE_SCOPE_DRIFT")
+        files = inventory["files"]
+        if hashlib.sha256(canonical(files)).hexdigest() != inventory["package_hash"]:
+            raise ValueError("MANIFEST_HASH_DRIFT")
+        for name, expected in files.items():
+            path = (self.source / name).resolve()
+            if self.source.resolve() not in path.parents or hash_file(path) != expected:
+                raise ValueError(f"SOURCE_DRIFT: {name}")
+        if self.source.resolve() in self.key.resolve().parents:
+            raise ValueError("SIGNING_KEY_MUST_BE_OUTSIDE_SOURCE")
+        secret = self.key.read_bytes()
+        if len(secret) < 32:
+            raise ValueError("INVALID_OWNER_KEY")
+        previous: str | None = None
+        for kind in ("REVIEW_ACCEPTED", "FREEZE", "LAUNCH"):
+            receipt = Receipt.model_validate(read(self.receipts / f"{kind}.json"))
+            body = receipt.model_dump(mode="json", exclude={"signature"})
+            expected = hmac.new(secret, canonical(body), "sha256").hexdigest()
+            if (
+                not hmac.compare_digest(expected, receipt.signature)
+                or receipt.kind != kind
+                or receipt.scope != self.policy.scope
+                or receipt.package_hash != inventory["package_hash"]
+                or receipt.policy_hash
+                != hashlib.sha256(canonical(self.policy.model_dump(mode="json"))).hexdigest()
+                or receipt.schedule_hash != self.schedule_hash
+                or receipt.predecessor_hash != previous
+                or receipt.expires_at <= at
+                or receipt.expires_at < self.policy.stop_at
+            ):
+>               raise ValueError("INVALID_OR_EXPIRED_AUTHORIZATION_CHAIN")
+E               ValueError: INVALID_OR_EXPIRED_AUTHORIZATION_CHAIN
+
+artifacts\phase-8-review-freeze\v2\controls.py:179: ValueError
+__________________ test_time_and_budget_stops[360-HOST_360H] __________________
+
+tmp_path = WindowsPath('C:/Users/syeda/AppData/Local/Temp/pytest-of-syeda/pytest-166/test_time_and_budget_stops_3600')
+hours = 360, error = 'HOST_360H'
+
+    @pytest.mark.parametrize("hours,error", [(360, "HOST_360H"), (359.6, "ADMISSION_CUTOFF"),
+                                            (330, "COMMITTED_COST")])
+    def test_time_and_budget_stops(tmp_path: Path, hours: float, error: str) -> None:
+>       _, authority = calibration(tmp_path)
+                       ^^^^^^^^^^^^^^^^^^^^^
+
+artifacts\phase-8-review-freeze\v2\test_controls.py:118: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+artifacts\phase-8-review-freeze\v2\test_controls.py:59: in calibration
+    initialize(root, source, manifest, policy, receipt_root, key, schedule, tmp / "backup")
+artifacts\phase-8-review-freeze\v2\runner.py:87: in initialize
+    authority.verify()  # No ledger creation or resource operation before all approvals.
+    ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <controls.Authority object at 0x0000013325DB4920>
+at = datetime.datetime(2026, 10, 7, 11, 28, 3, 616496, tzinfo=datetime.timezone.utc)
+
+    def verify(self, at: datetime | None = None) -> str:
+        at = at or utc()
+        inventory = read(self.manifest)
+        if inventory["kind"] != "REVIEW_INVENTORY" or inventory["scope"] != self.policy.scope:
+            raise ValueError("PACKAGE_SCOPE_DRIFT")
+        files = inventory["files"]
+        if hashlib.sha256(canonical(files)).hexdigest() != inventory["package_hash"]:
+            raise ValueError("MANIFEST_HASH_DRIFT")
+        for name, expected in files.items():
+            path = (self.source / name).resolve()
+            if self.source.resolve() not in path.parents or hash_file(path) != expected:
+                raise ValueError(f"SOURCE_DRIFT: {name}")
+        if self.source.resolve() in self.key.resolve().parents:
+            raise ValueError("SIGNING_KEY_MUST_BE_OUTSIDE_SOURCE")
+        secret = self.key.read_bytes()
+        if len(secret) < 32:
+            raise ValueError("INVALID_OWNER_KEY")
+        previous: str | None = None
+        for kind in ("REVIEW_ACCEPTED", "FREEZE", "LAUNCH"):
+            receipt = Receipt.model_validate(read(self.receipts / f"{kind}.json"))
+            body = receipt.model_dump(mode="json", exclude={"signature"})
+            expected = hmac.new(secret, canonical(body), "sha256").hexdigest()
+            if (
+                not hmac.compare_digest(expected, receipt.signature)
+                or receipt.kind != kind
+                or receipt.scope != self.policy.scope
+                or receipt.package_hash != inventory["package_hash"]
+                or receipt.policy_hash
+                != hashlib.sha256(canonical(self.policy.model_dump(mode="json"))).hexdigest()
+                or receipt.schedule_hash != self.schedule_hash
+                or receipt.predecessor_hash != previous
+                or receipt.expires_at <= at
+                or receipt.expires_at < self.policy.stop_at
+            ):
+>               raise ValueError("INVALID_OR_EXPIRED_AUTHORIZATION_CHAIN")
+E               ValueError: INVALID_OR_EXPIRED_AUTHORIZATION_CHAIN
+
+artifacts\phase-8-review-freeze\v2\controls.py:179: ValueError
+_____________ test_time_and_budget_stops[359.6-ADMISSION_CUTOFF] ______________
+
+tmp_path = WindowsPath('C:/Users/syeda/AppData/Local/Temp/pytest-of-syeda/pytest-166/test_time_and_budget_stops_3590')
+hours = 359.6, error = 'ADMISSION_CUTOFF'
+
+    @pytest.mark.parametrize("hours,error", [(360, "HOST_360H"), (359.6, "ADMISSION_CUTOFF"),
+                                            (330, "COMMITTED_COST")])
+    def test_time_and_budget_stops(tmp_path: Path, hours: float, error: str) -> None:
+>       _, authority = calibration(tmp_path)
+                       ^^^^^^^^^^^^^^^^^^^^^
+
+artifacts\phase-8-review-freeze\v2\test_controls.py:118: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+artifacts\phase-8-review-freeze\v2\test_controls.py:59: in calibration
+    initialize(root, source, manifest, policy, receipt_root, key, schedule, tmp / "backup")
+artifacts\phase-8-review-freeze\v2\runner.py:87: in initialize
+    authority.verify()  # No ledger creation or resource operation before all approvals.
+    ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <controls.Authority object at 0x000001332722A120>
+at = datetime.datetime(2026, 10, 7, 11, 28, 4, 21496, tzinfo=datetime.timezone.utc)
+
+    def verify(self, at: datetime | None = None) -> str:
+        at = at or utc()
+        inventory = read(self.manifest)
+        if inventory["kind"] != "REVIEW_INVENTORY" or inventory["scope"] != self.policy.scope:
+            raise ValueError("PACKAGE_SCOPE_DRIFT")
+        files = inventory["files"]
+        if hashlib.sha256(canonical(files)).hexdigest() != inventory["package_hash"]:
+            raise ValueError("MANIFEST_HASH_DRIFT")
+        for name, expected in files.items():
+            path = (self.source / name).resolve()
+            if self.source.resolve() not in path.parents or hash_file(path) != expected:
+                raise ValueError(f"SOURCE_DRIFT: {name}")
+        if self.source.resolve() in self.key.resolve().parents:
+            raise ValueError("SIGNING_KEY_MUST_BE_OUTSIDE_SOURCE")
+        secret = self.key.read_bytes()
+        if len(secret) < 32:
+            raise ValueError("INVALID_OWNER_KEY")
+        previous: str | None = None
+        for kind in ("REVIEW_ACCEPTED", "FREEZE", "LAUNCH"):
+            receipt = Receipt.model_validate(read(self.receipts / f"{kind}.json"))
+            body = receipt.model_dump(mode="json", exclude={"signature"})
+            expected = hmac.new(secret, canonical(body), "sha256").hexdigest()
+            if (
+                not hmac.compare_digest(expected, receipt.signature)
+                or receipt.kind != kind
+                or receipt.scope != self.policy.scope
+                or receipt.package_hash != inventory["package_hash"]
+                or receipt.policy_hash
+                != hashlib.sha256(canonical(self.policy.model_dump(mode="json"))).hexdigest()
+                or receipt.schedule_hash != self.schedule_hash
+                or receipt.predecessor_hash != previous
+                or receipt.expires_at <= at
+                or receipt.expires_at < self.policy.stop_at
+            ):
+>               raise ValueError("INVALID_OR_EXPIRED_AUTHORIZATION_CHAIN")
+E               ValueError: INVALID_OR_EXPIRED_AUTHORIZATION_CHAIN
+
+artifacts\phase-8-review-freeze\v2\controls.py:179: ValueError
+_______________ test_time_and_budget_stops[330-COMMITTED_COST] ________________
+
+tmp_path = WindowsPath('C:/Users/syeda/AppData/Local/Temp/pytest-of-syeda/pytest-166/test_time_and_budget_stops_3300')
+hours = 330, error = 'COMMITTED_COST'
+
+    @pytest.mark.parametrize("hours,error", [(360, "HOST_360H"), (359.6, "ADMISSION_CUTOFF"),
+                                            (330, "COMMITTED_COST")])
+    def test_time_and_budget_stops(tmp_path: Path, hours: float, error: str) -> None:
+>       _, authority = calibration(tmp_path)
+                       ^^^^^^^^^^^^^^^^^^^^^
+
+artifacts\phase-8-review-freeze\v2\test_controls.py:118: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+artifacts\phase-8-review-freeze\v2\test_controls.py:59: in calibration
+    initialize(root, source, manifest, policy, receipt_root, key, schedule, tmp / "backup")
+artifacts\phase-8-review-freeze\v2\runner.py:87: in initialize
+    authority.verify()  # No ledger creation or resource operation before all approvals.
+    ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <controls.Authority object at 0x0000013327228890>
+at = datetime.datetime(2026, 10, 7, 11, 28, 4, 518136, tzinfo=datetime.timezone.utc)
+
+    def verify(self, at: datetime | None = None) -> str:
+        at = at or utc()
+        inventory = read(self.manifest)
+        if inventory["kind"] != "REVIEW_INVENTORY" or inventory["scope"] != self.policy.scope:
+            raise ValueError("PACKAGE_SCOPE_DRIFT")
+        files = inventory["files"]
+        if hashlib.sha256(canonical(files)).hexdigest() != inventory["package_hash"]:
+            raise ValueError("MANIFEST_HASH_DRIFT")
+        for name, expected in files.items():
+            path = (self.source / name).resolve()
+            if self.source.resolve() not in path.parents or hash_file(path) != expected:
+                raise ValueError(f"SOURCE_DRIFT: {name}")
+        if self.source.resolve() in self.key.resolve().parents:
+            raise ValueError("SIGNING_KEY_MUST_BE_OUTSIDE_SOURCE")
+        secret = self.key.read_bytes()
+        if len(secret) < 32:
+            raise ValueError("INVALID_OWNER_KEY")
+        previous: str | None = None
+        for kind in ("REVIEW_ACCEPTED", "FREEZE", "LAUNCH"):
+            receipt = Receipt.model_validate(read(self.receipts / f"{kind}.json"))
+            body = receipt.model_dump(mode="json", exclude={"signature"})
+            expected = hmac.new(secret, canonical(body), "sha256").hexdigest()
+            if (
+                not hmac.compare_digest(expected, receipt.signature)
+                or receipt.kind != kind
+                or receipt.scope != self.policy.scope
+                or receipt.package_hash != inventory["package_hash"]
+                or receipt.policy_hash
+                != hashlib.sha256(canonical(self.policy.model_dump(mode="json"))).hexdigest()
+                or receipt.schedule_hash != self.schedule_hash
+                or receipt.predecessor_hash != previous
+                or receipt.expires_at <= at
+                or receipt.expires_at < self.policy.stop_at
+            ):
+>               raise ValueError("INVALID_OR_EXPIRED_AUTHORIZATION_CHAIN")
+E               ValueError: INVALID_OR_EXPIRED_AUTHORIZATION_CHAIN
+
+artifacts\phase-8-review-freeze\v2\controls.py:179: ValueError
+_______ test_resource_stops[available_memory_bytes-2147483647-RAM_STOP] _______
+
+tmp_path = WindowsPath('C:/Users/syeda/AppData/Local/Temp/pytest-of-syeda/pytest-166/test_resource_stops_available_0')
+field = 'available_memory_bytes', value = 2147483647, error = 'RAM_STOP'
+
+    @pytest.mark.parametrize("field,value,error", [
+        ("available_memory_bytes", 2 * 1024**3 - 1, "RAM_STOP"),
+        ("output_free_bytes", 20 * 1024**3 - 1, "DISK_STOP"),
+        ("backup_free_bytes", 20 * 1024**3 - 1, "DISK_STOP")])
+    def test_resource_stops(tmp_path: Path, field: str, value: int, error: str) -> None:
+>       _, authority = calibration(tmp_path)
+                       ^^^^^^^^^^^^^^^^^^^^^
+
+artifacts\phase-8-review-freeze\v2\test_controls.py:128: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+artifacts\phase-8-review-freeze\v2\test_controls.py:59: in calibration
+    initialize(root, source, manifest, policy, receipt_root, key, schedule, tmp / "backup")
+artifacts\phase-8-review-freeze\v2\runner.py:87: in initialize
+    authority.verify()  # No ledger creation or resource operation before all approvals.
+    ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <controls.Authority object at 0x0000013327296CC0>
+at = datetime.datetime(2026, 10, 7, 11, 28, 4, 868318, tzinfo=datetime.timezone.utc)
+
+    def verify(self, at: datetime | None = None) -> str:
+        at = at or utc()
+        inventory = read(self.manifest)
+        if inventory["kind"] != "REVIEW_INVENTORY" or inventory["scope"] != self.policy.scope:
+            raise ValueError("PACKAGE_SCOPE_DRIFT")
+        files = inventory["files"]
+        if hashlib.sha256(canonical(files)).hexdigest() != inventory["package_hash"]:
+            raise ValueError("MANIFEST_HASH_DRIFT")
+        for name, expected in files.items():
+            path = (self.source / name).resolve()
+            if self.source.resolve() not in path.parents or hash_file(path) != expected:
+                raise ValueError(f"SOURCE_DRIFT: {name}")
+        if self.source.resolve() in self.key.resolve().parents:
+            raise ValueError("SIGNING_KEY_MUST_BE_OUTSIDE_SOURCE")
+        secret = self.key.read_bytes()
+        if len(secret) < 32:
+            raise ValueError("INVALID_OWNER_KEY")
+        previous: str | None = None
+        for kind in ("REVIEW_ACCEPTED", "FREEZE", "LAUNCH"):
+            receipt = Receipt.model_validate(read(self.receipts / f"{kind}.json"))
+            body = receipt.model_dump(mode="json", exclude={"signature"})
+            expected = hmac.new(secret, canonical(body), "sha256").hexdigest()
+            if (
+                not hmac.compare_digest(expected, receipt.signature)
+                or receipt.kind != kind
+                or receipt.scope != self.policy.scope
+                or receipt.package_hash != inventory["package_hash"]
+                or receipt.policy_hash
+                != hashlib.sha256(canonical(self.policy.model_dump(mode="json"))).hexdigest()
+                or receipt.schedule_hash != self.schedule_hash
+                or receipt.predecessor_hash != previous
+                or receipt.expires_at <= at
+                or receipt.expires_at < self.policy.stop_at
+            ):
+>               raise ValueError("INVALID_OR_EXPIRED_AUTHORIZATION_CHAIN")
+E               ValueError: INVALID_OR_EXPIRED_AUTHORIZATION_CHAIN
+
+artifacts\phase-8-review-freeze\v2\controls.py:179: ValueError
+________ test_resource_stops[output_free_bytes-21474836479-DISK_STOP] _________
+
+tmp_path = WindowsPath('C:/Users/syeda/AppData/Local/Temp/pytest-of-syeda/pytest-166/test_resource_stops_output_fre0')
+field = 'output_free_bytes', value = 21474836479, error = 'DISK_STOP'
+
+    @pytest.mark.parametrize("field,value,error", [
+        ("available_memory_bytes", 2 * 1024**3 - 1, "RAM_STOP"),
+        ("output_free_bytes", 20 * 1024**3 - 1, "DISK_STOP"),
+        ("backup_free_bytes", 20 * 1024**3 - 1, "DISK_STOP")])
+    def test_resource_stops(tmp_path: Path, field: str, value: int, error: str) -> None:
+>       _, authority = calibration(tmp_path)
+                       ^^^^^^^^^^^^^^^^^^^^^
+
+artifacts\phase-8-review-freeze\v2\test_controls.py:128: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+artifacts\phase-8-review-freeze\v2\test_controls.py:59: in calibration
+    initialize(root, source, manifest, policy, receipt_root, key, schedule, tmp / "backup")
+artifacts\phase-8-review-freeze\v2\runner.py:87: in initialize
+    authority.verify()  # No ledger creation or resource operation before all approvals.
+    ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <controls.Authority object at 0x0000013325EAEDE0>
+at = datetime.datetime(2026, 10, 7, 11, 28, 5, 186719, tzinfo=datetime.timezone.utc)
+
+    def verify(self, at: datetime | None = None) -> str:
+        at = at or utc()
+        inventory = read(self.manifest)
+        if inventory["kind"] != "REVIEW_INVENTORY" or inventory["scope"] != self.policy.scope:
+            raise ValueError("PACKAGE_SCOPE_DRIFT")
+        files = inventory["files"]
+        if hashlib.sha256(canonical(files)).hexdigest() != inventory["package_hash"]:
+            raise ValueError("MANIFEST_HASH_DRIFT")
+        for name, expected in files.items():
+            path = (self.source / name).resolve()
+            if self.source.resolve() not in path.parents or hash_file(path) != expected:
+                raise ValueError(f"SOURCE_DRIFT: {name}")
+        if self.source.resolve() in self.key.resolve().parents:
+            raise ValueError("SIGNING_KEY_MUST_BE_OUTSIDE_SOURCE")
+        secret = self.key.read_bytes()
+        if len(secret) < 32:
+            raise ValueError("INVALID_OWNER_KEY")
+        previous: str | None = None
+        for kind in ("REVIEW_ACCEPTED", "FREEZE", "LAUNCH"):
+            receipt = Receipt.model_validate(read(self.receipts / f"{kind}.json"))
+            body = receipt.model_dump(mode="json", exclude={"signature"})
+            expected = hmac.new(secret, canonical(body), "sha256").hexdigest()
+            if (
+                not hmac.compare_digest(expected, receipt.signature)
+                or receipt.kind != kind
+                or receipt.scope != self.policy.scope
+                or receipt.package_hash != inventory["package_hash"]
+                or receipt.policy_hash
+                != hashlib.sha256(canonical(self.policy.model_dump(mode="json"))).hexdigest()
+                or receipt.schedule_hash != self.schedule_hash
+                or receipt.predecessor_hash != previous
+                or receipt.expires_at <= at
+                or receipt.expires_at < self.policy.stop_at
+            ):
+>               raise ValueError("INVALID_OR_EXPIRED_AUTHORIZATION_CHAIN")
+E               ValueError: INVALID_OR_EXPIRED_AUTHORIZATION_CHAIN
+
+artifacts\phase-8-review-freeze\v2\controls.py:179: ValueError
+________ test_resource_stops[backup_free_bytes-21474836479-DISK_STOP] _________
+
+tmp_path = WindowsPath('C:/Users/syeda/AppData/Local/Temp/pytest-of-syeda/pytest-166/test_resource_stops_backup_fre0')
+field = 'backup_free_bytes', value = 21474836479, error = 'DISK_STOP'
+
+    @pytest.mark.parametrize("field,value,error", [
+        ("available_memory_bytes", 2 * 1024**3 - 1, "RAM_STOP"),
+        ("output_free_bytes", 20 * 1024**3 - 1, "DISK_STOP"),
+        ("backup_free_bytes", 20 * 1024**3 - 1, "DISK_STOP")])
+    def test_resource_stops(tmp_path: Path, field: str, value: int, error: str) -> None:
+>       _, authority = calibration(tmp_path)
+                       ^^^^^^^^^^^^^^^^^^^^^
+
+artifacts\phase-8-review-freeze\v2\test_controls.py:128: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+artifacts\phase-8-review-freeze\v2\test_controls.py:59: in calibration
+    initialize(root, source, manifest, policy, receipt_root, key, schedule, tmp / "backup")
+artifacts\phase-8-review-freeze\v2\runner.py:87: in initialize
+    authority.verify()  # No ledger creation or resource operation before all approvals.
+    ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <controls.Authority object at 0x0000013325EAE030>
+at = datetime.datetime(2026, 10, 7, 11, 28, 5, 490731, tzinfo=datetime.timezone.utc)
+
+    def verify(self, at: datetime | None = None) -> str:
+        at = at or utc()
+        inventory = read(self.manifest)
+        if inventory["kind"] != "REVIEW_INVENTORY" or inventory["scope"] != self.policy.scope:
+            raise ValueError("PACKAGE_SCOPE_DRIFT")
+        files = inventory["files"]
+        if hashlib.sha256(canonical(files)).hexdigest() != inventory["package_hash"]:
+            raise ValueError("MANIFEST_HASH_DRIFT")
+        for name, expected in files.items():
+            path = (self.source / name).resolve()
+            if self.source.resolve() not in path.parents or hash_file(path) != expected:
+                raise ValueError(f"SOURCE_DRIFT: {name}")
+        if self.source.resolve() in self.key.resolve().parents:
+            raise ValueError("SIGNING_KEY_MUST_BE_OUTSIDE_SOURCE")
+        secret = self.key.read_bytes()
+        if len(secret) < 32:
+            raise ValueError("INVALID_OWNER_KEY")
+        previous: str | None = None
+        for kind in ("REVIEW_ACCEPTED", "FREEZE", "LAUNCH"):
+            receipt = Receipt.model_validate(read(self.receipts / f"{kind}.json"))
+            body = receipt.model_dump(mode="json", exclude={"signature"})
+            expected = hmac.new(secret, canonical(body), "sha256").hexdigest()
+            if (
+                not hmac.compare_digest(expected, receipt.signature)
+                or receipt.kind != kind
+                or receipt.scope != self.policy.scope
+                or receipt.package_hash != inventory["package_hash"]
+                or receipt.policy_hash
+                != hashlib.sha256(canonical(self.policy.model_dump(mode="json"))).hexdigest()
+                or receipt.schedule_hash != self.schedule_hash
+                or receipt.predecessor_hash != previous
+                or receipt.expires_at <= at
+                or receipt.expires_at < self.policy.stop_at
+            ):
+>               raise ValueError("INVALID_OR_EXPIRED_AUTHORIZATION_CHAIN")
+E               ValueError: INVALID_OR_EXPIRED_AUTHORIZATION_CHAIN
+
+artifacts\phase-8-review-freeze\v2\controls.py:179: ValueError
+______________________ test_cloud_and_active_thresholds _______________________
+
+tmp_path = WindowsPath('C:/Users/syeda/AppData/Local/Temp/pytest-of-syeda/pytest-166/test_cloud_and_active_threshol0')
+
+    def test_cloud_and_active_thresholds(tmp_path: Path) -> None:
+>       _, authority = calibration(tmp_path)
+                       ^^^^^^^^^^^^^^^^^^^^^
+
+artifacts\phase-8-review-freeze\v2\test_controls.py:136: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+artifacts\phase-8-review-freeze\v2\test_controls.py:59: in calibration
+    initialize(root, source, manifest, policy, receipt_root, key, schedule, tmp / "backup")
+artifacts\phase-8-review-freeze\v2\runner.py:87: in initialize
+    authority.verify()  # No ledger creation or resource operation before all approvals.
+    ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <controls.Authority object at 0x0000013325D41D90>
+at = datetime.datetime(2026, 10, 7, 11, 28, 5, 917557, tzinfo=datetime.timezone.utc)
+
+    def verify(self, at: datetime | None = None) -> str:
+        at = at or utc()
+        inventory = read(self.manifest)
+        if inventory["kind"] != "REVIEW_INVENTORY" or inventory["scope"] != self.policy.scope:
+            raise ValueError("PACKAGE_SCOPE_DRIFT")
+        files = inventory["files"]
+        if hashlib.sha256(canonical(files)).hexdigest() != inventory["package_hash"]:
+            raise ValueError("MANIFEST_HASH_DRIFT")
+        for name, expected in files.items():
+            path = (self.source / name).resolve()
+            if self.source.resolve() not in path.parents or hash_file(path) != expected:
+                raise ValueError(f"SOURCE_DRIFT: {name}")
+        if self.source.resolve() in self.key.resolve().parents:
+            raise ValueError("SIGNING_KEY_MUST_BE_OUTSIDE_SOURCE")
+        secret = self.key.read_bytes()
+        if len(secret) < 32:
+            raise ValueError("INVALID_OWNER_KEY")
+        previous: str | None = None
+        for kind in ("REVIEW_ACCEPTED", "FREEZE", "LAUNCH"):
+            receipt = Receipt.model_validate(read(self.receipts / f"{kind}.json"))
+            body = receipt.model_dump(mode="json", exclude={"signature"})
+            expected = hmac.new(secret, canonical(body), "sha256").hexdigest()
+            if (
+                not hmac.compare_digest(expected, receipt.signature)
+                or receipt.kind != kind
+                or receipt.scope != self.policy.scope
+                or receipt.package_hash != inventory["package_hash"]
+                or receipt.policy_hash
+                != hashlib.sha256(canonical(self.policy.model_dump(mode="json"))).hexdigest()
+                or receipt.schedule_hash != self.schedule_hash
+                or receipt.predecessor_hash != previous
+                or receipt.expires_at <= at
+                or receipt.expires_at < self.policy.stop_at
+            ):
+>               raise ValueError("INVALID_OR_EXPIRED_AUTHORIZATION_CHAIN")
+E               ValueError: INVALID_OR_EXPIRED_AUTHORIZATION_CHAIN
+
+artifacts\phase-8-review-freeze\v2\controls.py:179: ValueError
+___________________ test_pause_resume_and_prior_backup_gate ___________________
+
+tmp_path = WindowsPath('C:/Users/syeda/AppData/Local/Temp/pytest-of-syeda/pytest-166/test_pause_resume_and_prior_ba0')
+
+    def test_pause_resume_and_prior_backup_gate(tmp_path: Path) -> None:
+>       root, authority = calibration(tmp_path)
+                          ^^^^^^^^^^^^^^^^^^^^^
+
+artifacts\phase-8-review-freeze\v2\test_controls.py:150: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+artifacts\phase-8-review-freeze\v2\test_controls.py:59: in calibration
+    initialize(root, source, manifest, policy, receipt_root, key, schedule, tmp / "backup")
+artifacts\phase-8-review-freeze\v2\runner.py:87: in initialize
+    authority.verify()  # No ledger creation or resource operation before all approvals.
+    ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <controls.Authority object at 0x0000013326083710>
+at = datetime.datetime(2026, 10, 7, 11, 28, 6, 261827, tzinfo=datetime.timezone.utc)
+
+    def verify(self, at: datetime | None = None) -> str:
+        at = at or utc()
+        inventory = read(self.manifest)
+        if inventory["kind"] != "REVIEW_INVENTORY" or inventory["scope"] != self.policy.scope:
+            raise ValueError("PACKAGE_SCOPE_DRIFT")
+        files = inventory["files"]
+        if hashlib.sha256(canonical(files)).hexdigest() != inventory["package_hash"]:
+            raise ValueError("MANIFEST_HASH_DRIFT")
+        for name, expected in files.items():
+            path = (self.source / name).resolve()
+            if self.source.resolve() not in path.parents or hash_file(path) != expected:
+                raise ValueError(f"SOURCE_DRIFT: {name}")
+        if self.source.resolve() in self.key.resolve().parents:
+            raise ValueError("SIGNING_KEY_MUST_BE_OUTSIDE_SOURCE")
+        secret = self.key.read_bytes()
+        if len(secret) < 32:
+            raise ValueError("INVALID_OWNER_KEY")
+        previous: str | None = None
+        for kind in ("REVIEW_ACCEPTED", "FREEZE", "LAUNCH"):
+            receipt = Receipt.model_validate(read(self.receipts / f"{kind}.json"))
+            body = receipt.model_dump(mode="json", exclude={"signature"})
+            expected = hmac.new(secret, canonical(body), "sha256").hexdigest()
+            if (
+                not hmac.compare_digest(expected, receipt.signature)
+                or receipt.kind != kind
+                or receipt.scope != self.policy.scope
+                or receipt.package_hash != inventory["package_hash"]
+                or receipt.policy_hash
+                != hashlib.sha256(canonical(self.policy.model_dump(mode="json"))).hexdigest()
+                or receipt.schedule_hash != self.schedule_hash
+                or receipt.predecessor_hash != previous
+                or receipt.expires_at <= at
+                or receipt.expires_at < self.policy.stop_at
+            ):
+>               raise ValueError("INVALID_OR_EXPIRED_AUTHORIZATION_CHAIN")
+E               ValueError: INVALID_OR_EXPIRED_AUTHORIZATION_CHAIN
+
+artifacts\phase-8-review-freeze\v2\controls.py:179: ValueError
+____________ test_watchdog_stops_admission_but_keeps_active_window ____________
+
+tmp_path = WindowsPath('C:/Users/syeda/AppData/Local/Temp/pytest-of-syeda/pytest-166/test_watchdog_stops_admission_0')
+
+    def test_watchdog_stops_admission_but_keeps_active_window(tmp_path: Path) -> None:
+>       root, authority = calibration(tmp_path)
+                          ^^^^^^^^^^^^^^^^^^^^^
+
+artifacts\phase-8-review-freeze\v2\test_controls.py:169: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+artifacts\phase-8-review-freeze\v2\test_controls.py:59: in calibration
+    initialize(root, source, manifest, policy, receipt_root, key, schedule, tmp / "backup")
+artifacts\phase-8-review-freeze\v2\runner.py:87: in initialize
+    authority.verify()  # No ledger creation or resource operation before all approvals.
+    ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <controls.Authority object at 0x0000013326082630>
+at = datetime.datetime(2026, 10, 7, 11, 28, 6, 629173, tzinfo=datetime.timezone.utc)
+
+    def verify(self, at: datetime | None = None) -> str:
+        at = at or utc()
+        inventory = read(self.manifest)
+        if inventory["kind"] != "REVIEW_INVENTORY" or inventory["scope"] != self.policy.scope:
+            raise ValueError("PACKAGE_SCOPE_DRIFT")
+        files = inventory["files"]
+        if hashlib.sha256(canonical(files)).hexdigest() != inventory["package_hash"]:
+            raise ValueError("MANIFEST_HASH_DRIFT")
+        for name, expected in files.items():
+            path = (self.source / name).resolve()
+            if self.source.resolve() not in path.parents or hash_file(path) != expected:
+                raise ValueError(f"SOURCE_DRIFT: {name}")
+        if self.source.resolve() in self.key.resolve().parents:
+            raise ValueError("SIGNING_KEY_MUST_BE_OUTSIDE_SOURCE")
+        secret = self.key.read_bytes()
+        if len(secret) < 32:
+            raise ValueError("INVALID_OWNER_KEY")
+        previous: str | None = None
+        for kind in ("REVIEW_ACCEPTED", "FREEZE", "LAUNCH"):
+            receipt = Receipt.model_validate(read(self.receipts / f"{kind}.json"))
+            body = receipt.model_dump(mode="json", exclude={"signature"})
+            expected = hmac.new(secret, canonical(body), "sha256").hexdigest()
+            if (
+                not hmac.compare_digest(expected, receipt.signature)
+                or receipt.kind != kind
+                or receipt.scope != self.policy.scope
+                or receipt.package_hash != inventory["package_hash"]
+                or receipt.policy_hash
+                != hashlib.sha256(canonical(self.policy.model_dump(mode="json"))).hexdigest()
+                or receipt.schedule_hash != self.schedule_hash
+                or receipt.predecessor_hash != previous
+                or receipt.expires_at <= at
+                or receipt.expires_at < self.policy.stop_at
+            ):
+>               raise ValueError("INVALID_OR_EXPIRED_AUTHORIZATION_CHAIN")
+E               ValueError: INVALID_OR_EXPIRED_AUTHORIZATION_CHAIN
+
+artifacts\phase-8-review-freeze\v2\controls.py:179: ValueError
+=========================== short test summary info ===========================
+FAILED artifacts/phase-8-review-freeze/v2/test_controls.py::test_valid_calibration_admission_identity_and_deadline
+FAILED artifacts/phase-8-review-freeze/v2/test_controls.py::test_missing_authorization_stops_admission[REVIEW_ACCEPTED]
+FAILED artifacts/phase-8-review-freeze/v2/test_controls.py::test_missing_authorization_stops_admission[FREEZE]
+FAILED artifacts/phase-8-review-freeze/v2/test_controls.py::test_missing_authorization_stops_admission[LAUNCH]
+FAILED artifacts/phase-8-review-freeze/v2/test_controls.py::test_signature_chain_and_scope_rejection
+FAILED artifacts/phase-8-review-freeze/v2/test_controls.py::test_source_and_binding_drift_stop
+FAILED artifacts/phase-8-review-freeze/v2/test_controls.py::test_time_and_budget_stops[360-HOST_360H]
+FAILED artifacts/phase-8-review-freeze/v2/test_controls.py::test_time_and_budget_stops[359.6-ADMISSION_CUTOFF]
+FAILED artifacts/phase-8-review-freeze/v2/test_controls.py::test_time_and_budget_stops[330-COMMITTED_COST]
+FAILED artifacts/phase-8-review-freeze/v2/test_controls.py::test_resource_stops[available_memory_bytes-2147483647-RAM_STOP]
+FAILED artifacts/phase-8-review-freeze/v2/test_controls.py::test_resource_stops[output_free_bytes-21474836479-DISK_STOP]
+FAILED artifacts/phase-8-review-freeze/v2/test_controls.py::test_resource_stops[backup_free_bytes-21474836479-DISK_STOP]
+FAILED artifacts/phase-8-review-freeze/v2/test_controls.py::test_cloud_and_active_thresholds
+FAILED artifacts/phase-8-review-freeze/v2/test_controls.py::test_pause_resume_and_prior_backup_gate
+FAILED artifacts/phase-8-review-freeze/v2/test_controls.py::test_watchdog_stops_admission_but_keeps_active_window
+15 failed in 6.42s

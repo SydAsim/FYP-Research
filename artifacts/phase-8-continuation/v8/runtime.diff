@@ -1,0 +1,764 @@
+--- frozen-v7/artifacts/phase-8-runner-amendment/v4-complete/clock_sampling.py
++++ candidate-v8/artifacts/phase-8-runner-amendment/v4-complete/clock_sampling.py
+@@ -0,0 +1,102 @@
++"""Fresh bracketed operational clock samples; never adjust research timestamps."""
++
++from __future__ import annotations
++
++import math
++import time
++from collections.abc import Callable
++from dataclasses import dataclass
++from datetime import datetime
++from typing import Any
++
++from controls import Policy, clock_check, utc
++
++MAX_BRACKET_SECONDS = 0.05
++METHOD = "monotonic-wall-monotonic-v1"
++
++
++@dataclass(frozen=True)
++class Sample:
++    wall: datetime
++    before: float
++    after: float
++
++    @property
++    def midpoint(self) -> float:
++        return self.before + (self.after - self.before) / 2
++
++    def record(self) -> dict[str, Any]:
++        return {
++            "sampling_method": METHOD,
++            "wall": self.wall.isoformat(),
++            "monotonic": self.midpoint,
++            "monotonic_before": self.before,
++            "monotonic_after": self.after,
++            "bracket_seconds": self.after - self.before,
++            "uncertainty_seconds": (self.after - self.before) / 2,
++        }
++
++
++def sample(
++    wall: Callable[[], datetime] = utc, mono: Callable[[], float] = time.monotonic
++) -> Sample:
++    before = mono()
++    at = wall()
++    return Sample(at, before, mono())
++
++
++def quality(reading: Sample) -> None:
++    if (
++        not math.isfinite(reading.before)
++        or not math.isfinite(reading.after)
++        or reading.wall.tzinfo is None
++    ):
++        raise ValueError("CLOCK_SAMPLE_INVALID")
++    if reading.after < reading.before:
++        raise ValueError("MONOTONIC_CLOCK_DRIFT")
++    if reading.after - reading.before > MAX_BRACKET_SECONDS:
++        raise ValueError("CLOCK_SAMPLE_UNCERTAIN")
++
++
++def anchor_record(reading: Sample, boot: str) -> dict[str, Any]:
++    quality(reading)
++    return {"boot_id": boot, **reading.record()}
++
++
++def measurement(anchor: dict[str, Any], reading: Sample, boot: str) -> dict[str, Any]:
++    wall_delta = (reading.wall - datetime.fromisoformat(anchor["wall"])).total_seconds()
++    mono_delta = reading.midpoint - anchor["monotonic"]
++    uncertainty = reading.record()["uncertainty_seconds"] + anchor.get("uncertainty_seconds", 0.0)
++    return {
++        "anchor": anchor,
++        "sample": reading.record(),
++        "actual_boot_id": boot,
++        "wall_elapsed_seconds": wall_delta,
++        "monotonic_elapsed_seconds": mono_delta,
++        "wall_minus_monotonic_seconds": wall_delta - mono_delta,
++        "combined_sampling_uncertainty_seconds": uncertainty,
++        "difference_lower_seconds": wall_delta - mono_delta - uncertainty,
++        "difference_upper_seconds": wall_delta - mono_delta + uncertainty,
++        "rollback_threshold_seconds": 5,
++        "comparison_rhs_seconds": mono_delta - 5,
++        "point_comparison_rejects": wall_delta < mono_delta - 5,
++    }
++
++
++def check(policy: Policy, anchor: dict[str, Any], reading: Sample, boot: str) -> None:
++    # Boot identity and counter direction remain fail-closed before other checks.
++    if boot != anchor["boot_id"]:
++        raise ValueError("HOST_REBOOT_UNQUALIFIED")
++    quality(reading)
++    if anchor.get("sampling_method") != METHOD:
++        raise ValueError("BRACKETED_BOOT_ANCHOR_REQUIRED")
++    anchored = Sample(
++        datetime.fromisoformat(anchor["wall"]),
++        anchor["monotonic_before"],
++        anchor["monotonic_after"],
++    )
++    quality(anchored)
++    if anchor_record(anchored, anchor["boot_id"]) != anchor:
++        raise ValueError("CLOCK_ANCHOR_OPERAND_DRIFT")
++    # The existing five-second check is called unchanged with fresh paired values.
++    clock_check(policy, anchor, reading.wall, reading.midpoint, boot)
+--- frozen-v7/artifacts/phase-8-runner-amendment/v4-complete/closed_restart.py
++++ candidate-v8/artifacts/phase-8-runner-amendment/v4-complete/closed_restart.py
+@@ -1,4 +1,4 @@
+-"""Reviewed 82-original metadata continuation, including stopped-host reuse."""
++"""Reviewed 120-original metadata continuation, including stopped-host reuse."""
+ 
+ from __future__ import annotations
+ 
+@@ -10,44 +10,44 @@
+ from controls import Journal, hash_file, read, write_new
+ 
+ HERE = Path(__file__).resolve().parent
+-COUNT = 82
++COUNT = 120
+ IDENTITY = ("sequence", "case_id", "arm", "attempt", "execution_id", "fixture_hash")
+-NEXT = "01a11705-11f1-792b-ae1e-36bfc6773842"
+-PARENT_FREEZE = "cf6d4ff9e6e8916a8204c420076676fe9d9c746545ad686357b4e65a8f78710c"
++NEXT = "01a11705-11f1-75f4-b64e-8f0a3679518b"
++PARENT_FREEZE = "3a4bf3b0f6d833bc89744778557258f6612a3622337511fb6ff9841ce27f5e46"
+ 
+ 
+ def boundary(rows: list[dict[str, Any]], saved: list[dict[str, Any]]) -> None:
+-    pinned = read(HERE / "closed-82/ledger-read-only.json")["rows"]
++    pinned = read(HERE / "closed-120/ledger-read-only.json")["rows"]
+     if len(rows) != 1500 or len(saved) != 1500:
+         raise ValueError("EXACT_1500_IDENTITIES_REQUIRED")
+     for actual, original, schedule in zip(rows, pinned, saved, strict=True):
+         if any(actual[k] != original[k] for k in IDENTITY) or any(
+             actual[k] != schedule[k] for k in IDENTITY if k != "execution_id"
+         ):
+-            raise ValueError("CLOSED82_IDENTITY_OR_ORDER_DRIFT")
++            raise ValueError("CLOSED120_IDENTITY_OR_ORDER_DRIFT")
+     if rows[:COUNT] != pinned[:COUNT]:
+-        raise ValueError("CLOSED82_ORIGINAL_STATUS_OR_BACKUP_DRIFT")
++        raise ValueError("CLOSED120_ORIGINAL_STATUS_OR_BACKUP_DRIFT")
+     if any(
+         r["state"] != "PLANNED"
+         or any(r[k] is not None for k in ("deadline", "backup_hash", "error"))
+         for r in rows[COUNT:]
+     ):
+-        raise ValueError("CLOSED82_ACTIVE_OR_CHANGED_SLOT")
+-    if rows[COUNT]["execution_id"] != NEXT or rows[COUNT]["arm"] != "B3":
+-        raise ValueError("NEXT_SEQUENCE83_DRIFT")
++        raise ValueError("CLOSED120_ACTIVE_OR_CHANGED_SLOT")
++    if rows[COUNT]["execution_id"] != NEXT or rows[COUNT]["arm"] != "P1":
++        raise ValueError("NEXT_SEQUENCE121_DRIFT")
+ 
+ 
+ def master_check(master: Path) -> list[dict[str, Any]]:
+     from handover import original_policy, ro_rows
+ 
+-    for name, digest in read(HERE / "closed-82-members.json").items():
++    for name, digest in read(HERE / "closed-120-members.json").items():
+         target = (master / name).resolve()
+         if master.resolve() not in target.parents or hash_file(target) != digest:
+-            raise ValueError("CLOSED82_MEMBER_DRIFT: " + name)
++            raise ValueError("CLOSED120_MEMBER_DRIFT: " + name)
+     rows = ro_rows(master)
+-    boundary(rows, read(HERE / "closed-82/ledger-read-only.json")["rows"])
++    boundary(rows, read(HERE / "closed-120/ledger-read-only.json")["rows"])
+     original_policy(read(master / "run.json")["policy"])
+-    if read(master / "pause.json")["reason"] != "PROTOCOL_STOP":
++    if read(master / "pause.json")["reason"] != "WALL_CLOCK_BACKWARD_STOP_ADMISSIONS":
+         raise ValueError("EXACT_REVIEWED_STOP_REQUIRED")
+     for row in rows[:COUNT]:
+         receipt = master / "backups" / (row["execution_id"] + ".json")
+@@ -60,7 +60,7 @@
+             or not proof["cloud"]["version_id"]
+             or any(raw[k] != row[k] for k in ("execution_id", "arm", "attempt", "fixture_hash"))
+         ):
+-            raise ValueError("CLOSED82_INCOMPLETE_BACKUP_OR_EXPORT")
++            raise ValueError("CLOSED120_INCOMPLETE_BACKUP_OR_EXPORT")
+     return rows
+ 
+ 
+@@ -83,13 +83,13 @@
+     shutil.copytree(master, destination / "restart-history")
+     config = read(master / "run.json")
+     config.update(
+-        source="/opt/fyp-phase8-continuation-v7",
+-        manifest="/opt/fyp-phase8-continuation-v7/artifacts/phase-8-review-freeze/v2/review-inventory.json",
+-        backup="/var/lib/p8-continuation-v7/backup",
++        source="/opt/fyp-phase8-continuation-v8",
++        manifest="/opt/fyp-phase8-continuation-v8/artifacts/phase-8-review-freeze/v2/review-inventory.json",
++        backup="/var/lib/p8-continuation-v8/backup",
+         operational_limits_sha256="60d8dbb2b7f3f6a83bd442ac491316e9a9e17d45a039e4b59d9400821d377791",
+         continuation={
+             "manifest": "artifacts/phase-8-runner-amendment/v4-complete/candidate-inventory.json",
+-            "receipts": "/var/lib/fyp-owner/continuation-v7-receipts",
++            "receipts": "/var/lib/fyp-owner/continuation-v8-receipts",
+         },
+     )
+     # Original backup paths remain valid on the retained root; never restore SQL.
+@@ -102,12 +102,12 @@
+         },
+     )
+     record = {
+-        "version": "phase85-continuation-v7",
++        "version": "phase85-continuation-v8",
+         "backed_up": COUNT,
+-        "planned": 1418,
++        "planned": 1380,
+         "next_execution_id": NEXT,
+         "parent_freeze_sha256": PARENT_FREEZE,
+-        "history_files": read(HERE / "closed-82-members.json"),
++        "history_files": read(HERE / "closed-120-members.json"),
+         "driver_calls": 0,
+         "live_application_state_restored": False,
+         "clock_reset": False,
+@@ -116,7 +116,7 @@
+     journal = Journal(destination)
+     journal.verify()
+     journal.event(
+-        "CLOSED_82_METADATA_IMPORT", proof=hash_file(destination / "restart-boundary.json")
++        "CLOSED_120_METADATA_IMPORT", proof=hash_file(destination / "restart-boundary.json")
+     )
+     journal.event(
+         "BINDINGS_SEALED",
+@@ -135,16 +135,16 @@
+     if (
+         record["parent_freeze_sha256"] != PARENT_FREEZE
+         or record["backed_up"] != COUNT
+-        or record["planned"] != 1418
++        or record["planned"] != 1380
+         or record["next_execution_id"] != NEXT
+-        or record["history_files"] != read(HERE / "closed-82-members.json")
++        or record["history_files"] != read(HERE / "closed-120-members.json")
+     ):
+-        raise ValueError("CLOSED82_HANDOVER_BINDING_DRIFT")
++        raise ValueError("CLOSED120_HANDOVER_BINDING_DRIFT")
+     history = root / "restart-history"
+     for name, digest in record["history_files"].items():
+         target = (history / name).resolve()
+         if history.resolve() not in target.parents or hash_file(target) != digest:
+-            raise ValueError("CLOSED82_HISTORY_DRIFT")
++            raise ValueError("CLOSED120_HISTORY_DRIFT")
+     rows = ro_rows(root)
+     saved = read(history / "ledger-read-only.json")["rows"]
+     if (
+@@ -152,7 +152,7 @@
+         or rows[:COUNT] != saved[:COUNT]
+         or any(any(a[k] != b[k] for k in IDENTITY) for a, b in zip(rows, saved, strict=True))
+     ):
+-        raise ValueError("CLOSED82_LIVE_IDENTITY_OR_ORIGINAL_DRIFT")
++        raise ValueError("CLOSED120_LIVE_IDENTITY_OR_ORIGINAL_DRIFT")
+ 
+     def notices(folder: Path) -> list[tuple[Any, ...]]:
+         with sqlite3.connect(
+@@ -163,10 +163,10 @@
+ 
+     historical = notices(history)
+     if notices(root)[: len(historical)] != historical:
+-        raise ValueError("CLOSED82_NOTICE_PREFIX_DRIFT")
++        raise ValueError("CLOSED120_NOTICE_PREFIX_DRIFT")
+     for row in saved[:COUNT]:
+         if hash_file(root / "backups" / (row["execution_id"] + ".json")) != row["backup_hash"]:
+-            raise ValueError("CLOSED82_BACKUP_RECEIPT_DRIFT")
++            raise ValueError("CLOSED120_BACKUP_RECEIPT_DRIFT")
+ 
+ 
+ def imported(root: Path, execution_id: str) -> bool:
+--- frozen-v7/artifacts/phase-8-runner-amendment/v4-complete/handover.py
++++ candidate-v8/artifacts/phase-8-runner-amendment/v4-complete/handover.py
+@@ -7,11 +7,11 @@
+ import hmac
+ import sqlite3
+ import sys
+-import time
+ from datetime import datetime
+ from pathlib import Path
+ from typing import Any, Literal
+ 
++from clock_sampling import anchor_record, sample
+ from controls import Authority, Journal, Policy, Strict, canonical, hash_file, read, utc, write_new
+ from operational_limits import LIMITS_SHA256, effective_policy, verified_limits
+ from pydantic import Field
+@@ -106,7 +106,7 @@
+ 
+ 
+ def verify_imported_first(root: Path) -> None:
+-    """Compatibility entry point verifies all 82 retained originals."""
++    """Compatibility entry point verifies all 120 retained originals."""
+     from closed_prefix import verify
+ 
+     verify(root)
+@@ -121,7 +121,7 @@
+     config = read(root / "run.json")
+     inventory = read(Path(config["source"]) / config["continuation"]["manifest"])
+     value = {
+-        "version": "phase85-continuation-v7",
++        "version": "phase85-continuation-v8",
+         "execution_id": execution_id,
+         "run_id": RUN,
+         "parent_freeze_sha256": PARENT_FREEZE,
+@@ -134,6 +134,7 @@
+         "two_originals_sha256": hash_file(HERE / "two_originals.py"),
+         "closed_prefix_sha256": hash_file(HERE / "closed_prefix.py"),
+         "controls_sha256": hash_file(HERE / "controls.py"),
++        "clock_sampling_sha256": hash_file(HERE / "clock_sampling.py"),
+         "inventory_read_sha256": hash_file(HERE / "inventory_read.py"),
+         "storage_sha256": hash_file(HERE / "storage.py"),
+         "closed_restart_sha256": hash_file(HERE / "closed_restart.py"),
+@@ -171,7 +172,7 @@
+         "bd4d32f4968eaff243d65d9cfe8fad36c603cd709c09ee7fdebd29746e90da42"
+     ]
+     immediate_parent_freeze_sha256: Literal[
+-        "95d48df4494ad022808c172238596f7761582781108b3f9f982088f8a50dfe26"
++        "3a4bf3b0f6d833bc89744778557258f6612a3622337511fb6ff9841ce27f5e46"
+     ]
+     expires_at: datetime
+     signer: str
+@@ -315,13 +316,15 @@
+         Journal(root).rows(),
+         read(REPO / "artifacts/phase-8-review-freeze/v2/schedule.json")["rows"],
+     )
+-    at = utc()
++    boot = boot_id()
++    reading = sample()
++    at = reading.wall
+     if at < authority.policy.host_started_at or at >= authority.policy.stop_at:
+         raise ValueError("ORIGINAL_DEADLINE_EXPIRED_OR_CLOCK_ROLLBACK")
+     path = root / "host-clock.json"
+-    write_new(path, {"boot_id": boot_id(), "monotonic": time.monotonic(), "wall": at.isoformat()})
++    write_new(path, anchor_record(reading, boot))
+     journal = Journal(root)
+-    journal.event("HOST_CLOCK_SEALED", hash=hash_file(path))
++    journal.event("HOST_CLOCK_SEALED", hash=hash_file(path), measurement=read(path))
+     journal.event(
+         "NEW_HOST_SEGMENT_CLOSED_BOUNDARY",
+         freeze=proof,
+@@ -344,7 +347,7 @@
+     verify_proof(root, "complete", cloud)
+     from runner import verify_clock, verify_host_timer
+ 
+-    verify_clock(root, authority.policy, utc())
++    verify_clock(root, authority.policy)
+     verify_host_timer(root)
+     journal = Journal(root)
+     journal.verify()
+--- frozen-v7/artifacts/phase-8-runner-amendment/v4-complete/reuse_prepare.py
++++ candidate-v8/artifacts/phase-8-runner-amendment/v4-complete/reuse_prepare.py
+@@ -16,7 +16,7 @@
+ from controls import Journal, canonical, hash_file, read, utc, write_new
+ from handover import ContinuationAuthority, bind_host_segment, ro_rows, verify_imported_first
+ 
+-OLD = Path("/var/lib/p8-combined-v4/run")
++OLD = Path("/var/lib/p8-continuation-v7/run")
+ INSTANCE = "i-057344e5372faf62f"
+ 
+ 
+@@ -65,14 +65,14 @@
+         )
+         if result.stdout.strip() != "0":
+             raise ValueError("OLD_OPERATIONAL_PROCESS_NOT_QUIESCED")
+-    pinned = read(Path(__file__).parent / "closed-82/ledger-read-only.json")["rows"]
++    pinned = read(Path(__file__).parent / "closed-120/ledger-read-only.json")["rows"]
+     boundary(ro_rows(OLD), pinned)
+-    if read(OLD / "pause.json")["reason"] != "PROTOCOL_STOP":
++    if read(OLD / "pause.json")["reason"] != "WALL_CLOCK_BACKWARD_STOP_ADMISSIONS":
+         raise ValueError("OLD_PAUSE_DRIFT")
+     for port in (16432, 16433, 19100, 19101, 19102, 19110):
+         with socket.socket() as handle:
+             handle.bind(("127.0.0.1", port))
+-    stage(Path(__file__).parent / "closed-82", root)
++    stage(Path(__file__).parent / "closed-120", root)
+     # Retain additional old operational notices emitted during boot, separately
+     # from the accepted snapshot; neither historical source is overwritten.
+     folder = root / "postboot-old-operational-evidence"
+@@ -121,8 +121,8 @@
+             "status": "PASS_PREPARATION_NOT_LAUNCH",
+             "instance_id": INSTANCE,
+             "next_execution_id": NEXT,
+-            "backed_up": 82,
+-            "planned": 1418,
++            "backed_up": 120,
++            "planned": 1380,
+             "external_sha256": hash_file(external),
+             "original_deadline": authority.policy.stop_at.isoformat(),
+             "original_policy_unchanged": True,
+@@ -131,7 +131,7 @@
+         },
+     )
+     Journal(root).event(
+-        "REUSED_HOST_CLOSED82_PREPARED", hash=hash_file(root / "reuse-preparation.json")
++        "REUSED_HOST_CLOSED120_PREPARED", hash=hash_file(root / "reuse-preparation.json")
+     )
+ 
+ 
+--- frozen-v7/artifacts/phase-8-runner-amendment/v4-complete/runner.py
++++ candidate-v8/artifacts/phase-8-runner-amendment/v4-complete/runner.py
+@@ -17,12 +17,13 @@
+ REPO = HERE.parents[2]
+ sys.path.insert(0, str(REPO))
+ 
++from clock_sampling import anchor_record, measurement, sample  # noqa: E402
++from clock_sampling import check as paired_clock_check  # noqa: E402
+ from closed_restart import imported as imported_closed  # noqa: E402
+ from controls import (  # noqa: E402
+     Authority,
+     Journal,
+     Policy,
+-    clock_check,
+     guard,
+     hash_file,
+     read,
+@@ -156,10 +157,8 @@
+     if sys.platform == "linux":
+         from research.execution_linux_v1.platform import boot_id
+ 
+-        write_new(
+-            root / "host-clock.json",
+-            {"boot_id": boot_id(), "monotonic": time.monotonic(), "wall": utc().isoformat()},
+-        )
++        boot = boot_id()
++        write_new(root / "host-clock.json", anchor_record(sample(), boot))
+         journal.event("HOST_CLOCK_SEALED", hash=hash_file(root / "host-clock.json"))
+ 
+ 
+@@ -188,11 +187,11 @@
+     if actual != bindings:
+         raise ValueError("LEDGER_SLOT_BINDING_DRIFT")
+     if sys.platform == "linux" and not readonly:
+-        verify_clock(root, authority.policy, utc())
++        verify_clock(root, authority.policy)
+     return authority
+ 
+ 
+-def verify_clock(root: Path, policy: Policy, at: datetime) -> None:
++def verify_clock(root: Path, policy: Policy) -> None:
+     from research.execution_linux_v1.platform import boot_id
+ 
+     clock = root / "host-clock.json"
+@@ -202,9 +201,31 @@
+             for r in db.execute("SELECT body FROM notices")
+             if json.loads(r[0]).get("kind") == "HOST_CLOCK_SEALED"
+         ]
+-    if hash_file(clock) not in hashes:
++    digest = hash_file(clock)
++    if digest not in hashes:
+         raise ValueError("HOST_CLOCK_SEAL_DRIFT")
+-    clock_check(policy, read(clock), at, time.monotonic(), boot_id())
++    anchor = read(clock)
++    boot = boot_id()
++    # Read after all metadata and boot checks; never reuse a caller's old wall time.
++    reading = sample()
++    operands = measurement(anchor, reading, boot)
++    detail = {
++        "anchor_sha256": digest,
++        "caller": "runner.verify_clock",
++        "run_id": policy.run_id,
++        "original_deadline": policy.stop_at.isoformat(),
++        **operands,
++    }
++    try:
++        paired_clock_check(policy, anchor, reading, boot)
++    except ValueError as error:
++        # Persist actual failed operands in the durable chain before the outer pause.
++        Journal(root).event("HOST_CLOCK_REJECTED", reason=str(error), measurement=detail)
++        print(json.dumps({"kind": "HOST_CLOCK_SAMPLE", "result": str(error), **detail}), flush=True)
++        raise
++    # Every successful sample is available in the operational service journal;
++    # avoid multiplying the per-slot master-ledger archive for routine checks.
++    print(json.dumps({"kind": "HOST_CLOCK_SAMPLE", "result": "PASS", **detail}), flush=True)
+ 
+ 
+ def cloud_for(root: Path, *, readonly: bool = False) -> Cloud:
+@@ -587,7 +608,7 @@
+     hard = at >= policy.stop_at
+     if sys.platform == "linux":
+         try:
+-            verify_clock(root, policy, at)
++            verify_clock(root, policy)
+         except ValueError as error:
+             hard = hard or str(error) == "HOST_360H_LIMIT"
+             journal.pause(str(error))
+--- frozen-v7/artifacts/phase-8-runner-amendment/v4-complete/test_clock_continuation_v8.py
++++ candidate-v8/artifacts/phase-8-runner-amendment/v4-complete/test_clock_continuation_v8.py
+@@ -0,0 +1,281 @@
++"""Eighteen finite offline controls; temporary metadata only, zero drivers."""
++
++from __future__ import annotations
++
++import copy
++import json
++import shutil
++from datetime import UTC, datetime, timedelta
++from pathlib import Path
++from typing import Any
++
++import clock_sampling as clocks
++import pytest
++import runner
++from closed_restart import HERE, NEXT, boundary, stage, verify
++from controls import Journal, Policy, hash_file, read, write_new
++from postflight import recover
++from storage import OfflineCloud, final_backup, upload, verify_continuation_metadata
++
++EPOCH = datetime(2026, 10, 7, 15, 24, 23, 810674, tzinfo=UTC)
++POLICY = Policy.model_validate(read(HERE / "original-launch-policy.json"))
++
++
++def reading(seconds: float, mono: float, width: float = 0) -> clocks.Sample:
++    return clocks.Sample(EPOCH + timedelta(seconds=seconds), mono - width / 2, mono + width / 2)
++
++
++def anchor() -> dict[str, Any]:
++    return clocks.anchor_record(reading(0, 100), "cal-boot")
++
++
++def clock_root(tmp: Path) -> Path:
++    root = tmp / "cal-clock-v8"
++    journal = Journal(root)
++    write_new(root / "host-clock.json", anchor())
++    journal.event("HOST_CLOCK_SEALED", hash=hash_file(root / "host-clock.json"))
++    return root
++
++
++def test_clock_01_bracket_order_and_midpoint() -> None:
++    events: list[str] = []
++    values = iter([100.0, 100.02])
++
++    def mono() -> float:
++        events.append("mono")
++        return next(values)
++
++    def wall() -> datetime:
++        events.append("wall")
++        return EPOCH
++
++    got = clocks.sample(wall, mono)
++    assert events == ["mono", "wall", "mono"] and got.midpoint == pytest.approx(100.01)
++    assert got.record()["uncertainty_seconds"] == pytest.approx(0.01)
++
++
++def test_clock_02_metadata_delay_precedes_pair(tmp_path: Path, monkeypatch: Any) -> None:
++    root = clock_root(tmp_path)
++    phases: list[str] = []
++    real_read = runner.read
++
++    def delayed_metadata(path: Path) -> Any:
++        phases.append("metadata-done-after-eight-synthetic-seconds")
++        return real_read(path)
++
++    def paired() -> clocks.Sample:
++        assert phases == ["metadata-done-after-eight-synthetic-seconds", "boot-done"]
++        return reading(108, 208, 0.002)
++
++    def boot() -> str:
++        phases.append("boot-done")
++        return "cal-boot"
++
++    monkeypatch.setattr(runner, "read", delayed_metadata)
++    monkeypatch.setattr(runner, "sample", paired)
++    monkeypatch.setattr("research.execution_linux_v1.platform.boot_id", boot)
++    runner.verify_clock(root, POLICY)
++
++
++def test_clock_03_excess_uncertainty_stops() -> None:
++    with pytest.raises(ValueError, match="CLOCK_SAMPLE_UNCERTAIN"):
++        clocks.check(POLICY, anchor(), reading(10, 110, 0.051), "cal-boot")
++
++
++def test_clock_04_negative_bracket_stops() -> None:
++    with pytest.raises(ValueError, match="MONOTONIC_CLOCK_DRIFT"):
++        clocks.quality(clocks.Sample(EPOCH, 101, 100))
++
++
++def test_clock_05_nonfinite_stops() -> None:
++    with pytest.raises(ValueError, match="CLOCK_SAMPLE_INVALID"):
++        clocks.quality(clocks.Sample(EPOCH, float("nan"), 100))
++
++
++def test_clock_06_exact_five_seconds_unchanged() -> None:
++    clocks.check(POLICY, anchor(), reading(95, 200), "cal-boot")
++    with pytest.raises(ValueError, match="WALL_CLOCK_BACKWARD"):
++        clocks.check(POLICY, anchor(), reading(94.999999, 200), "cal-boot")
++
++
++def test_clock_07_genuine_rollback_stops() -> None:
++    with pytest.raises(ValueError, match="WALL_CLOCK_BACKWARD"):
++        clocks.check(POLICY, anchor(), reading(94, 200), "cal-boot")
++
++
++def test_clock_08_wrong_boot_stops() -> None:
++    with pytest.raises(ValueError, match="HOST_REBOOT_UNQUALIFIED"):
++        clocks.check(POLICY, anchor(), reading(100, 200), "other-boot")
++
++
++def test_clock_09_counter_before_anchor_stops() -> None:
++    with pytest.raises(ValueError, match="MONOTONIC_CLOCK_DRIFT"):
++        clocks.check(POLICY, anchor(), reading(10, 99), "cal-boot")
++
++
++def test_clock_10_absolute_deadline_unchanged() -> None:
++    with pytest.raises(ValueError, match="HOST_360H_LIMIT"):
++        clocks.check(POLICY, anchor(), reading(360 * 3600, 360 * 3600 + 100), "cal-boot")
++    assert POLICY.stop_at.isoformat() == "2026-10-22T15:24:23.810674+00:00"
++
++
++def test_clock_11_anchor_same_pair_and_quality() -> None:
++    got = clocks.anchor_record(reading(0, 100, 0.002), "cal-boot")
++    assert got["sampling_method"] == clocks.METHOD
++    assert got["monotonic_before"] == 99.999 and got["monotonic_after"] == 100.001
++    clocks.check(POLICY, got, reading(100, 200, 0.002), "cal-boot")
++    with pytest.raises(ValueError, match="CLOCK_SAMPLE_UNCERTAIN"):
++        clocks.anchor_record(reading(0, 100, 0.1), "cal-boot")
++    with pytest.raises(ValueError, match="BRACKETED_BOOT_ANCHOR_REQUIRED"):
++        clocks.check(
++            POLICY,
++            {k: got[k] for k in ("boot_id", "wall", "monotonic")},
++            reading(100, 200),
++            "cal-boot",
++        )
++
++
++def test_clock_12_rejection_actual_operands_durable(
++    tmp_path: Path, monkeypatch: Any, capsys: Any
++) -> None:
++    root = clock_root(tmp_path)
++    monkeypatch.setattr(runner, "sample", lambda: reading(94, 200, 0.002))
++    monkeypatch.setattr("research.execution_linux_v1.platform.boot_id", lambda: "cal-boot")
++    with pytest.raises(ValueError, match="WALL_CLOCK_BACKWARD"):
++        runner.verify_clock(root, POLICY)
++    journal = Journal(root)
++    journal.pause("WALL_CLOCK_BACKWARD_STOP_ADMISSIONS")
++    journal.verify()
++    with journal.connect() as db:
++        notices = [json.loads(r[0]) for r in db.execute("SELECT body FROM notices ORDER BY n")]
++    failure = next(n for n in notices if n["kind"] == "HOST_CLOCK_REJECTED")
++    details = failure["measurement"]
++    assert details["wall_elapsed_seconds"] == 94
++    assert details["monotonic_elapsed_seconds"] == 100
++    assert details["wall_minus_monotonic_seconds"] == -6
++    assert details["comparison_rhs_seconds"] == 95
++    assert details["sample"]["monotonic_before"] == 199.999
++    assert details["combined_sampling_uncertainty_seconds"] == pytest.approx(0.001)
++    assert read(root / "pause.json")["reason"] == failure["reason"]
++    logged = json.loads(capsys.readouterr().out)
++    assert logged["result"] == failure["reason"] and logged["anchor_sha256"] == hash_file(
++        root / "host-clock.json"
++    )
++
++
++@pytest.fixture(scope="module")
++def imported(tmp_path_factory: Any) -> Path:
++    root = tmp_path_factory.mktemp("cal-v8-boundary") / "run"
++    stage(HERE / "closed-120", root)
++    return root
++
++
++def test_boundary_01_exact_closed_handover(imported: Path) -> None:
++    from handover import verify_imported_first
++
++    verify_imported_first(imported)
++    rows = Journal(imported).rows()
++    assert (
++        len(rows) == 1500
++        and rows[:120] == read(HERE / "closed-120/ledger-read-only.json")["rows"][:120]
++    )
++    assert rows[120]["execution_id"] == NEXT and rows[120]["arm"] == "P1"
++    assert sum(r["state"] == "PLANNED" for r in rows) == 1380
++    assert read(imported / "pause.json")["reason"] == "CONTINUATION_REVIEW_REQUIRED"
++    assert (
++        read(imported / "restart-history/pause.json")["reason"]
++        == "WALL_CLOCK_BACKWARD_STOP_ADMISSIONS"
++    )
++
++
++def test_boundary_02_altered_identity_rejected(imported: Path) -> None:
++    rows = copy.deepcopy(Journal(imported).rows())
++    rows[120]["attempt"] = 2
++    with pytest.raises(ValueError, match="IDENTITY_OR_ORDER_DRIFT"):
++        boundary(rows, read(HERE / "closed-120/ledger-read-only.json")["rows"])
++
++
++def test_boundary_03_active_pending_rejected(imported: Path) -> None:
++    rows = copy.deepcopy(Journal(imported).rows())
++    rows[120]["state"] = "RUNNING"
++    with pytest.raises(ValueError, match="ACTIVE_OR_CHANGED_SLOT"):
++        boundary(rows, read(HERE / "closed-120/ledger-read-only.json")["rows"])
++
++
++def test_boundary_04_incomplete_receipt_rejected(imported: Path) -> None:
++    path = imported / "backups" / (Journal(imported).rows()[119]["execution_id"] + ".json")
++    original = path.read_bytes()
++    try:
++        path.write_text("{}")
++        with pytest.raises(ValueError, match="BACKUP_RECEIPT_DRIFT"):
++            verify(imported)
++    finally:
++        path.write_bytes(original)
++
++
++def backup_test(imported: Path, tmp: Path, complete: bool) -> Path:
++    root = tmp / "cal-v8-backup"
++    shutil.copytree(imported, root)
++    # Existing *historical* v7 records test copying only. No signature is issued
++    # and no authority verifier/admission is bypassed or invoked as successful.
++    shutil.copyfile(HERE / "closed-120/host-clock.json", root / "host-clock.json")
++    receipts = tmp / "historical-public"
++    shutil.copytree(HERE / "closed-120/public-authority", receipts)
++    if complete:
++        shutil.copyfile(
++            HERE / "closed-120/continuation-readiness.json", root / "continuation-readiness.json"
++        )
++    else:
++        (receipts / "continuation/CONTINUATION_LAUNCH.json").unlink()
++    config = read(root / "run.json")
++    config["receipts"] = str(receipts / "original")
++    config["continuation"]["receipts"] = str(receipts / "continuation")
++    (root / "run.json").write_text(json.dumps(config))
++    archive = final_backup(Journal(root), tmp / "backup", prelaunch=not complete)
++    from handover import ContinuationPolicy
++
++    cloud = OfflineCloud(tmp / "independent-stored-copy")
++    proof = upload(
++        Journal(root), cloud, ContinuationPolicy.model_validate(config["policy"]), archive
++    )
++    cloud.verify(proof)
++    recovered = (
++        recover(proof, tmp / "readback", local_archive=cloud.root / proof.version_id) / "slot"
++    )
++    verify_continuation_metadata(recovered)
++    assert Journal(recovered).rows() == Journal(imported).rows()
++    assert len(list((recovered / "backups").glob("*.json"))) == 120
++    write_new(
++        tmp / "roundtrip.json",
++        {
++            "status": "PASS",
++            "phase": "COMPLETE" if complete else "PRELAUNCH",
++            "bytes": archive.stat().st_size,
++            "sha256": hash_file(archive),
++            "BACKED_UP": 120,
++            "PLANNED": 1380,
++            "driver_calls": 0,
++            "historical_records_not_launch_authority": True,
++        },
++    )
++    return recovered
++
++
++def test_boundary_05_prelaunch_backup_roundtrip(imported: Path, tmp_path: Path) -> None:
++    root = backup_test(imported, tmp_path, False)
++    assert not (root / "continuation-readiness.json").exists()
++    original = (root / "restart-boundary.json").read_bytes()
++    (root / "restart-boundary.json").unlink()
++    with pytest.raises((ValueError, FileNotFoundError)):
++        verify_continuation_metadata(root)
++    (root / "restart-boundary.json").write_bytes(original)
++    verify_continuation_metadata(root)
++
++
++def test_boundary_06_complete_backup_roundtrip(imported: Path, tmp_path: Path) -> None:
++    root = backup_test(imported, tmp_path, True)
++    assert read(root / "continuation-backup.json")["phase"] == "COMPLETE"
++    path = root / "restart-history/pause.json"
++    path.write_text("{}")
++    with pytest.raises(ValueError, match="METADATA_DRIFT"):
++        verify_continuation_metadata(root)

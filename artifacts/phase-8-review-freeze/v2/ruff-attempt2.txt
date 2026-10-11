@@ -1,0 +1,506 @@
+E501 Line too long (131 > 100)
+  --> artifacts\phase-8-review-freeze\v2\analyze.py:31:101
+   |
+29 |                        values={key: "UNKNOWN" for key in ENDPOINTS}, duration_seconds=None,
+30 |                        event_observed=None, censor_reason=reason,
+31 |                        oracle_hash=hashlib.sha256(canonical({"execution_id": slot["execution_id"], "reason": reason})).hexdigest(),
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+32 |                        phase=case.correction_barrier, fault=case.fault_label,
+33 |                        revision_type="NONE" if case.stratum is Stratum.CLEAN else "PARAMETER_CORRECTION",
+   |
+
+E501 Line too long (105 > 100)
+  --> artifacts\phase-8-review-freeze\v2\analyze.py:33:101
+   |
+31 |                        oracle_hash=hashlib.sha256(canonical({"execution_id": slot["execution_id"], "reason": reason})).hexdigest(),
+32 |                        phase=case.correction_barrier, fault=case.fault_label,
+33 |                        revision_type="NONE" if case.stratum is Stratum.CLEAN else "PARAMETER_CORRECTION",
+   |                                                                                                     ^^^^^
+34 |                        action_class="CREATE" if case.stratum is Stratum.CLEAN else "CREATE_RESCHEDULE"
+35 |                        if case.provider.supports_reschedule else "CREATE_CANCEL_CREATE")
+   |
+
+E501 Line too long (102 > 100)
+  --> artifacts\phase-8-review-freeze\v2\analyze.py:34:101
+   |
+32 |                        phase=case.correction_barrier, fault=case.fault_label,
+33 |                        revision_type="NONE" if case.stratum is Stratum.CLEAN else "PARAMETER_CORRECTION",
+34 |                        action_class="CREATE" if case.stratum is Stratum.CLEAN else "CREATE_RESCHEDULE"
+   |                                                                                                     ^^
+35 |                        if case.provider.supports_reschedule else "CREATE_CANCEL_CREATE")
+   |
+
+E501 Line too long (109 > 100)
+  --> artifacts\phase-8-review-freeze\v2\analyze.py:40:101
+   |
+38 | def analyze(root: Path, output: Path) -> None:
+39 |     authority = verify_run(root, readonly=True)
+40 |     cases = {key: StudyCase.model_validate(value) for key, value in read(root / "run.json")["cases"].items()}
+   |                                                                                                     ^^^^^^^^^
+41 |     rows, evidence = [], []
+42 |     for slot in Journal(root).rows():
+   |
+
+E501 Line too long (113 > 100)
+  --> artifacts\phase-8-review-freeze\v2\analyze.py:44:101
+   |
+42 |     for slot in Journal(root).rows():
+43 |         case = cases[slot["case_id"]]
+44 |         export = root / "slots" / f"{slot['sequence']:04d}" / "executions" / slot["execution_id"] / "export.json"
+   |                                                                                                     ^^^^^^^^^^^^^
+45 |         if not export.is_file():
+46 |             rows.append(unavailable(case, slot, authority.policy.scope, "ORIGINAL_" + slot["state"] + "_NO_VERIFIED_EXPORT"))
+   |
+
+E501 Line too long (125 > 100)
+  --> artifacts\phase-8-review-freeze\v2\analyze.py:46:101
+   |
+44 |         export = root / "slots" / f"{slot['sequence']:04d}" / "executions" / slot["execution_id"] / "export.json"
+45 |         if not export.is_file():
+46 |             rows.append(unavailable(case, slot, authority.policy.scope, "ORIGINAL_" + slot["state"] + "_NO_VERIFIED_EXPORT"))
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+47 |             evidence.append({"execution_id": slot["execution_id"], "status": "MISSING_RETAINED"})
+48 |             continue
+   |
+
+E501 Line too long (119 > 100)
+  --> artifacts\phase-8-review-freeze\v2\analyze.py:53:101
+   |
+51 |         trace = read(export)
+52 |         if (trace["execution_id"] != slot["execution_id"] or trace["arm"] != slot["arm"]
+53 |             or trace["attempt"] != 1 or StudyCase.model_validate(trace["input"]).fixture_hash != slot["fixture_hash"]):
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^
+54 |             raise ValueError("ORIGINAL_ANALYSIS_BINDING_DRIFT")
+55 |         try:
+   |
+
+E501 Line too long (134 > 100)
+  --> artifacts\phase-8-review-freeze\v2\analyze.py:59:101
+   |
+57 |         except (ValueError, KeyError, TypeError) as error:
+58 |             row = unavailable(case, slot, authority.policy.scope, "ORIGINAL_ORACLE_FAILURE")
+59 |             evidence.append({"execution_id": slot["execution_id"], "status": "ORACLE_FAILURE_RETAINED", "type": type(error).__name__})
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+60 |         else:
+61 |             evidence.append({"execution_id": slot["execution_id"], "status": "REPLAYED", "export_hash": hash_file(export)})
+   |
+
+E501 Line too long (123 > 100)
+  --> artifacts\phase-8-review-freeze\v2\analyze.py:61:101
+   |
+59 |             evidence.append({"execution_id": slot["execution_id"], "status": "ORACLE_FAILURE_RETAINED", "type": type(error).__name__})
+60 |         else:
+61 |             evidence.append({"execution_id": slot["execution_id"], "status": "REPLAYED", "export_hash": hash_file(export)})
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^
+62 |         rows.append(row)
+63 |     # Canonical scientific settings; no partial-study resampling or optional extension.
+   |
+
+E501 Line too long (121 > 100)
+  --> artifacts\phase-8-review-freeze\v2\analyze.py:65:101
+   |
+63 |     # Canonical scientific settings; no partial-study resampling or optional extension.
+64 |     report = analysis(list(cases.values()), rows, authority)
+65 |     write_new(output, {"planned_originals": len(Journal(root).rows()), "rows": [r.model_dump(mode="json") for r in rows],
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^
+66 |                        "evidence": evidence, "analysis": report, "diagnostic_reruns_included": False})
+   |
+
+E501 Line too long (102 > 100)
+  --> artifacts\phase-8-review-freeze\v2\analyze.py:66:101
+   |
+64 |     report = analysis(list(cases.values()), rows, authority)
+65 |     write_new(output, {"planned_originals": len(Journal(root).rows()), "rows": [r.model_dump(mode="json") for r in rows],
+66 |                        "evidence": evidence, "analysis": report, "diagnostic_reruns_included": False})
+   |                                                                                                     ^^
+
+E501 Line too long (152 > 100)
+   --> artifacts\phase-8-review-freeze\v2\collector.py:242:101
+    |
+240 | …
+241 | …: "CLOCK_OR_GAP", "at": at})
+242 | …ple[k] for k in ("system_free_bytes", "output_free_bytes", "backup_free_bytes")) < 10 * GIB:
+    |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+243 | …CTIVE_RESOURCE_PRESSURE", "at": at})
+244 | …al.id, sample=sample)
+    |
+
+E501 Line too long (171 > 100)
+   --> artifacts\phase-8-review-freeze\v2\controls.py:159:101
+    |
+157 | …path) != expected:
+158 | …
+159 | …"contracts", "docs") if self.policy.scope == "CAMPAIGN" else inventory.get("closed_source_roots", [])
+    |                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+160 | …
+161 | …
+    |
+
+E501 Line too long (159 > 100)
+   --> artifacts\phase-8-review-freeze\v2\controls.py:164:101
+    |
+162 | …
+163 | …
+164 | …".pytest_cache", ".mypy_cache", ".ruff_cache", "test-results", "playwright-report", "coverage"}
+    |                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+165 | …p in base.rglob("*")
+166 | …on(p.parts) and p.suffix != ".pyc"}
+    |
+
+E501 Line too long (113 > 100)
+   --> artifacts\phase-8-review-freeze\v2\controls.py:172:101
+    |
+170 |         if self.policy.scope == "CAMPAIGN":
+171 |             prefix = "artifacts/phase-8-review-freeze/v2/"
+172 |             actual_scripts = {p.relative_to(self.source).as_posix() for p in (self.source / prefix).glob("*.py")}
+    |                                                                                                     ^^^^^^^^^^^^^
+173 |             if actual_scripts != {name for name in files if name.startswith(prefix) and name.endswith(".py")}:
+174 |                 raise ValueError("RUNNER_EXECUTABLE_CLOSURE_DRIFT")
+    |
+
+E501 Line too long (110 > 100)
+   --> artifacts\phase-8-review-freeze\v2\controls.py:173:101
+    |
+171 |             prefix = "artifacts/phase-8-review-freeze/v2/"
+172 |             actual_scripts = {p.relative_to(self.source).as_posix() for p in (self.source / prefix).glob("*.py")}
+173 |             if actual_scripts != {name for name in files if name.startswith(prefix) and name.endswith(".py")}:
+    |                                                                                                     ^^^^^^^^^^
+174 |                 raise ValueError("RUNNER_EXECUTABLE_CLOSURE_DRIFT")
+175 |         if self.source.resolve() in self.key.resolve().parents:
+    |
+
+E501 Line too long (105 > 100)
+   --> artifacts\phase-8-review-freeze\v2\controls.py:238:101
+    |
+236 |     ):
+237 |         raise ValueError("DISK_STOP")
+238 |     if not active and sample.get("working_bytes", 0) + policy.slot_capacity_reserve_bytes > 50 * 1024**3:
+    |                                                                                                     ^^^^^
+239 |         raise ValueError("WORKING_RESERVATION_STOP")
+240 |     if not active and sample.get("backup_bytes", 0) + policy.slot_capacity_reserve_bytes > 50 * 1024**3:
+    |
+
+E501 Line too long (104 > 100)
+   --> artifacts\phase-8-review-freeze\v2\controls.py:240:101
+    |
+238 |     if not active and sample.get("working_bytes", 0) + policy.slot_capacity_reserve_bytes > 50 * 1024**3:
+239 |         raise ValueError("WORKING_RESERVATION_STOP")
+240 |     if not active and sample.get("backup_bytes", 0) + policy.slot_capacity_reserve_bytes > 50 * 1024**3:
+    |                                                                                                     ^^^^
+241 |         raise ValueError("BACKUP_RESERVATION_STOP")
+    |
+
+E501 Line too long (107 > 100)
+   --> artifacts\phase-8-review-freeze\v2\controls.py:244:101
+    |
+244 | def clock_check(policy: Policy, anchor: dict[str, Any], at: datetime, monotonic: float, boot: str) -> None:
+    |                                                                                                     ^^^^^^^
+245 |     if boot != anchor["boot_id"]:
+246 |         raise ValueError("HOST_REBOOT_UNQUALIFIED")
+    |
+
+E501 Line too long (105 > 100)
+  --> artifacts\phase-8-review-freeze\v2\postflight.py:23:101
+   |
+21 |         destination = root / "x"
+22 |         result = extract(archive, destination, proof.sha256)
+23 |         write_new(root / "postflight-verified.json", {"object": proof.model_dump(), "extraction": result,
+   |                                                                                                     ^^^^^
+24 |                   "cleanup_authorized": False, "main_executions": 0})
+25 |         return destination
+   |
+
+E501 Line too long (104 > 100)
+  --> artifacts\phase-8-review-freeze\v2\postflight.py:28:101
+   |
+26 |     except BaseException as error:
+27 |         write_new(root / f"postflight-failure-{time.time_ns()}.json",
+28 |                   {"type": type(error).__name__, "retained_partial": True, "cleanup_authorized": False})
+   |                                                                                                     ^^^^
+29 |         raise
+   |
+
+E501 Line too long (125 > 100)
+   --> artifacts\phase-8-review-freeze\v2\runner.py:148:101
+    |
+146 |     if sys.platform == "linux":
+147 |         from research.execution_linux_v1.platform import boot_id
+148 |         write_new(root / "host-clock.json", {"boot_id": boot_id(), "monotonic": time.monotonic(), "wall": utc().isoformat()})
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+149 |         journal.event("HOST_CLOCK_SEALED", hash=hash_file(root / "host-clock.json"))
+    |
+
+E501 Line too long (115 > 100)
+   --> artifacts\phase-8-review-freeze\v2\runner.py:199:101
+    |
+197 |     if authority.policy.scope == "CALIBRATION":
+198 |         return OfflineCloud(Path(config["offline_root"]), prefix)
+199 |     if "offline_root" in config or config["prefix"] != prefix or config["bucket"] != authority.policy.cloud_bucket:
+    |                                                                                                     ^^^^^^^^^^^^^^^
+200 |         raise ValueError("MAIN_REQUIRES_DEDICATED_VERSIONED_CLOUD")
+201 |     return S3Cloud(config["bucket"], prefix)
+    |
+
+E501 Line too long (135 > 100)
+   --> artifacts\phase-8-review-freeze\v2\runner.py:400:101
+    |
+398 | …
+399 | …
+400 | …e not in manifest["files"] for name in ("setup_app.sql.gz", "setup_truth.sql.gz")):
+    |                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+401 | …QUIRED_BEFORE_RETIREMENT")
+402 | …
+    |
+
+E501 Line too long (104 > 100)
+  --> artifacts\phase-8-review-freeze\v2\storage.py:54:101
+   |
+52 |             ),
+53 |         )
+54 |         if self.client.get_bucket_location(Bucket=bucket).get("LocationConstraint") != "ap-southeast-2":
+   |                                                                                                     ^^^^
+55 |             raise ValueError("SYDNEY_EVIDENCE_BUCKET_REQUIRED")
+56 |         if self.client.get_bucket_versioning(Bucket=bucket).get("Status") != "Enabled":
+   |
+
+E501 Line too long (111 > 100)
+   --> artifacts\phase-8-review-freeze\v2\storage.py:112:101
+    |
+110 |     def find(self, key: str, digest: str, size: int) -> ObjectProof:
+111 |         matches = []
+112 |         for page in self.client.get_paginator("list_object_versions").paginate(Bucket=self.bucket, Prefix=key):
+    |                                                                                                     ^^^^^^^^^^^
+113 |             for value in page.get("Versions", []):
+114 |                 if value["Key"] == key:
+    |
+
+E501 Line too long (126 > 100)
+   --> artifacts\phase-8-review-freeze\v2\storage.py:115:101
+    |
+113 |             for value in page.get("Versions", []):
+114 |                 if value["Key"] == key:
+115 |                     proof = ObjectProof(bucket=self.bucket, key=key, version_id=value["VersionId"], sha256=digest, bytes=size)
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+116 |                     self.verify(proof)
+117 |                     matches.append(proof)
+    |
+
+E501 Line too long (114 > 100)
+   --> artifacts\phase-8-review-freeze\v2\storage.py:156:101
+    |
+155 |     def find(self, key: str, digest: str, size: int) -> ObjectProof:
+156 |         proof = ObjectProof(bucket=self.bucket, key=key, version_id=digest + ".object", sha256=digest, bytes=size)
+    |                                                                                                     ^^^^^^^^^^^^^^
+157 |         self.verify(proof)
+158 |         return proof
+    |
+
+E501 Line too long (109 > 100)
+   --> artifacts\phase-8-review-freeze\v2\storage.py:172:101
+    |
+170 |     cloud.verify(proof)
+171 |     with journal.connect() as db:
+172 |         db.execute("UPDATE reservations SET state='VERIFIED',version=? WHERE key=?", (proof.version_id, key))
+    |                                                                                                     ^^^^^^^^^
+173 |     journal.event("READ_ONLY_UPLOAD_RECONCILED", proof=proof.model_dump())
+174 |     return proof
+    |
+
+E501 Line too long (116 > 100)
+   --> artifacts\phase-8-review-freeze\v2\storage.py:235:101
+    |
+233 |         master = folder / "master"
+234 |         master.mkdir()
+235 |         with Journal(master_root).connect() as source_db, sqlite3.connect(master / "campaign.sqlite3") as target_db:
+    |                                                                                                     ^^^^^^^^^^^^^^^^
+236 |             source_db.backup(target_db)
+237 |         for name in ("run.json", "bindings.json", "binding-seal.json"):
+    |
+
+E501 Line too long (116 > 100)
+   --> artifacts\phase-8-review-freeze\v2\storage.py:273:101
+    |
+271 |     with tarfile.open(archive, "x:gz") as outgoing:
+272 |         outgoing.add(folder, arcname="slot")
+273 |     write_new(archive.with_suffix(".receipt.json"), {"sha256": hash_file(archive), "bytes": archive.stat().st_size})
+    |                                                                                                     ^^^^^^^^^^^^^^^^
+274 |     return archive
+    |
+
+B023 Function definition does not bind loop variable `handle`
+   --> artifacts\phase-8-review-freeze\v2\storage.py:294:39
+    |
+292 |             if handle is None:
+293 |                 raise ValueError("BACKUP_MEMBER_MISSING")
+294 |             for block in iter(lambda: handle.read(1024**2), b""):
+    |                                       ^^^^^^
+295 |                 calculated.update(block)
+296 |             if calculated.hexdigest() != digest:
+    |
+
+E501 Line too long (101 > 100)
+  --> artifacts\phase-8-review-freeze\v2\test_collector.py:68:101
+   |
+66 |     # produce a retained oracle failure, never a purported research success.
+67 |     monkeypatch.setattr(collector.Trial, "snapshot", lambda *a: {"CONTROL_ONLY": True})
+68 |     monkeypatch.setattr("research.execution_linux_v1.runtime.install_process_boundary", lambda: None)
+   |                                                                                                     ^
+69 |     assert not collector.execute(folder, ledger.rows()[0], checkpoint_once=True)
+70 |     first = ledger.rows()[0]
+   |
+
+E501 Line too long (103 > 100)
+   --> artifacts\phase-8-review-freeze\v2\test_controls.py:130:101
+    |
+128 |     _, authority = calibration(tmp_path)
+129 |     with pytest.raises(ValueError, match=error):
+130 |         guard(authority.policy, sample(), authority.policy.host_started_at + timedelta(hours=hours), 0)
+    |                                                                                                     ^^^
+
+E501 Line too long (120 > 100)
+  --> artifacts\phase-8-review-freeze\v2\test_final.py:16:101
+   |
+16 | @pytest.mark.parametrize("change,error", [("reboot", "HOST_REBOOT"), ("backward", "WALL_CLOCK"), ("360h", "HOST_360H")])
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^
+17 | def test_clock_guard_never_resets_host_allowance(tmp_path: Path, change: str, error: str) -> None:
+18 |     _, authority = calibration(tmp_path)
+   |
+
+E501 Line too long (113 > 100)
+  --> artifacts\phase-8-review-freeze\v2\test_final.py:71:101
+   |
+71 | def test_watchdog_main_shutdown_command_boundary_without_real_shutdown(tmp_path: Path, monkeypatch: Any) -> None:
+   |                                                                                                     ^^^^^^^^^^^^^
+72 |     import runner
+73 |     root, authority = calibration(tmp_path)
+   |
+
+E501 Line too long (110 > 100)
+  --> artifacts\phase-8-review-freeze\v2\test_final.py:76:101
+   |
+74 |     # Scope-only control object, no signed main receipt or main admission.
+75 |     policy = authority.policy.model_copy(update={"scope": "CAMPAIGN"})
+76 |     monkeypatch.setattr(runner, "authority_for", lambda _: __import__("types").SimpleNamespace(policy=policy))
+   |                                                                                                     ^^^^^^^^^^
+77 |     monkeypatch.setattr(runner, "verify_clock", lambda *a: None)
+78 |     calls = []
+   |
+
+E501 Line too long (122 > 100)
+  --> artifacts\phase-8-review-freeze\v2\test_integrated.py:22:101
+   |
+20 |     proof = upload(Journal(root), cloud, __import__("runner").authority_for(root).policy, archive)
+21 |     output = recover(proof, tmp_path / "p", FakeStore(archive.read_bytes()))
+22 |     assert read(output / "slot/executions" / slot["execution_id"] / "export.json")["execution_id"] == slot["execution_id"]
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^
+23 |     assert read(tmp_path / "p/postflight-verified.json")["cleanup_authorized"] is False
+24 |     assert archive.exists()
+   |
+
+E501 Line too long (106 > 100)
+  --> artifacts\phase-8-review-freeze\v2\test_integrated.py:44:101
+   |
+42 |     cloud.verify(proof)
+43 |     assert cloud.calls == 1 and read(root / "pause.json")["reason"] == "BACKUP_FAILURE"
+44 |     assert upload(Journal(root), cloud, __import__("runner").authority_for(root).policy, archive) == proof
+   |                                                                                                     ^^^^^^
+45 |     assert cloud.calls == 1
+   |
+
+E501 Line too long (121 > 100)
+  --> artifacts\phase-8-review-freeze\v2\test_integrated.py:54:101
+   |
+52 |     assert len(bank["main_inputs"]) == len(order) == 500
+53 |     assert len(schedule) == 1500
+54 |     assert [(s["case_id"], s["arm"]) for s in schedule] == [(p["case_id"], arm) for p in order for arm in p["arm_order"]]
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^
+55 |     assert all(s["attempt"] == 1 and s["execution_id"] is None for s in schedule)
+56 |     sql = (REPO / "database/001_initial_schema.sql").read_text()
+   |
+
+E501 Line too long (101 > 100)
+  --> artifacts\phase-8-review-freeze\v2\test_integrated.py:62:101
+   |
+60 |     tree = ast.parse((REPO / "research/remedies/runner.py").read_text())
+61 |     assert any(isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id == "range"
+62 |                and len(n.args) == 1 and isinstance(n.args[0], ast.Constant) and n.args[0].value == 30
+   |                                                                                                     ^
+63 |                for n in ast.walk(tree))
+64 |     design = (REPO / "research/study_v4/design.py").read_text()
+   |
+
+E501 Line too long (129 > 100)
+  --> artifacts\phase-8-review-freeze\v2\test_integrated.py:78:101
+   |
+78 | @pytest.mark.skipif(__import__("sys").platform != "linux", reason="Linux process boundary exercised in separate local container")
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+79 | def test_linux_terminal_and_process_identity(tmp_path: Path) -> None:
+80 |     from research.execution_linux_v1.platform import process_identity, runner_lock
+   |
+
+E501 Line too long (120 > 100)
+   --> artifacts\phase-8-review-freeze\v2\test_integrated.py:101:101
+    |
+ 99 |     folder = output / "slot"
+100 |     Ledger(folder)
+101 |     write_new(folder / "resources.json", {"containers": ["p8-linux-v1-1d9f386587-app", "p8-linux-v1-1d9f386587-truth"]})
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^
+102 |     for name in ("qualification-plan.json", "source-seal.json", "config.json"):
+103 |         write_new(folder / name, {"classification": "CALIBRATION_READ_ONLY_BACKUP_CHECK"})
+    |
+
+B017 Do not assert blind exception: `Exception`
+  --> artifacts\phase-8-review-freeze\v2\test_storage.py:49:10
+   |
+47 |     damaged = archive.read_bytes()[:-20]
+48 |     archive.write_bytes(damaged)
+49 |     with pytest.raises(Exception):
+   |          ^^^^^^^^^^^^^^^^^^^^^^^^
+50 |         complete_backup(Journal(root), OfflineCloud(tmp_path / "remote-copy"),
+51 |                         authority_for(root).policy, slot, archive)
+   |
+
+E501 Line too long (103 > 100)
+  --> artifacts\phase-8-review-freeze\v2\test_storage.py:93:101
+   |
+92 |     with pytest.raises(ValueError, match="30GIB_RESERVATION"):
+93 |         upload(Journal(root), FullCloud(tmp_path / "remote-copy"), authority_for(root).policy, archive)
+   |                                                                                                     ^^^
+94 |     with Journal(root).connect() as db:
+95 |         assert db.execute("SELECT count(*) FROM reservations").fetchone()[0] == 0
+   |
+
+E501 Line too long (114 > 100)
+  --> artifacts\phase-8-review-freeze\v2\verify_pilot.py:23:101
+   |
+21 |             raise ValueError("ORIGINAL_REPLAY_DRIFT_RETAIN_OUTCOME")
+22 |         records.append({"trace": str(path.resolve()), "sha256": hash_file(path),
+23 |                         "execution_id": trace["execution_id"], "grade": "IDENTICAL", "analysis_row": "IDENTICAL"})
+   |                                                                                                     ^^^^^^^^^^^^^^
+24 |         case = StudyCase.model_validate(trace["input"])
+25 |         if case.case_id in cases and cases[case.case_id].fixture_hash != case.fixture_hash:
+   |
+
+E501 Line too long (209 > 100)
+  --> artifacts\phase-8-review-freeze\v2\verify_pilot.py:35:101
+   |
+33 | …
+34 | …
+35 | …rted", "classification")} == {k: v for k, v in original.items() if k not in ("status", "main_started", "classification")}
+   |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+36 | …
+37 | …", "main_executions": 0,
+   |
+
+E501 Line too long (112 > 100)
+  --> artifacts\phase-8-review-freeze\v2\verify_pilot.py:37:101
+   |
+35 |     assert {k: v for k, v in result["outcomes"].items() if k not in ("status", "main_started", "classification")} == {k: v for k, v in…
+36 |     assert all(r.classification == "VALIDATION_ONLY" for r in rows)
+37 |     write_new(output / "replay.json", {"classification": "RETAINED_CALIBRATION_READ_ONLY", "main_executions": 0,
+   |                                                                                                     ^^^^^^^^^^^^
+38 |              "traces": records, "count": len(records), "analysis_outcomes": "IDENTICAL",
+39 |              "analysis_draws_qualification_only": {"latency": 20, "aft": 8}, "analysis": result})
+   |
+
+Found 59 errors (11 fixed, 48 remaining).

@@ -1,0 +1,22 @@
+{
+  "version": "phase85-refusal-amendment-v1",
+  "status": "DECLARED_BEFORE_CALIBRATION_NOT_ACCEPTED_OR_FROZEN",
+  "scope": "LOCAL_CALIBRATION_ONLY",
+  "main_campaign": "PAUSED",
+  "aws_host": "STOPPED_NO_AWS_OPERATIONS",
+  "cloud_budget_usd": 0,
+  "planned_live_executions": 4,
+  "concurrency": 1,
+  "observation_seconds_per_execution": 600,
+  "live_wall_budget_seconds": 3000,
+  "local_execution_resources": "cached Linux runner image, dedicated named network and per-slot PostgreSQL/Redis resources; no host ports",
+  "backup": "two separately versioned local roots using the existing OfflineCloud implementation; both real PostgreSQL dumps, archive/member verification; does not requalify S3",
+  "cases": [
+    {"id": "cal-v4-p85a-refusal-01", "arm": "B3", "recipe": "resource-only", "proof": "specific b3-evidence refusal, raw FAILED retained, complete 600s, unchanged outcome values, verified backup followed by actual next-slot driver admission"},
+    {"id": "cal-v4-p85a-next-02", "arm": "B3", "recipe": "clean", "proof": "saved-order next admission after prior verified backup, normal driver, full 600s and verified backup"},
+    {"id": "cal-v4-p85a-defect-03", "arm": "B3", "recipe": "clean", "proof": "named CALIBRATION_TECHNICAL_DEFECT after real driver returns; real exception and durable pause; backup retained and sentinel next slot rejected"},
+    {"id": "cal-v4-p85a-recovery-04", "arm": "B3", "recipe": "resource-only", "proof": "stop collector at checkpoint after two polls, retain live services, same-boot attach to original execution/deadline; no driver or POST commands replayed; finish original 600s and verify backup"}
+  ],
+  "offline_checks": ["expected refusal exact recognition", "other 409 and 500 rejection", "missing/malformed or mismatched wrapper rejection", "retryable refusal rejection", "wrong/missing provider facts rejection", "wrong operation/revision rejection", "wrong exception rejection", "classification integrity and missingness", "timing and original/revised outcome parity", "main admission remains blocked", "before/after frozen and first-original hashes"],
+  "stopping_criteria": "Finite checks only. Retain every attempt. Stop live admissions on unplanned technical failure, source drift, active RAM below 1GiB, disk below 10GiB, or total local wall budget expiry. Do not enlarge the set or observation windows. All four planned results and required offline gates must PASS before recommending review; no main freeze/launch capabilities created."
+}

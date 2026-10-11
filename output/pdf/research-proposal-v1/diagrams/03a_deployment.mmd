@@ -1,0 +1,10 @@
+flowchart TB
+ subgraph App[Application containers]
+ Web[web :3000] --> API[api-controller :8000]
+ Voice[voice-worker :8001] --> API
+ Durable[durable-worker :8002] --> API
+ API --> PG[(postgres :5432 internal)]
+ Durable --> PG
+ M[migrate: one-shot Alembic] --> PG
+ PG --> PV[(postgres_data volume)]
+ end

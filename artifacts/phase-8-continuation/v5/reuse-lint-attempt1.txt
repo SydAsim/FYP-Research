@@ -1,0 +1,75 @@
+E501 Line too long (105 > 100)
+  --> E:/p8v5/source/artifacts/phase-8-runner-amendment/v4-complete/reuse_prepare.py:29:101
+   |
+27 |     key = Path("/var/lib/fyp-owner/owner.key").read_bytes()
+28 |     body = {k:v for k,v in proof.items() if k != "signature"}
+29 |     if not hmac.compare_digest(hmac.new(key, canonical(body), "sha256").hexdigest(), proof["signature"]):
+   |                                                                                                     ^^^^^
+30 |         raise ValueError("UNSIGNED_EXTERNAL_REUSE_GATES")
+31 |     required = (
+   |
+
+E501 Line too long (101 > 100)
+  --> E:/p8v5/source/artifacts/phase-8-runner-amendment/v4-complete/reuse_prepare.py:37:101
+   |
+35 |         "no_inbound_access", "original_deadline_and_budget_fit",
+36 |     )
+37 |     if proof["instance_id"] != INSTANCE or any(proof["checks"].get(k) is not True for k in required):
+   |                                                                                                     ^
+38 |         raise ValueError("REUSE_EXTERNAL_GATES_NOT_VERIFIED")
+39 |     expiration = datetime.fromisoformat(proof["expires_at"].replace("Z", "+00:00"))
+   |
+
+E501 Line too long (107 > 100)
+  --> E:/p8v5/source/artifacts/phase-8-runner-amendment/v4-complete/reuse_prepare.py:63:101
+   |
+61 |     folder.mkdir()
+62 |     uri = (OLD / "campaign.sqlite3").resolve().as_uri() + "?mode=ro"
+63 |     with sqlite3.connect(uri, uri=True) as original, sqlite3.connect(folder / "campaign.sqlite3") as saved:
+   |                                                                                                     ^^^^^^^
+64 |         original.execute("BEGIN")
+65 |         original.backup(saved)
+   |
+
+E501 Line too long (102 > 100)
+  --> E:/p8v5/source/artifacts/phase-8-runner-amendment/v4-complete/reuse_prepare.py:68:101
+   |
+66 |     (folder / "pause.json").write_bytes((OLD / "pause.json").read_bytes())
+67 |     journal = subprocess.run(["journalctl", "-u", "fyp-phase8-campaign.service", "-u",
+68 |                               "fyp-phase8-watchdog.service", "--no-pager", "-o", "short-iso-precise"],
+   |                                                                                                     ^^
+69 |                              check=True, text=True, capture_output=True, timeout=30)
+70 |     (folder / "journal.log").write_text(journal.stdout)
+   |
+
+E501 Line too long (148 > 100)
+  --> E:/p8v5/source/artifacts/phase-8-runner-amendment/v4-complete/reuse_prepare.py:73:101
+   |
+71 | …
+72 | …un.json"))
+73 | …(root / "run.json")["continuation"]["manifest"])["package_hash"] != proof["package_hash"]:
+   |                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+74 | …RIFT")
+75 | …means no main admission
+   |
+
+E501 Line too long (106 > 100)
+  --> E:/p8v5/source/artifacts/phase-8-runner-amendment/v4-complete/reuse_prepare.py:81:101
+   |
+79 |         "status": "PASS_PREPARATION_NOT_LAUNCH", "instance_id": INSTANCE,
+80 |         "next_execution_id": NEXT, "backed_up": 82, "planned": 1418,
+81 |         "external_sha256": hash_file(external), "original_deadline": authority.policy.stop_at.isoformat(),
+   |                                                                                                     ^^^^^^
+82 |         "original_policy_unchanged": True, "old_root_untouched": True, "driver_calls": 0,
+83 |     })
+   |
+
+E501 Line too long (105 > 100)
+  --> E:/p8v5/source/artifacts/phase-8-runner-amendment/v4-complete/reuse_prepare.py:84:101
+   |
+82 |         "original_policy_unchanged": True, "old_root_untouched": True, "driver_calls": 0,
+83 |     })
+84 |     Journal(root).event("REUSED_HOST_CLOSED82_PREPARED", hash=hash_file(root / "reuse-preparation.json"))
+   |                                                                                                     ^^^^^
+
+Found 8 errors (1 fixed, 7 remaining).

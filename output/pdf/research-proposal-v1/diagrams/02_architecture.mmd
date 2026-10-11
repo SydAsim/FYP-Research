@@ -1,0 +1,12 @@
+flowchart TB
+ B[Browser: UI and playback reporter] -->|HTTP via Next proxy| A[API controller]
+ B <-->|RTC media and data| L[LiveKit]
+ L <--> V[Voice worker: cascade and scheduler]
+ V -->|Validated commands| A
+ A --> D[(Application PostgreSQL)]
+ W[Durable worker] --> D
+ W -->|Adapter requests and reads| P[Provider / simulator]
+ W -->|Repair scheduler records and releases| A
+ R[Optional Redis container] -.-> N[No current correctness authority]
+ A -.-> O[JSON logs; optional telemetry scaffolding]
+ W -.-> O

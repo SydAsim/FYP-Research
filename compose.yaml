@@ -1,0 +1,208 @@
+name: commit-aware-voice-agent
+services:
+  postgres:
+    image: postgres:16.9
+    environment:
+      POSTGRES_DB: voice_agent
+      POSTGRES_USER: voice_agent
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-voice_agent_local}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:${POSTGRES_HOST_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U voice_agent -d voice_agent"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  simulator-postgres:
+    image: postgres:16.9
+    environment:
+      POSTGRES_DB: simulator_truth
+      POSTGRES_USER: simulator
+      POSTGRES_PASSWORD: ${SIMULATOR_POSTGRES_PASSWORD:-simulator_local}
+    volumes:
+      - simulator_data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U simulator -d simulator_truth"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile.python
+    command: ["alembic", "upgrade", "head"]
+    environment:
+      DATABASE_ADMIN_URL: postgresql+psycopg://voice_agent:${POSTGRES_PASSWORD:-voice_agent_local}@postgres:5432/voice_agent
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  api-controller:
+    build:
+      context: .
+      dockerfile: Dockerfile.python
+    command: ["uvicorn", "apps.api_controller.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    environment:
+      DATABASE_URL: postgresql+asyncpg://voice_agent:${POSTGRES_PASSWORD:-voice_agent_local}@postgres:5432/voice_agent
+      DATABASE_SYNC_URL: postgresql://voice_agent:${POSTGRES_PASSWORD:-voice_agent_local}@postgres:5432/voice_agent
+      SIMULATOR_BASE_URL: http://provider-simulator:8010
+      VOICE_WORKER_BASE_URL: http://voice-worker:8001
+      EXPERIMENT_MODE: "true"
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    ports:
+      - "127.0.0.1:8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health/ready', timeout=3)"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  voice-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.python
+    command: ["uvicorn", "apps.voice_worker.main:app", "--host", "0.0.0.0", "--port", "8001"]
+    environment:
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      API_BASE_URL: http://api-controller:8000
+      LIVEKIT_URL: ws://livekit:7880
+      VOICE_PROFILE: local_cascade
+      VOSK_MODEL_PATH: /models/vosk-model-small-en-us-0.15
+      LOCAL_LLM_URL: http://local-llm:8080
+      EXPERIMENT_MODE: "true"
+    volumes:
+      - ./models:/models:ro
+    depends_on:
+      api-controller:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8001:8001"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health/live', timeout=3)"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  durable-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.python
+    command: ["uvicorn", "apps.durable_worker.main:app", "--host", "0.0.0.0", "--port", "8002"]
+    environment:
+      DATABASE_URL: postgresql+asyncpg://voice_agent:${POSTGRES_PASSWORD:-voice_agent_local}@postgres:5432/voice_agent
+      DATABASE_SYNC_URL: postgresql://voice_agent:${POSTGRES_PASSWORD:-voice_agent_local}@postgres:5432/voice_agent
+      SIMULATOR_BASE_URL: http://provider-simulator:8010
+      API_BASE_URL: http://api-controller:8000
+      REPAIR_DELIVERY_ENABLED: "true"
+      EXPERIMENT_MODE: "true"
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    ports:
+      - "127.0.0.1:8002:8002"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8002/health/ready', timeout=3)"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  provider-simulator:
+    build:
+      context: .
+      dockerfile: Dockerfile.python
+    command: ["uvicorn", "research.provider_simulator.main:app", "--host", "0.0.0.0", "--port", "8010"]
+    environment:
+      EXPERIMENT_MODE: "true"
+      SIMULATOR_DATABASE_URL: postgresql://simulator:${SIMULATOR_POSTGRES_PASSWORD:-simulator_local}@simulator-postgres:5432/simulator_truth
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    depends_on:
+      simulator-postgres:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8010:8010"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8010/health/live', timeout=3)"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    command: ["pnpm", "--dir", "apps/web", "start"]
+    environment:
+      API_BASE_URL: http://api-controller:8000
+    depends_on:
+      api-controller:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:3000:3000"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3000/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7.4.5-alpine
+    profiles: ["redis"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  livekit:
+    image: livekit/livekit-server:v1.13.7
+    profiles: ["media"]
+    command: ["--dev", "--bind", "0.0.0.0", "--node-ip", "127.0.0.1", "--config", "/etc/livekit-local.yaml"]
+    volumes:
+      - ./deployment/livekit-local.yaml:/etc/livekit-local.yaml:ro
+    ports:
+      - "127.0.0.1:7880:7880"
+      - "127.0.0.1:7881:7881"
+      - "127.0.0.1:7882:7882/udp"
+
+  local-llm:
+    image: ghcr.io/ggml-org/llama.cpp@sha256:00bd6c289c590e576948cb3639b8195e4d3e6dd6ba1d761f0e2b871fcd4df24f
+    profiles: ["local-voice"]
+    command: ["-m", "/models/qwen2.5-0.5b-instruct-q4_k_m.gguf", "--host", "0.0.0.0", "--port", "8080", "-c", "2048", "-n", "128", "-t", "4"]
+    volumes:
+      - ./models:/models:ro
+    ports:
+      - "127.0.0.1:11435:8080"
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.140.1
+    profiles: ["observability"]
+    command: ["--config=/etc/otelcol-contrib/config.yaml"]
+    volumes:
+      - ./deployment/otel-collector.yaml:/etc/otelcol-contrib/config.yaml:ro
+
+  prometheus:
+    image: prom/prometheus:v3.4.1
+    profiles: ["observability"]
+    volumes:
+      - ./deployment/prometheus.yaml:/etc/prometheus/prometheus.yml:ro
+
+  grafana:
+    image: grafana/grafana:12.0.2
+    profiles: ["observability"]
+    ports:
+      - "127.0.0.1:3001:3000"
+
+volumes:
+  postgres_data:
+  simulator_data:

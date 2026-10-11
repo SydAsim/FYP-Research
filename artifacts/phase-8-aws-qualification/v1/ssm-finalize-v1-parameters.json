@@ -1,0 +1,5 @@
+{
+  "commands": [
+    "set -eu\naws s3 cp s3://fyp-p82-20261005-018da1d6-803656589923/source/finalize-v1.sh /opt/fyp-phase82-qualification/finalize-v1-template.sh --region ap-southeast-2\necho 'f5d348da698d0aaf13284efcc7f2610f7dae88cf4453aecfed57dbd9ec76b497  /opt/fyp-phase82-qualification/finalize-v1-template.sh' | sha256sum -c -\nsed -e 's/@BUCKET@/fyp-p82-20261005-018da1d6-803656589923/g' -e 's/@SOURCE_VERSION@/tSVUvzrVj5pVHZ0FEn2Fr6F1hRht_p.T/g' /opt/fyp-phase82-qualification/finalize-v1-template.sh >/opt/fyp-phase82-qualification/finalize-v1.sh\nbash -n /opt/fyp-phase82-qualification/finalize-v1.sh\ncat >/etc/systemd/system/fyp-p82-finalize-v1.service <<'UNIT'\n[Unit]\nDescription=Completed qualification evidence export and stop\nAfter=docker.service network-online.target\n[Service]\nType=oneshot\nExecStart=/bin/bash /opt/fyp-phase82-qualification/finalize-v1.sh\nTimeoutStartSec=10min\nRestart=no\nStandardOutput=journal\nStandardError=journal\nUNIT\nsystemctl daemon-reload\nsystemctl start --no-block fyp-p82-finalize-v1.service\nsystemctl show fyp-p82-finalize-v1.service -p ActiveState -p MainPID\n"
+  ]
+}

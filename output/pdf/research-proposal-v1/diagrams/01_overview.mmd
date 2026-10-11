@@ -1,0 +1,10 @@
+flowchart TB
+ C[Caller asks for an appointment] --> V[Voice agent receives the request]
+ V --> A[Server accepts and checks it]
+ A --> D[(Durable records: PostgreSQL)]
+ A --> W[Worker sends or reconciles]
+ W --> P[Appointment provider]
+ P --> W
+ D --> U[Dashboard: known facts and follow-up]
+ A --> S[Evidence-backed statement]
+ S --> C

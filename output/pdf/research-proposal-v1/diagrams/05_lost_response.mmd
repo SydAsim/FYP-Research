@@ -1,0 +1,15 @@
+sequenceDiagram
+ participant C as Caller
+ participant A as Controller / PG
+ participant W as Worker
+ participant P as Provider
+ C->>A: Accept 3 PM (revision 1)
+ A->>A: Persist operation A and dispatch
+ W->>P: CREATE, stable key A
+ P->>P: Commit 3 PM, append truth
+ P--xW: Response lost
+ W->>A: Persist UNKNOWN
+ W->>P: Read status / resource
+ P-->>W: Original effect exists
+ W->>A: Record observation, verify
+ Note over A,P: No blind repeated CREATE

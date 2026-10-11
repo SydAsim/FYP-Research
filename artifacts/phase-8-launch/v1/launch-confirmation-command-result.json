@@ -1,0 +1,60 @@
+{
+  "status": "success",
+  "stdout": "",
+  "return_value": {
+    "Command": {
+      "CommandId": "d0ba383c-6843-47fd-a6f8-280c66555cfc",
+      "DocumentName": "AWS-RunShellScript",
+      "DocumentVersion": "$DEFAULT",
+      "Comment": "Record actual first original admission and current collection, read only",
+      "ExpiresAfter": "2026-10-07T16:47:18.077000+00:00",
+      "Parameters": {
+        "commands": [
+          "set -eu\npython3 - <<'PY'\nimport json,sqlite3\nfrom pathlib import Path\nroot=Path('/var/lib/p8/run')\nwith sqlite3.connect('file:/var/lib/p8/run/campaign.sqlite3?mode=ro',uri=True) as db:\n db.row_factory=sqlite3.Row\n events=[json.loads(r[0]) for r in db.execute('SELECT body FROM notices ORDER BY n') if json.loads(r[0]).get('kind')=='ADMITTED']\n rows=[dict(r) for r in db.execute('SELECT sequence,case_id,arm,attempt,execution_id,state,deadline FROM slots WHERE sequence=1')]\nprint(json.dumps({'admission_events':events,'first_original':rows,'pause':json.loads((root/'pause.json').read_text()) if (root/'pause.json').exists() else None}))\nPY\n/var/lib/p8-deployment/progress.sh\n"
+        ],
+        "executionTimeout": [
+          "60"
+        ]
+      },
+      "InstanceIds": [
+        "i-0a6196aff6f8098ac"
+      ],
+      "Targets": [],
+      "RequestedDateTime": "2026-10-07T15:46:18.077000+00:00",
+      "Status": "Pending",
+      "StatusDetails": "Pending",
+      "OutputS3Region": "ap-southeast-2",
+      "OutputS3BucketName": "fyp-p82-20261005-018da1d6-803656589923",
+      "OutputS3KeyPrefix": "exports/phase8/p85-01a116f7-3b82-7a79-8653-3aee62dc99e9/deployment/launch-confirmation",
+      "MaxConcurrency": "50",
+      "MaxErrors": "0",
+      "TargetCount": 1,
+      "CompletedCount": 0,
+      "ErrorCount": 0,
+      "DeliveryTimedOutCount": 0,
+      "ServiceRole": "",
+      "NotificationConfig": {
+        "NotificationArn": "",
+        "NotificationEvents": [],
+        "NotificationType": ""
+      },
+      "CloudWatchOutputConfig": {
+        "CloudWatchLogGroupName": "",
+        "CloudWatchOutputEnabled": false
+      },
+      "TimeoutSeconds": 3600,
+      "AlarmConfiguration": {
+        "IgnorePollAlarmFailure": false,
+        "Alarms": []
+      },
+      "TriggeredAlarms": []
+    }
+  },
+  "api_calls": [
+    {
+      "service": "ssm",
+      "operation": "SendCommand",
+      "status": "success"
+    }
+  ]
+}

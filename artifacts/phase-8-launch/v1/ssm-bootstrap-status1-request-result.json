@@ -1,0 +1,60 @@
+{
+  "status": "success",
+  "stdout": "",
+  "return_value": {
+    "Command": {
+      "CommandId": "41b81a9f-3f46-4b94-9cb2-ca469572174f",
+      "DocumentName": "AWS-RunShellScript",
+      "DocumentVersion": "$DEFAULT",
+      "Comment": "Phase 8 deployment status only; no main execution",
+      "ExpiresAfter": "2026-10-07T16:31:25.892000+00:00",
+      "Parameters": {
+        "commands": [
+          "systemctl is-active cloud-final.service; systemctl is-active fyp-p85-bootstrap-stop.timer; systemctl list-timers fyp-p85-bootstrap-stop.timer --no-pager; if test -f /var/lib/p8-deployment/dependencies-ready.json; then cat /var/lib/p8-deployment/dependencies-ready.json; fi; if test -f /var/lib/fyp-owner/transfer-public.pem; then cat /var/lib/fyp-owner/transfer-public.pem; fi; tail -n 12 /var/log/cloud-init-output.log; df -B1 /; free -b"
+        ],
+        "executionTimeout": [
+          "60"
+        ]
+      },
+      "InstanceIds": [
+        "i-0a6196aff6f8098ac"
+      ],
+      "Targets": [],
+      "RequestedDateTime": "2026-10-07T15:30:25.892000+00:00",
+      "Status": "Pending",
+      "StatusDetails": "Pending",
+      "OutputS3Region": "ap-southeast-2",
+      "OutputS3BucketName": "",
+      "OutputS3KeyPrefix": "",
+      "MaxConcurrency": "50",
+      "MaxErrors": "0",
+      "TargetCount": 1,
+      "CompletedCount": 0,
+      "ErrorCount": 0,
+      "DeliveryTimedOutCount": 0,
+      "ServiceRole": "",
+      "NotificationConfig": {
+        "NotificationArn": "",
+        "NotificationEvents": [],
+        "NotificationType": ""
+      },
+      "CloudWatchOutputConfig": {
+        "CloudWatchLogGroupName": "",
+        "CloudWatchOutputEnabled": false
+      },
+      "TimeoutSeconds": 3600,
+      "AlarmConfiguration": {
+        "IgnorePollAlarmFailure": false,
+        "Alarms": []
+      },
+      "TriggeredAlarms": []
+    }
+  },
+  "api_calls": [
+    {
+      "service": "ssm",
+      "operation": "SendCommand",
+      "status": "success"
+    }
+  ]
+}

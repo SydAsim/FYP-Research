@@ -1,0 +1,8 @@
+flowchart TB
+ E[Current applicable evidence] --> P[Permit withdrawal + update]
+ P --> U[Publish corrective segment]
+ U --> A{Applicable full completion ACK?}
+ A -->|Yes| C[Record completed repair]
+ A -->|Missing| M[Pending / retry / unresolved handoff]
+ A -->|Revision changed| N[Retarget; old ACK cannot close new work]
+ N -.-> E

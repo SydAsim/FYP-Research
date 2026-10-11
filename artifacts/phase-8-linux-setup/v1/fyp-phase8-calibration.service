@@ -1,0 +1,23 @@
+[Unit]
+Description=FYP Phase 8 Linux calibration ONLY (main study blocked)
+After=docker.service network-online.target
+Requires=docker.service
+
+[Service]
+Type=simple
+User=fyp
+Group=fyp
+SupplementaryGroups=docker
+WorkingDirectory=/opt/fyp-phase8-linux-v1
+Environment=PYTHONUNBUFFERED=1
+Environment=P8_DOCKER_DATA_PATH=/var/lib/docker
+ExecStart=/opt/fyp-phase8-linux-v1/.venv/bin/python artifacts/phase-8-linux-setup/v1/runner.py run --root /srv/fyp/cal-linux-v1
+KillMode=process
+KillSignal=SIGTERM
+TimeoutStopSec=20
+Restart=no
+UMask=0077
+StandardOutput=journal
+StandardError=journal
+
+# Deliberately no Install section: manual calibration admission, no boot-time launch.

@@ -1,0 +1,60 @@
+{
+  "status": "success",
+  "stdout": "",
+  "return_value": {
+    "Command": {
+      "CommandId": "e6544712-dc92-4c60-a6a6-d93d6a848171",
+      "DocumentName": "AWS-RunShellScript",
+      "DocumentVersion": "$DEFAULT",
+      "Comment": "Read-only receipt transport diagnosis; no admission or resealing",
+      "ExpiresAfter": "2026-10-07T16:39:06.269000+00:00",
+      "Parameters": {
+        "commands": [
+          "set -eu\ncd /opt/fyp-phase8-linux-v1\nexport PYTHONPATH=$PWD:$PWD/.venv-analysis/lib/python3.12/site-packages:$PWD/.venv-transport/lib/python3.12/site-packages\n.venv/bin/python -B - <<'PY'\nimport sys,hmac,hashlib,json\nfrom pathlib import Path\nsys.path.insert(0,str(Path.cwd()/'artifacts/phase-8-review-freeze/v2'))\nfrom controls import read,canonical,hash_file,policy_commitment,Policy\nowner=Path('/var/lib/fyp-owner');secret=(owner/'owner.key').read_bytes();policy=Policy.model_validate(read(owner/'launch-policy.json'))\nprevious=None;results=[]\nfor kind in ('REVIEW_ACCEPTED','FREEZE','LAUNCH'):\n p=owner/'receipts'/f'{kind}.json';raw=read(p);body={k:v for k,v in raw.items() if k!='signature'}\n results.append({'kind':kind,'file_sha256':hash_file(p),'signature_valid':hmac.compare_digest(raw['signature'],hmac.new(secret,canonical(body),'sha256').hexdigest()),'predecessor_matches':raw['predecessor_hash']==previous,'expires_at':raw['expires_at'],'policy_matches':raw['policy_hash']==policy_commitment(policy,kind)})\n previous=hashlib.sha256(canonical(raw)).hexdigest()\nprint(json.dumps({'receipts':results,'policy':policy.model_dump(mode='json'),'main_initialized':Path('/var/lib/p8/run').exists()}))\nPY\n"
+        ],
+        "executionTimeout": [
+          "60"
+        ]
+      },
+      "InstanceIds": [
+        "i-0a6196aff6f8098ac"
+      ],
+      "Targets": [],
+      "RequestedDateTime": "2026-10-07T15:38:06.269000+00:00",
+      "Status": "Pending",
+      "StatusDetails": "Pending",
+      "OutputS3Region": "ap-southeast-2",
+      "OutputS3BucketName": "",
+      "OutputS3KeyPrefix": "",
+      "MaxConcurrency": "50",
+      "MaxErrors": "0",
+      "TargetCount": 1,
+      "CompletedCount": 0,
+      "ErrorCount": 0,
+      "DeliveryTimedOutCount": 0,
+      "ServiceRole": "",
+      "NotificationConfig": {
+        "NotificationArn": "",
+        "NotificationEvents": [],
+        "NotificationType": ""
+      },
+      "CloudWatchOutputConfig": {
+        "CloudWatchLogGroupName": "",
+        "CloudWatchOutputEnabled": false
+      },
+      "TimeoutSeconds": 3600,
+      "AlarmConfiguration": {
+        "IgnorePollAlarmFailure": false,
+        "Alarms": []
+      },
+      "TriggeredAlarms": []
+    }
+  },
+  "api_calls": [
+    {
+      "service": "ssm",
+      "operation": "SendCommand",
+      "status": "success"
+    }
+  ]
+}

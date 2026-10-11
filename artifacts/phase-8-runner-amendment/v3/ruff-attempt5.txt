@@ -1,0 +1,23 @@
+E501 Line too long (101 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\collector.py:168:101
+    |
+166 |                 with psycopg.connect(self.runtime.database, row_factory=dict_row) as connection:
+167 |                     observations = connection.execute(
+168 |                         "SELECT p.* FROM provider_events p JOIN operations o ON o.id=p.operation_id "
+    |                                                                                                     ^
+169 |                         "WHERE o.workflow_id=%s AND p.event_kind='READINESS_OBSERVATION_V2' "
+170 |                         "ORDER BY p.occurred_at", (self.item['workflow_id'],)
+    |
+
+E501 Line too long (101 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\response_guard.py:33:101
+   |
+31 |                 or observation['query'].get('scenario_id') != scenario
+32 |                 or observation['query'].get('resource_key') != item.get('resource_key')
+33 |                 or raw.get('status') != 200 or raw.get('body', {}).get('authoritative') is not True):
+   |                                                                                                     ^
+34 |             continue
+35 |         at = datetime.fromisoformat(observation['available_at'])
+   |
+
+Found 2 errors.

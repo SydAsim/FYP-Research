@@ -1,0 +1,5115 @@
+{
+  "run_id": "916f0b17-ba2a-484a-a680-fc28c2a23ce5",
+  "case_id": "f139759e-d99e-4d45-812c-ecfca5c06e75",
+  "manifest": {
+    "name": "Phase 6 paired secondary-c88bdd50cd377df5",
+    "runner_version": "phase6-paired-runner-v6",
+    "latency_analysis_version": "phase6-correction-latency-v1",
+    "scenario": {
+      "fixture_version": "phase6-secondary-pairwise-v3",
+      "scenario_key": "secondary-c88bdd50cd377df5",
+      "revision_type": "RETRACTION",
+      "action_semantics": "CREATE_THEN_CANCEL",
+      "workflow_shape": "ONE_TICKET_ONE_APPOINTMENT",
+      "acoustic_condition": "CLEAN_SCRIPTED_TRANSCRIPT",
+      "provider_capability": "CANCEL_CREATE_STATUS_AND_RESOURCE_LOOKUP",
+      "visibility": "UNAVAILABLE",
+      "speech_exposure": "NONE",
+      "fault_family": "RESPONSE_LOSS",
+      "correction_barrier": "P3",
+      "seed": 30,
+      "initial_start": "2026-11-05T15:00:00+05:00",
+      "final_start": "2026-11-05T15:00:00+05:00",
+      "timezone": "Asia/Karachi",
+      "initial_transcript": "Book maintenance on November fifth twenty twenty six at three P M.",
+      "correction_transcript": "Cancel the maintenance appointment. I no longer want it.",
+      "audio_hash": "96ca029eb97abef12a51320a3de68f84fa3a04c550f10d989f38687299c99032",
+      "repetition": 1
+    },
+    "fixture_hash": "cdaed436beaa31fe832f31f2f7b0054f87007518b7dc18435771080fdd2bbb54",
+    "audio_hash": "96ca029eb97abef12a51320a3de68f84fa3a04c550f10d989f38687299c99032",
+    "source_tree_hash": "26302ee580c72771f657304cfec4364f25d2a7fb78bc32e52ab63c2b3f85f410",
+    "source_commit": "uncommitted:26302ee580c72771f657304cfec4364f25d2a7fb78bc32e52ab63c2b3f85f410",
+    "container_digests": {
+      "api-controller": "sha256:afac6805094dad354ee0943718ee5700ced64cd193e09b879427d3280678f8cb",
+      "durable-worker": "sha256:0b51af2988e731531bc1cdbed65f6f0f957b18dbe630dc1b93a6cbcf6feb81cb",
+      "livekit": "sha256:6fd3b7088874c4d119160dd688798dfec852bc014786d392caad15f6f63912a3",
+      "local-llm": "sha256:00bd6c289c590e576948cb3639b8195e4d3e6dd6ba1d761f0e2b871fcd4df24f",
+      "postgres": "sha256:ddfe3e8713e3ee5b8f286082cb12512488dfbf3f5a1ecb0b74a42e6055af0a5f",
+      "provider-simulator": "sha256:5a84ef40d3f226b837aa7f2dde3e4a1d2b968b874634c6269eb27fdc0ad740b9",
+      "redis": "sha256:bb186d083732f669da90be8b0f975a37812b15e913465bb14d845db72a4e3e08",
+      "simulator-postgres": "sha256:ddfe3e8713e3ee5b8f286082cb12512488dfbf3f5a1ecb0b74a42e6055af0a5f",
+      "voice-worker": "sha256:c6bc642f308fe60a98f678f96f8d92dcff1ff27de3763f94ede8a8f5db21e1ed",
+      "web": "sha256:ef77848daf1922d93993b6c3617be116f5f9afc2563b1038d70f6af5de794685"
+    },
+    "migration_version": "0011_phase6_b3_audio",
+    "model_profile": "phase6-frozen-scripted-transcript",
+    "prompt_hashes": [
+      "4e7f37b164df1e6f2cfd59d7e98be9e1cf5cfe68ba748c40e7088639748566fe",
+      "62f6e4a524ef313696371c227c3f8a6e94a86fc3760b4c2dab45a2e83f54962e"
+    ],
+    "retry_budget": 8,
+    "provider_timeout_seconds": 40,
+    "primary_endpoints": [
+      "correction_success",
+      "unsupported_confirmation"
+    ],
+    "speech_policy_version": "phase3-policy-v1",
+    "fault_schedule": {
+      "barrier": "P3",
+      "fault": "RESPONSE_LOSS",
+      "request_index": 1,
+      "target": "AFTER_COMMIT_BEFORE_RESPONSE:1",
+      "hash": "fa7d4d83c63f6d4d5196104f6eeb2906cff9b3806f7cf802377e6d730abf1064"
+    },
+    "arms": {
+      "B0": {
+        "arm": "B0",
+        "durable_idempotency": false,
+        "reconcile_before_retry": false,
+        "revision_invalidation": false,
+        "transaction_staging": false,
+        "compensation": false,
+        "playback_tracking": false,
+        "claim_permits": false,
+        "product_state_invariants": false,
+        "durable_played_span_repair": false
+      },
+      "B1": {
+        "arm": "B1",
+        "durable_idempotency": true,
+        "reconcile_before_retry": true,
+        "revision_invalidation": false,
+        "transaction_staging": false,
+        "compensation": false,
+        "playback_tracking": false,
+        "claim_permits": false,
+        "product_state_invariants": false,
+        "durable_played_span_repair": false
+      },
+      "B2": {
+        "arm": "B2",
+        "durable_idempotency": true,
+        "reconcile_before_retry": true,
+        "revision_invalidation": true,
+        "transaction_staging": true,
+        "compensation": true,
+        "playback_tracking": false,
+        "claim_permits": false,
+        "product_state_invariants": false,
+        "durable_played_span_repair": false
+      },
+      "B3": {
+        "arm": "B3",
+        "durable_idempotency": true,
+        "reconcile_before_retry": true,
+        "revision_invalidation": true,
+        "transaction_staging": true,
+        "compensation": true,
+        "playback_tracking": true,
+        "claim_permits": false,
+        "product_state_invariants": false,
+        "durable_played_span_repair": false
+      },
+      "P1": {
+        "arm": "P1",
+        "durable_idempotency": true,
+        "reconcile_before_retry": true,
+        "revision_invalidation": true,
+        "transaction_staging": true,
+        "compensation": true,
+        "playback_tracking": true,
+        "claim_permits": true,
+        "product_state_invariants": true,
+        "durable_played_span_repair": false
+      },
+      "P2": {
+        "arm": "P2",
+        "durable_idempotency": true,
+        "reconcile_before_retry": true,
+        "revision_invalidation": true,
+        "transaction_staging": true,
+        "compensation": true,
+        "playback_tracking": true,
+        "claim_permits": true,
+        "product_state_invariants": true,
+        "durable_played_span_repair": true
+      }
+    },
+    "run_id": "916f0b17-ba2a-484a-a680-fc28c2a23ce5",
+    "frozen_at_utc": "2026-10-03T14:14:27.272085+00:00"
+  },
+  "manifest_hash": "98249c7505624e057a12cb9226e6c92decf4b0c3f36772316da525606ba59aea",
+  "execution_count": 6,
+  "independent_scenario_count": 1,
+  "paired_summary": {
+    "independent_scenarios": 1,
+    "executions": 6,
+    "by_arm": {
+      "B0": {
+        "scenarios": 1,
+        "successes": 0
+      },
+      "B1": {
+        "scenarios": 1,
+        "successes": 0
+      },
+      "B2": {
+        "scenarios": 1,
+        "successes": 0
+      },
+      "B3": {
+        "scenarios": 1,
+        "successes": 0
+      },
+      "P1": {
+        "scenarios": 1,
+        "successes": 0
+      },
+      "P2": {
+        "scenarios": 1,
+        "successes": 0
+      }
+    }
+  },
+  "executions": [
+    {
+      "execution_id": "6934e778-bd71-4ee5-9bf7-fa6e79a54b00",
+      "arm": "B0",
+      "scenario_id": "5a92e610-3af3-4435-8d02-4d2ead8fc17c",
+      "workflow_id": "2e906f06-19b7-4fa8-aa0a-807706f42cbe",
+      "first_operation_id": "6e9babb6-b849-4e23-8ddd-ad6b13afeced",
+      "current_operation_id": null,
+      "fault_occurrence_id": "165b5cac-d960-4c01-94f6-7bfff6146522",
+      "fault_placement_hash": "fa7d4d83c63f6d4d5196104f6eeb2906cff9b3806f7cf802377e6d730abf1064",
+      "speech_source": "research_baseline_uncertainty",
+      "receipt_id": null,
+      "permit_id": null,
+      "playback_ack": null,
+      "correction_scripted_at": "2026-10-03T14:14:27.997422+00:00",
+      "observation_ended_at": "2026-10-03T14:14:28.445719+00:00",
+      "worker_steps": [],
+      "normalized_events": [
+        {
+          "workflow_sequence": 1,
+          "event_name": "IntentRevisionAccepted",
+          "intent_revision": 1,
+          "payload": {
+            "revision": 1,
+            "change_class": "INITIAL",
+            "desired_state_hash": "14aade80c661acb6eaa065a54591ea3ad6e03a3410f7b38ac951ccb4d0d56de4"
+          }
+        },
+        {
+          "workflow_sequence": 2,
+          "event_name": "IntentRevisionAccepted",
+          "intent_revision": 2,
+          "payload": {
+            "revision": 2,
+            "change_class": "RETRACTION",
+            "desired_state_hash": "14aade80c661acb6eaa065a54591ea3ad6e03a3410f7b38ac951ccb4d0d56de4"
+          }
+        }
+      ],
+      "provider_evidence": [],
+      "baseline_events": [
+        {
+          "ordinal": 1,
+          "event_kind": "REQUEST_SENT",
+          "raw_json": {
+            "action": "CREATE",
+            "timezone": "Asia/Karachi",
+            "scenario_id": "5a92e610-3af3-4435-8d02-4d2ead8fc17c",
+            "operation_id": "6e9babb6-b849-4e23-8ddd-ad6b13afeced",
+            "request_hash": "d473ffb9a8c882707c3abc0e499a1d3c0fa8580786473f971a48e58a31cacdab",
+            "resource_key": "property:4542f8c4-f51b-4807-96cc-27d9046fb755:maintenance",
+            "requested_end": "2026-11-05T16:00:00+05:00",
+            "idempotency_key": "phase6:6934e778-bd71-4ee5-9bf7-fa6e79a54b00:original",
+            "requested_start": "2026-11-05T15:00:00+05:00"
+          },
+          "normalized_json": {
+            "sent": true,
+            "action": "CREATE"
+          },
+          "content_hash": "5a6ce96b6c585764a52692c33b70425f6fbf10b95a18842ce5af81c031e6807f",
+          "trace_id": "ad60f3f4-232f-4cdd-9bbe-b26b9443678f",
+          "occurred_at": "2026-10-03 14:14:27.715852+00:00"
+        },
+        {
+          "ordinal": 2,
+          "event_kind": "PROVIDER_RESPONSE",
+          "raw_json": {
+            "transport_error": "IncompleteRead"
+          },
+          "normalized_json": {
+            "status": null,
+            "outcome": "UNKNOWN",
+            "authoritative": false,
+            "transport_error": true
+          },
+          "content_hash": "b04ba8f0fc3c9275fac4ec93685ee107149e4162e4561cdab0eb3c707c2e6867",
+          "trace_id": "ad60f3f4-232f-4cdd-9bbe-b26b9443678f",
+          "occurred_at": "2026-10-03 14:14:28.150581+00:00"
+        },
+        {
+          "ordinal": 3,
+          "event_kind": "UNRESOLVED_STOP",
+          "raw_json": {
+            "transport_error": "IncompleteRead"
+          },
+          "normalized_json": {
+            "reason": "NO_SAFE_RETRY_PROOF",
+            "outcome": "UNKNOWN"
+          },
+          "content_hash": "7f327ff2d36e4ee539e69c0af4e5060283badc9e344f4108e14414fbd24bf17e",
+          "trace_id": "ad60f3f4-232f-4cdd-9bbe-b26b9443678f",
+          "occurred_at": "2026-10-03 14:14:28.296603+00:00"
+        }
+      ],
+      "baseline_simulator_config": {
+        "idempotency": true,
+        "status_lookup": true,
+        "resource_lookup": true,
+        "visibility": "UNAVAILABLE",
+        "visibility_reads": 0,
+        "supports_reschedule": false,
+        "held_barriers": [
+          "AFTER_COMMIT_BEFORE_RESPONSE:1"
+        ],
+        "faults": [
+          {
+            "request_index": 1,
+            "stage": "AFTER_COMMIT_BEFORE_RESPONSE",
+            "kind": "DROP_RESPONSE"
+          }
+        ]
+      },
+      "timing_evidence": {
+        "barriers": [
+          {
+            "id": "5896aba8-2b08-4d69-a3dc-9aadf0244c0d",
+            "barrier_name": "P3",
+            "ordinal": 1,
+            "state": "RELEASED",
+            "source_event_id": "AFTER_COMMIT_BEFORE_RESPONSE:1",
+            "reached_at": "2026-10-03 14:14:27.870740+00:00",
+            "released_at": "2026-10-03 14:14:28.121333+00:00"
+          }
+        ],
+        "faults": [
+          {
+            "id": "165b5cac-d960-4c01-94f6-7bfff6146522",
+            "barrier_name": "P3",
+            "fault_type": "RESPONSE_LOSS",
+            "scheduled_target": {
+              "fault": "RESPONSE_LOSS",
+              "target": "AFTER_COMMIT_BEFORE_RESPONSE:1",
+              "barrier": "P3",
+              "request_index": 1
+            },
+            "actual_event_id": "5896aba8-2b08-4d69-a3dc-9aadf0244c0d",
+            "injected_at": "2026-10-03 14:14:28.188656+00:00",
+            "parameters": {
+              "placement_hash": "fa7d4d83c63f6d4d5196104f6eeb2906cff9b3806f7cf802377e6d730abf1064"
+            }
+          }
+        ]
+      },
+      "simulator_truth": [
+        {
+          "sequence": 3293,
+          "scenario_id": "5a92e610-3af3-4435-8d02-4d2ead8fc17c",
+          "operation_id": "6e9babb6-b849-4e23-8ddd-ad6b13afeced",
+          "request_hash": "d473ffb9a8c882707c3abc0e499a1d3c0fa8580786473f971a48e58a31cacdab",
+          "idempotency_key": "phase6:6934e778-bd71-4ee5-9bf7-fa6e79a54b00:original",
+          "action": "CREATE",
+          "appointment_id": "4dbbad56-4d4a-456d-ba67-0531de692753",
+          "resource_key": "property:4542f8c4-f51b-4807-96cc-27d9046fb755:maintenance",
+          "before_facts": null,
+          "after_facts": {
+            "status": "CONFIRMED",
+            "ends_at": "2026-11-05T11:00:00+00:00",
+            "version": 0,
+            "timezone": "Asia/Karachi",
+            "starts_at": "2026-11-05T10:00:00+00:00",
+            "resource_key": "property:4542f8c4-f51b-4807-96cc-27d9046fb755:maintenance",
+            "appointment_id": "4dbbad56-4d4a-456d-ba67-0531de692753"
+          },
+          "result_code": "PRESENT",
+          "committed_at": "2026-10-03 14:14:27.836239+00:00"
+        }
+      ],
+      "oracle_result": {
+        "oracle_version": "phase6-truth-oracle-v1",
+        "correction_success": false,
+        "unsupported_confirmation": false,
+        "unsupported_event_ids": [],
+        "stale_confirmation_count": 0,
+        "relevant_claim_count": 0,
+        "duplicate_effect": false,
+        "outcome_coverage": false,
+        "safe_resolution": false,
+        "active_final_truth": [
+          {
+            "status": "CONFIRMED",
+            "ends_at": "2026-11-05T11:00:00+00:00",
+            "version": 0,
+            "timezone": "Asia/Karachi",
+            "starts_at": "2026-11-05T10:00:00+00:00",
+            "resource_key": "property:4542f8c4-f51b-4807-96cc-27d9046fb755:maintenance",
+            "appointment_id": "4dbbad56-4d4a-456d-ba67-0531de692753"
+          }
+        ],
+        "provider_commit_count": 1,
+        "result_hash": "456839d088641c42aa96c4be61293e463212c1933f80b7d3c98c7bd243e6f8c6"
+      },
+      "metrics": [
+        {
+          "metric_name": "correction_success",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "unsupported_confirmation",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "duplicate_effect",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "safe_resolution",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "outcome_coverage",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        }
+      ],
+      "correction_to_outcome_latency": {
+        "duration_ms": 448.297,
+        "event_observed": false,
+        "censored": true
+      }
+    },
+    {
+      "execution_id": "2852bdbd-1767-4778-8653-22cbac5975b4",
+      "arm": "B1",
+      "scenario_id": "2012bf60-85fb-46c1-8cb3-43310d5a97cc",
+      "workflow_id": "41b92983-6cac-41bb-b4f4-92fd62d71144",
+      "first_operation_id": "bd844f6a-73cd-49e1-8a00-682518b6c141",
+      "current_operation_id": null,
+      "fault_occurrence_id": "ffd05856-7365-4fd1-8c07-7be8afeb9f53",
+      "fault_placement_hash": "fa7d4d83c63f6d4d5196104f6eeb2906cff9b3806f7cf802377e6d730abf1064",
+      "speech_source": "research_baseline_uncertainty",
+      "receipt_id": null,
+      "permit_id": null,
+      "playback_ack": null,
+      "correction_scripted_at": "2026-10-03T14:14:29.361351+00:00",
+      "observation_ended_at": "2026-10-03T14:14:30.833792+00:00",
+      "worker_steps": [],
+      "normalized_events": [
+        {
+          "workflow_sequence": 1,
+          "event_name": "IntentRevisionAccepted",
+          "intent_revision": 1,
+          "payload": {
+            "revision": 1,
+            "change_class": "INITIAL",
+            "desired_state_hash": "ba68d823d911ba07591fca4a3e65d9b61059bcc924b9678b2ce7380fac403d72"
+          }
+        },
+        {
+          "workflow_sequence": 2,
+          "event_name": "IntentRevisionAccepted",
+          "intent_revision": 2,
+          "payload": {
+            "revision": 2,
+            "change_class": "RETRACTION",
+            "desired_state_hash": "ba68d823d911ba07591fca4a3e65d9b61059bcc924b9678b2ce7380fac403d72"
+          }
+        }
+      ],
+      "provider_evidence": [],
+      "baseline_events": [
+        {
+          "ordinal": 1,
+          "event_kind": "REQUEST_SENT",
+          "raw_json": {
+            "action": "CREATE",
+            "timezone": "Asia/Karachi",
+            "scenario_id": "2012bf60-85fb-46c1-8cb3-43310d5a97cc",
+            "operation_id": "bd844f6a-73cd-49e1-8a00-682518b6c141",
+            "request_hash": "da1b9a25c30fd882c33b68b57ca44a4a213e1ac2d4029f617ba23c1623b9311f",
+            "resource_key": "property:c3c098da-f67a-4d46-bbda-8363cb20ece1:maintenance",
+            "requested_end": "2026-11-05T16:00:00+05:00",
+            "idempotency_key": "phase6:2852bdbd-1767-4778-8653-22cbac5975b4:original",
+            "requested_start": "2026-11-05T15:00:00+05:00"
+          },
+          "normalized_json": {
+            "sent": true,
+            "action": "CREATE"
+          },
+          "content_hash": "1b8bcf5213fda923801974c7a2ac27a9631faf7f0fca413ff3ca7b0a4186d232",
+          "trace_id": "39468c04-d82d-4a56-b9a5-61c0fc944272",
+          "occurred_at": "2026-10-03 14:14:28.983032+00:00"
+        },
+        {
+          "ordinal": 2,
+          "event_kind": "PROVIDER_RESPONSE",
+          "raw_json": {
+            "transport_error": "IncompleteRead"
+          },
+          "normalized_json": {
+            "status": null,
+            "outcome": "UNKNOWN",
+            "authoritative": false,
+            "transport_error": true
+          },
+          "content_hash": "b04ba8f0fc3c9275fac4ec93685ee107149e4162e4561cdab0eb3c707c2e6867",
+          "trace_id": "39468c04-d82d-4a56-b9a5-61c0fc944272",
+          "occurred_at": "2026-10-03 14:14:29.601514+00:00"
+        },
+        {
+          "ordinal": 3,
+          "event_kind": "STATUS_LOOKUP",
+          "raw_json": {
+            "body": {
+              "detail": "Provider operation status is unavailable"
+            },
+            "status": 503
+          },
+          "normalized_json": {
+            "status": 503,
+            "outcome": null,
+            "authoritative": null,
+            "transport_error": false
+          },
+          "content_hash": "41c80a82fdf039b253000a22b6bff20fe4088bf7d8593d70b282c4521a1d7fbb",
+          "trace_id": "39468c04-d82d-4a56-b9a5-61c0fc944272",
+          "occurred_at": "2026-10-03 14:14:29.835919+00:00"
+        },
+        {
+          "ordinal": 4,
+          "event_kind": "STATUS_LOOKUP",
+          "raw_json": {
+            "body": {
+              "detail": "Provider operation status is unavailable"
+            },
+            "status": 503
+          },
+          "normalized_json": {
+            "status": 503,
+            "outcome": null,
+            "authoritative": null,
+            "transport_error": false
+          },
+          "content_hash": "41c80a82fdf039b253000a22b6bff20fe4088bf7d8593d70b282c4521a1d7fbb",
+          "trace_id": "39468c04-d82d-4a56-b9a5-61c0fc944272",
+          "occurred_at": "2026-10-03 14:14:29.933872+00:00"
+        },
+        {
+          "ordinal": 5,
+          "event_kind": "STATUS_LOOKUP",
+          "raw_json": {
+            "body": {
+              "detail": "Provider operation status is unavailable"
+            },
+            "status": 503
+          },
+          "normalized_json": {
+            "status": 503,
+            "outcome": null,
+            "authoritative": null,
+            "transport_error": false
+          },
+          "content_hash": "41c80a82fdf039b253000a22b6bff20fe4088bf7d8593d70b282c4521a1d7fbb",
+          "trace_id": "39468c04-d82d-4a56-b9a5-61c0fc944272",
+          "occurred_at": "2026-10-03 14:14:30.075242+00:00"
+        },
+        {
+          "ordinal": 6,
+          "event_kind": "STATUS_LOOKUP",
+          "raw_json": {
+            "body": {
+              "detail": "Provider operation status is unavailable"
+            },
+            "status": 503
+          },
+          "normalized_json": {
+            "status": 503,
+            "outcome": null,
+            "authoritative": null,
+            "transport_error": false
+          },
+          "content_hash": "41c80a82fdf039b253000a22b6bff20fe4088bf7d8593d70b282c4521a1d7fbb",
+          "trace_id": "39468c04-d82d-4a56-b9a5-61c0fc944272",
+          "occurred_at": "2026-10-03 14:14:30.182560+00:00"
+        },
+        {
+          "ordinal": 7,
+          "event_kind": "STATUS_LOOKUP",
+          "raw_json": {
+            "body": {
+              "detail": "Provider operation status is unavailable"
+            },
+            "status": 503
+          },
+          "normalized_json": {
+            "status": 503,
+            "outcome": null,
+            "authoritative": null,
+            "transport_error": false
+          },
+          "content_hash": "41c80a82fdf039b253000a22b6bff20fe4088bf7d8593d70b282c4521a1d7fbb",
+          "trace_id": "39468c04-d82d-4a56-b9a5-61c0fc944272",
+          "occurred_at": "2026-10-03 14:14:30.285178+00:00"
+        },
+        {
+          "ordinal": 8,
+          "event_kind": "STATUS_LOOKUP",
+          "raw_json": {
+            "body": {
+              "detail": "Provider operation status is unavailable"
+            },
+            "status": 503
+          },
+          "normalized_json": {
+            "status": 503,
+            "outcome": null,
+            "authoritative": null,
+            "transport_error": false
+          },
+          "content_hash": "41c80a82fdf039b253000a22b6bff20fe4088bf7d8593d70b282c4521a1d7fbb",
+          "trace_id": "39468c04-d82d-4a56-b9a5-61c0fc944272",
+          "occurred_at": "2026-10-03 14:14:30.390466+00:00"
+        },
+        {
+          "ordinal": 9,
+          "event_kind": "STATUS_LOOKUP",
+          "raw_json": {
+            "body": {
+              "detail": "Provider operation status is unavailable"
+            },
+            "status": 503
+          },
+          "normalized_json": {
+            "status": 503,
+            "outcome": null,
+            "authoritative": null,
+            "transport_error": false
+          },
+          "content_hash": "41c80a82fdf039b253000a22b6bff20fe4088bf7d8593d70b282c4521a1d7fbb",
+          "trace_id": "39468c04-d82d-4a56-b9a5-61c0fc944272",
+          "occurred_at": "2026-10-03 14:14:30.490077+00:00"
+        },
+        {
+          "ordinal": 10,
+          "event_kind": "STATUS_LOOKUP",
+          "raw_json": {
+            "body": {
+              "detail": "Provider operation status is unavailable"
+            },
+            "status": 503
+          },
+          "normalized_json": {
+            "status": 503,
+            "outcome": null,
+            "authoritative": null,
+            "transport_error": false
+          },
+          "content_hash": "41c80a82fdf039b253000a22b6bff20fe4088bf7d8593d70b282c4521a1d7fbb",
+          "trace_id": "39468c04-d82d-4a56-b9a5-61c0fc944272",
+          "occurred_at": "2026-10-03 14:14:30.595439+00:00"
+        },
+        {
+          "ordinal": 11,
+          "event_kind": "UNRESOLVED_STOP",
+          "raw_json": {
+            "transport_error": "IncompleteRead"
+          },
+          "normalized_json": {
+            "reason": "NO_SAFE_RETRY_PROOF",
+            "outcome": "UNKNOWN"
+          },
+          "content_hash": "7f327ff2d36e4ee539e69c0af4e5060283badc9e344f4108e14414fbd24bf17e",
+          "trace_id": "39468c04-d82d-4a56-b9a5-61c0fc944272",
+          "occurred_at": "2026-10-03 14:14:30.653006+00:00"
+        }
+      ],
+      "baseline_simulator_config": {
+        "idempotency": true,
+        "status_lookup": true,
+        "resource_lookup": true,
+        "visibility": "UNAVAILABLE",
+        "visibility_reads": 0,
+        "supports_reschedule": false,
+        "held_barriers": [
+          "AFTER_COMMIT_BEFORE_RESPONSE:1"
+        ],
+        "faults": [
+          {
+            "request_index": 1,
+            "stage": "AFTER_COMMIT_BEFORE_RESPONSE",
+            "kind": "DROP_RESPONSE"
+          }
+        ]
+      },
+      "timing_evidence": {
+        "barriers": [
+          {
+            "id": "9c15dbb5-f84a-41da-867a-c279320bbe07",
+            "barrier_name": "P3",
+            "ordinal": 1,
+            "state": "RELEASED",
+            "source_event_id": "AFTER_COMMIT_BEFORE_RESPONSE:1",
+            "reached_at": "2026-10-03 14:14:29.189410+00:00",
+            "released_at": "2026-10-03 14:14:29.551847+00:00"
+          }
+        ],
+        "faults": [
+          {
+            "id": "ffd05856-7365-4fd1-8c07-7be8afeb9f53",
+            "barrier_name": "P3",
+            "fault_type": "RESPONSE_LOSS",
+            "scheduled_target": {
+              "fault": "RESPONSE_LOSS",
+              "target": "AFTER_COMMIT_BEFORE_RESPONSE:1",
+              "barrier": "P3",
+              "request_index": 1
+            },
+            "actual_event_id": "9c15dbb5-f84a-41da-867a-c279320bbe07",
+            "injected_at": "2026-10-03 14:14:29.665694+00:00",
+            "parameters": {
+              "placement_hash": "fa7d4d83c63f6d4d5196104f6eeb2906cff9b3806f7cf802377e6d730abf1064"
+            }
+          }
+        ]
+      },
+      "simulator_truth": [
+        {
+          "sequence": 3294,
+          "scenario_id": "2012bf60-85fb-46c1-8cb3-43310d5a97cc",
+          "operation_id": "bd844f6a-73cd-49e1-8a00-682518b6c141",
+          "request_hash": "da1b9a25c30fd882c33b68b57ca44a4a213e1ac2d4029f617ba23c1623b9311f",
+          "idempotency_key": "phase6:2852bdbd-1767-4778-8653-22cbac5975b4:original",
+          "action": "CREATE",
+          "appointment_id": "085bbec9-d36f-44fb-8f09-cad594a35938",
+          "resource_key": "property:c3c098da-f67a-4d46-bbda-8363cb20ece1:maintenance",
+          "before_facts": null,
+          "after_facts": {
+            "status": "CONFIRMED",
+            "ends_at": "2026-11-05T11:00:00+00:00",
+            "version": 0,
+            "timezone": "Asia/Karachi",
+            "starts_at": "2026-11-05T10:00:00+00:00",
+            "resource_key": "property:c3c098da-f67a-4d46-bbda-8363cb20ece1:maintenance",
+            "appointment_id": "085bbec9-d36f-44fb-8f09-cad594a35938"
+          },
+          "result_code": "PRESENT",
+          "committed_at": "2026-10-03 14:14:29.147050+00:00"
+        }
+      ],
+      "oracle_result": {
+        "oracle_version": "phase6-truth-oracle-v1",
+        "correction_success": false,
+        "unsupported_confirmation": false,
+        "unsupported_event_ids": [],
+        "stale_confirmation_count": 0,
+        "relevant_claim_count": 0,
+        "duplicate_effect": false,
+        "outcome_coverage": false,
+        "safe_resolution": false,
+        "active_final_truth": [
+          {
+            "status": "CONFIRMED",
+            "ends_at": "2026-11-05T11:00:00+00:00",
+            "version": 0,
+            "timezone": "Asia/Karachi",
+            "starts_at": "2026-11-05T10:00:00+00:00",
+            "resource_key": "property:c3c098da-f67a-4d46-bbda-8363cb20ece1:maintenance",
+            "appointment_id": "085bbec9-d36f-44fb-8f09-cad594a35938"
+          }
+        ],
+        "provider_commit_count": 1,
+        "result_hash": "787f737ed53eff819b6bc5e1bbe183560b34df63b23cbd7764f68cee0ef0ef70"
+      },
+      "metrics": [
+        {
+          "metric_name": "correction_success",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "unsupported_confirmation",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "duplicate_effect",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "safe_resolution",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "outcome_coverage",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        }
+      ],
+      "correction_to_outcome_latency": {
+        "duration_ms": 1472.441,
+        "event_observed": false,
+        "censored": true
+      }
+    },
+    {
+      "execution_id": "889a87c7-1461-41f7-be74-efa732a9e85c",
+      "arm": "B2",
+      "scenario_id": "a5f23946-c2e7-416c-8575-2c6cf86d050f",
+      "workflow_id": "74e41609-cff9-463f-bbb1-238e7b4aa326",
+      "first_operation_id": "cc47c1b1-c58d-478d-bcb7-df61a5c83ad7",
+      "current_operation_id": null,
+      "fault_occurrence_id": "aa027f09-4fe5-486b-ac4f-8a7e9651df26",
+      "fault_placement_hash": "fa7d4d83c63f6d4d5196104f6eeb2906cff9b3806f7cf802377e6d730abf1064",
+      "speech_source": "research_baseline_uncertainty",
+      "receipt_id": null,
+      "permit_id": null,
+      "playback_ack": null,
+      "correction_scripted_at": "2026-10-03T14:14:31.726123+00:00",
+      "observation_ended_at": "2026-10-03T14:14:32.837973+00:00",
+      "worker_steps": [],
+      "normalized_events": [
+        {
+          "workflow_sequence": 1,
+          "event_name": "IntentRevisionAccepted",
+          "intent_revision": 1,
+          "payload": {
+            "revision": 1,
+            "change_class": "INITIAL",
+            "desired_state_hash": "7c2b7afe3b881c4cab86a06dcc511bd95c214835e358cdaf21f38b2ce84d6174"
+          }
+        },
+        {
+          "workflow_sequence": 2,
+          "event_name": "IntentRevisionAccepted",
+          "intent_revision": 2,
+          "payload": {
+            "revision": 2,
+            "change_class": "RETRACTION",
+            "desired_state_hash": "7c2b7afe3b881c4cab86a06dcc511bd95c214835e358cdaf21f38b2ce84d6174"
+          }
+        }
+      ],
+      "provider_evidence": [],
+      "baseline_events": [
+        {
+          "ordinal": 1,
+          "event_kind": "REQUEST_SENT",
+          "raw_json": {
+            "action": "CREATE",
+            "timezone": "Asia/Karachi",
+            "scenario_id": "a5f23946-c2e7-416c-8575-2c6cf86d050f",
+            "operation_id": "cc47c1b1-c58d-478d-bcb7-df61a5c83ad7",
+            "request_hash": "d473c4b4bf9ae5f87b29134b0a24ea275193b9979ce23f60d2c88b1255a609e6",
+            "resource_key": "property:6bb56b78-e129-4430-9532-1db2a5124999:maintenance",
+            "requested_end": "2026-11-05T16:00:00+05:00",
+            "idempotency_key": "phase6:889a87c7-1461-41f7-be74-efa732a9e85c:original",
+            "requested_start": "2026-11-05T15:00:00+05:00"
+          },
+          "normalized_json": {
+            "sent": true,
+            "action": "CREATE"
+          },
+          "content_hash": "261186a666f9de137f5ad8452d81c67c3da7d0c731ed2ee8cabb9e1ed82f5551",
+          "trace_id": "b2c4e614-89dd-4ca4-a9f8-2acb4643fa8c",
+          "occurred_at": "2026-10-03 14:14:31.448913+00:00"
+        },
+        {
+          "ordinal": 2,
+          "event_kind": "PROVIDER_RESPONSE",
+          "raw_json": {
+            "transport_error": "IncompleteRead"
+          },
+          "normalized_json": {
+            "status": null,
+            "outcome": "UNKNOWN",
+            "authoritative": false,
+            "transport_error": true
+          },
+          "content_hash": "b04ba8f0fc3c9275fac4ec93685ee107149e4162e4561cdab0eb3c707c2e6867",
+          "trace_id": "b2c4e614-89dd-4ca4-a9f8-2acb4643fa8c",
+          "occurred_at": "2026-10-03 14:14:31.935890+00:00"
+        },
+        {
+          "ordinal": 3,
+          "event_kind": "STATUS_LOOKUP",
+          "raw_json": {
+            "body": {
+              "detail": "Provider operation status is unavailable"
+            },
+            "status": 503
+          },
+          "normalized_json": {
+            "status": 503,
+            "outcome": null,
+            "authoritative": null,
+            "transport_error": false
+          },
+          "content_hash": "41c80a82fdf039b253000a22b6bff20fe4088bf7d8593d70b282c4521a1d7fbb",
+          "trace_id": "b2c4e614-89dd-4ca4-a9f8-2acb4643fa8c",
+          "occurred_at": "2026-10-03 14:14:32.163406+00:00"
+        },
+        {
+          "ordinal": 4,
+          "event_kind": "STATUS_LOOKUP",
+          "raw_json": {
+            "body": {
+              "detail": "Provider operation status is unavailable"
+            },
+            "status": 503
+          },
+          "normalized_json": {
+            "status": 503,
+            "outcome": null,
+            "authoritative": null,
+            "transport_error": false
+          },
+          "content_hash": "41c80a82fdf039b253000a22b6bff20fe4088bf7d8593d70b282c4521a1d7fbb",
+          "trace_id": "b2c4e614-89dd-4ca4-a9f8-2acb4643fa8c",
+          "occurred_at": "2026-10-03 14:14:32.262256+00:00"
+        },
+        {
+          "ordinal": 5,
+          "event_kind": "STATUS_LOOKUP",
+          "raw_json": {
+            "body": {
+              "detail": "Provider operation status is unavailable"
+            },
+            "status": 503
+          },
+          "normalized_json": {
+            "status": 503,
+            "outcome": null,
+            "authoritative": null,
+            "transport_error": false
+          },
+          "content_hash": "41c80a82fdf039b253000a22b6bff20fe4088bf7d8593d70b282c4521a1d7fbb",
+          "trace_id": "b2c4e614-89dd-4ca4-a9f8-2acb4643fa8c",
+          "occurred_at": "2026-10-03 14:14:32.353260+00:00"
+        },
+        {
+          "ordinal": 6,
+          "event_kind": "STATUS_LOOKUP",
+          "raw_json": {
+            "body": {
+              "detail": "Provider operation status is unavailable"
+            },
+            "status": 503
+          },
+          "normalized_json": {
+            "status": 503,
+            "outcome": null,
+            "authoritative": null,
+            "transport_error": false
+          },
+          "content_hash": "41c80a82fdf039b253000a22b6bff20fe4088bf7d8593d70b282c4521a1d7fbb",
+          "trace_id": "b2c4e614-89dd-4ca4-a9f8-2acb4643fa8c",
+          "occurred_at": "2026-10-03 14:14:32.443062+00:00"
+        },
+        {
+          "ordinal": 7,
+          "event_kind": "STATUS_LOOKUP",
+          "raw_json": {
+            "body": {
+              "detail": "Provider operation status is unavailable"
+            },
+            "status": 503
+          },
+          "normalized_json": {
+            "status": 503,
+            "outcome": null,
+            "authoritative": null,
+            "transport_error": false
+          },
+          "content_hash": "41c80a82fdf039b253000a22b6bff20fe4088bf7d8593d70b282c4521a1d7fbb",
+          "trace_id": "b2c4e614-89dd-4ca4-a9f8-2acb4643fa8c",
+          "occurred_at": "2026-10-03 14:14:32.534510+00:00"
+        },
+        {
+          "ordinal": 8,
+          "event_kind": "STATUS_LOOKUP",
+          "raw_json": {
+            "body": {
+              "detail": "Provider operation status is unavailable"
+            },
+            "status": 503
+          },
+          "normalized_json": {
+            "status": 503,
+            "outcome": null,
+            "authoritative": null,
+            "transport_error": false
+          },
+          "content_hash": "41c80a82fdf039b253000a22b6bff20fe4088bf7d8593d70b282c4521a1d7fbb",
+          "trace_id": "b2c4e614-89dd-4ca4-a9f8-2acb4643fa8c",
+          "occurred_at": "2026-10-03 14:14:32.596550+00:00"
+        },
+        {
+          "ordinal": 9,
+          "event_kind": "STATUS_LOOKUP",
+          "raw_json": {
+            "body": {
+              "detail": "Provider operation status is unavailable"
+            },
+            "status": 503
+          },
+          "normalized_json": {
+            "status": 503,
+            "outcome": null,
+            "authoritative": null,
+            "transport_error": false
+          },
+          "content_hash": "41c80a82fdf039b253000a22b6bff20fe4088bf7d8593d70b282c4521a1d7fbb",
+          "trace_id": "b2c4e614-89dd-4ca4-a9f8-2acb4643fa8c",
+          "occurred_at": "2026-10-03 14:14:32.655471+00:00"
+        },
+        {
+          "ordinal": 10,
+          "event_kind": "STATUS_LOOKUP",
+          "raw_json": {
+            "body": {
+              "detail": "Provider operation status is unavailable"
+            },
+            "status": 503
+          },
+          "normalized_json": {
+            "status": 503,
+            "outcome": null,
+            "authoritative": null,
+            "transport_error": false
+          },
+          "content_hash": "41c80a82fdf039b253000a22b6bff20fe4088bf7d8593d70b282c4521a1d7fbb",
+          "trace_id": "b2c4e614-89dd-4ca4-a9f8-2acb4643fa8c",
+          "occurred_at": "2026-10-03 14:14:32.715234+00:00"
+        },
+        {
+          "ordinal": 11,
+          "event_kind": "UNRESOLVED_STOP",
+          "raw_json": {
+            "transport_error": "IncompleteRead"
+          },
+          "normalized_json": {
+            "reason": "NO_SAFE_RETRY_PROOF",
+            "outcome": "UNKNOWN"
+          },
+          "content_hash": "7f327ff2d36e4ee539e69c0af4e5060283badc9e344f4108e14414fbd24bf17e",
+          "trace_id": "b2c4e614-89dd-4ca4-a9f8-2acb4643fa8c",
+          "occurred_at": "2026-10-03 14:14:32.748159+00:00"
+        }
+      ],
+      "baseline_simulator_config": {
+        "idempotency": true,
+        "status_lookup": true,
+        "resource_lookup": true,
+        "visibility": "UNAVAILABLE",
+        "visibility_reads": 0,
+        "supports_reschedule": false,
+        "held_barriers": [
+          "AFTER_COMMIT_BEFORE_RESPONSE:1"
+        ],
+        "faults": [
+          {
+            "request_index": 1,
+            "stage": "AFTER_COMMIT_BEFORE_RESPONSE",
+            "kind": "DROP_RESPONSE"
+          }
+        ]
+      },
+      "timing_evidence": {
+        "barriers": [
+          {
+            "id": "0de93e4f-584f-4e2b-a0f2-c8d949454208",
+            "barrier_name": "P3",
+            "ordinal": 1,
+            "state": "RELEASED",
+            "source_event_id": "AFTER_COMMIT_BEFORE_RESPONSE:1",
+            "reached_at": "2026-10-03 14:14:31.610372+00:00",
+            "released_at": "2026-10-03 14:14:31.886028+00:00"
+          }
+        ],
+        "faults": [
+          {
+            "id": "aa027f09-4fe5-486b-ac4f-8a7e9651df26",
+            "barrier_name": "P3",
+            "fault_type": "RESPONSE_LOSS",
+            "scheduled_target": {
+              "fault": "RESPONSE_LOSS",
+              "target": "AFTER_COMMIT_BEFORE_RESPONSE:1",
+              "barrier": "P3",
+              "request_index": 1
+            },
+            "actual_event_id": "0de93e4f-584f-4e2b-a0f2-c8d949454208",
+            "injected_at": "2026-10-03 14:14:31.994984+00:00",
+            "parameters": {
+              "placement_hash": "fa7d4d83c63f6d4d5196104f6eeb2906cff9b3806f7cf802377e6d730abf1064"
+            }
+          }
+        ]
+      },
+      "simulator_truth": [
+        {
+          "sequence": 3295,
+          "scenario_id": "a5f23946-c2e7-416c-8575-2c6cf86d050f",
+          "operation_id": "cc47c1b1-c58d-478d-bcb7-df61a5c83ad7",
+          "request_hash": "d473c4b4bf9ae5f87b29134b0a24ea275193b9979ce23f60d2c88b1255a609e6",
+          "idempotency_key": "phase6:889a87c7-1461-41f7-be74-efa732a9e85c:original",
+          "action": "CREATE",
+          "appointment_id": "2401b6b9-1caf-46f5-99d2-376d775b1f15",
+          "resource_key": "property:6bb56b78-e129-4430-9532-1db2a5124999:maintenance",
+          "before_facts": null,
+          "after_facts": {
+            "status": "CONFIRMED",
+            "ends_at": "2026-11-05T11:00:00+00:00",
+            "version": 0,
+            "timezone": "Asia/Karachi",
+            "starts_at": "2026-11-05T10:00:00+00:00",
+            "resource_key": "property:6bb56b78-e129-4430-9532-1db2a5124999:maintenance",
+            "appointment_id": "2401b6b9-1caf-46f5-99d2-376d775b1f15"
+          },
+          "result_code": "PRESENT",
+          "committed_at": "2026-10-03 14:14:31.574831+00:00"
+        }
+      ],
+      "oracle_result": {
+        "oracle_version": "phase6-truth-oracle-v1",
+        "correction_success": false,
+        "unsupported_confirmation": false,
+        "unsupported_event_ids": [],
+        "stale_confirmation_count": 0,
+        "relevant_claim_count": 0,
+        "duplicate_effect": false,
+        "outcome_coverage": false,
+        "safe_resolution": false,
+        "active_final_truth": [
+          {
+            "status": "CONFIRMED",
+            "ends_at": "2026-11-05T11:00:00+00:00",
+            "version": 0,
+            "timezone": "Asia/Karachi",
+            "starts_at": "2026-11-05T10:00:00+00:00",
+            "resource_key": "property:6bb56b78-e129-4430-9532-1db2a5124999:maintenance",
+            "appointment_id": "2401b6b9-1caf-46f5-99d2-376d775b1f15"
+          }
+        ],
+        "provider_commit_count": 1,
+        "result_hash": "72bf41e9b8e384575163f7aca7545ecffaaa2790b90995214340ab3c77e37e17"
+      },
+      "metrics": [
+        {
+          "metric_name": "correction_success",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "unsupported_confirmation",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "duplicate_effect",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "safe_resolution",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "outcome_coverage",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        }
+      ],
+      "correction_to_outcome_latency": {
+        "duration_ms": 1111.85,
+        "event_observed": false,
+        "censored": true
+      }
+    },
+    {
+      "execution_id": "8d79b495-fcb7-4896-9fdf-28196551a386",
+      "arm": "B3",
+      "scenario_id": "6590e4dc-339c-40eb-9cb3-bbfb52cec549",
+      "workflow_id": "a6f1bc8e-aac2-4da5-8efc-f20649dfe930",
+      "first_operation_id": "467b28da-26ad-4312-b006-cb266b79172e",
+      "current_operation_id": null,
+      "fault_occurrence_id": "41ca66b7-1f43-4bad-b7aa-4d24e1eeb2f8",
+      "fault_placement_hash": "fa7d4d83c63f6d4d5196104f6eeb2906cff9b3806f7cf802377e6d730abf1064",
+      "speech_source": "withheld_unknown_provider_evidence",
+      "receipt_id": null,
+      "permit_id": null,
+      "playback_ack": null,
+      "correction_scripted_at": "2026-10-03T14:14:33.617197+00:00",
+      "observation_ended_at": "2026-10-03T14:14:37.308269+00:00",
+      "pre_correction_receipt_id": null,
+      "initial_worker_steps": [
+        {
+          "job_id": "5dddf3c8-d98c-4512-b177-85a26c5919bb",
+          "action": "dispatch",
+          "state": "DONE",
+          "provider_status": null,
+          "effect_knowledge": "UNKNOWN"
+        }
+      ],
+      "worker_steps": [
+        {
+          "job_id": "dcbccf98-da23-452a-bbcb-d9fe3dc843e9",
+          "action": "reconcile",
+          "outcome": "UNKNOWN"
+        },
+        {
+          "job_id": "dcbccf98-da23-452a-bbcb-d9fe3dc843e9",
+          "action": "reconcile",
+          "outcome": "UNKNOWN"
+        },
+        {
+          "job_id": "dcbccf98-da23-452a-bbcb-d9fe3dc843e9",
+          "action": "reconcile",
+          "outcome": "UNKNOWN"
+        },
+        {
+          "job_id": "dcbccf98-da23-452a-bbcb-d9fe3dc843e9",
+          "action": "reconcile",
+          "outcome": "UNKNOWN"
+        },
+        {
+          "job_id": "dcbccf98-da23-452a-bbcb-d9fe3dc843e9",
+          "action": "reconcile",
+          "outcome": "UNKNOWN"
+        },
+        {
+          "job_id": "dcbccf98-da23-452a-bbcb-d9fe3dc843e9",
+          "action": "reconcile",
+          "outcome": "UNKNOWN"
+        },
+        {
+          "job_id": "dcbccf98-da23-452a-bbcb-d9fe3dc843e9",
+          "action": "reconcile",
+          "outcome": "UNKNOWN"
+        },
+        {
+          "job_id": "dcbccf98-da23-452a-bbcb-d9fe3dc843e9",
+          "action": "reconcile",
+          "outcome": "UNKNOWN"
+        }
+      ],
+      "normalized_events": [
+        {
+          "workflow_sequence": 1,
+          "event_name": "IntentRevisionAccepted",
+          "intent_revision": 1,
+          "payload": {
+            "revision": 1,
+            "change_class": "INITIAL",
+            "desired_state_hash": "8c62d0853b41f605421fa8f837dbdc892a8c8439271ee8c5bc14c7cb29409ed0"
+          }
+        },
+        {
+          "workflow_sequence": 2,
+          "event_name": "OperationReady",
+          "intent_revision": 1,
+          "payload": {
+            "request_hash": "523bb342d320470e6bda224785da06bc83912cef886b68f78597df995010de06"
+          }
+        },
+        {
+          "workflow_sequence": 3,
+          "event_name": "DispatchRecorded",
+          "intent_revision": 1,
+          "payload": {
+            "attempt_id": "ba42ed08-5cee-420e-97e0-b11415e28f5b"
+          }
+        },
+        {
+          "workflow_sequence": 4,
+          "event_name": "ProviderRequestSent",
+          "intent_revision": 1,
+          "payload": {
+            "attempt_id": "ba42ed08-5cee-420e-97e0-b11415e28f5b"
+          }
+        },
+        {
+          "workflow_sequence": 5,
+          "event_name": "ReconciliationScheduled",
+          "intent_revision": 2,
+          "payload": {
+            "reason": "accepted_correction"
+          }
+        },
+        {
+          "workflow_sequence": 6,
+          "event_name": "OperationSuperseded",
+          "intent_revision": 2,
+          "payload": {
+            "effect_knowledge": "UNKNOWN",
+            "previous_revision": 1
+          }
+        },
+        {
+          "workflow_sequence": 7,
+          "event_name": "IntentRevisionAccepted",
+          "intent_revision": 2,
+          "payload": {
+            "revision": 2,
+            "change_class": "RETRACTION",
+            "desired_state_hash": "8c62d0853b41f605421fa8f837dbdc892a8c8439271ee8c5bc14c7cb29409ed0"
+          }
+        },
+        {
+          "workflow_sequence": 8,
+          "event_name": "OperationOutcomeUnknown",
+          "intent_revision": 1,
+          "payload": {
+            "reason": {
+              "transport_error": "IncompleteRead"
+            }
+          }
+        },
+        {
+          "workflow_sequence": 9,
+          "event_name": "ReconciliationScheduled",
+          "intent_revision": 1,
+          "payload": {
+            "reason": "ambiguous_dispatch"
+          }
+        },
+        {
+          "workflow_sequence": 10,
+          "event_name": "ReconciliationPending",
+          "intent_revision": 1,
+          "payload": {
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "workflow_sequence": 11,
+          "event_name": "ReconciliationPending",
+          "intent_revision": 1,
+          "payload": {
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "workflow_sequence": 12,
+          "event_name": "ReconciliationPending",
+          "intent_revision": 1,
+          "payload": {
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "workflow_sequence": 13,
+          "event_name": "ReconciliationPending",
+          "intent_revision": 1,
+          "payload": {
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "workflow_sequence": 14,
+          "event_name": "ReconciliationPending",
+          "intent_revision": 1,
+          "payload": {
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "workflow_sequence": 15,
+          "event_name": "ReconciliationPending",
+          "intent_revision": 1,
+          "payload": {
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "workflow_sequence": 16,
+          "event_name": "ReconciliationPending",
+          "intent_revision": 1,
+          "payload": {
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "workflow_sequence": 17,
+          "event_name": "ReconciliationPending",
+          "intent_revision": 1,
+          "payload": {
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "workflow_sequence": 18,
+          "event_name": "WorkflowEscalated",
+          "intent_revision": 2,
+          "payload": {
+            "reason": "RECONCILIATION_BUDGET_EXHAUSTED"
+          }
+        }
+      ],
+      "provider_evidence": [
+        {
+          "operation": {
+            "id": "467b28da-26ad-4312-b006-cb266b79172e",
+            "workflow_id": "a6f1bc8e-aac2-4da5-8efc-f20649dfe930",
+            "intent_revision": 1,
+            "parent_operation_id": null,
+            "supersedes_operation_id": null,
+            "action_type": "CREATE_APPOINTMENT",
+            "target_resource_type": "appointment",
+            "target_resource_id": null,
+            "processing_phase": "RECONCILING",
+            "effect_knowledge": "UNKNOWN",
+            "applicability": "SUPERSEDED",
+            "speech_eligibility": "BLOCKED",
+            "idempotency_key": "phase6:8d79b495-fcb7-4896-9fdf-28196551a386:original",
+            "request_hash": "523bb342d320470e6bda224785da06bc83912cef886b68f78597df995010de06",
+            "normalized_request_json": {
+              "action": "CREATE",
+              "scenario_id": "6590e4dc-339c-40eb-9cb3-bbfb52cec549",
+              "workflow_id": "a6f1bc8e-aac2-4da5-8efc-f20649dfe930",
+              "resource_key": "property:98395452-fc85-4082-8436-89c907cd19fc:maintenance",
+              "desired_state": {
+                "timezone": "Asia/Karachi",
+                "ticket_id": "1cbab965-87a3-4e5a-ab62-005f9f129642",
+                "requested_end": "2026-11-05T16:00:00+05:00",
+                "appointment_id": null,
+                "requested_start": "2026-11-05T15:00:00+05:00"
+              },
+              "intent_revision": 1,
+              "expected_resource_version": 0
+            },
+            "provider_adapter": "simulator",
+            "provider_operation_id": null,
+            "reconciliation_required": true,
+            "dispatch_recorded_at": "2026-10-03T14:14:33.270768Z",
+            "response_received_at": null,
+            "effect_observed_at": null,
+            "resolved_at": null,
+            "version": 3,
+            "created_at": "2026-10-03T14:14:33.182159Z",
+            "updated_at": "2026-10-03T14:14:36.506273Z"
+          },
+          "attempts": [
+            {
+              "id": "ba42ed08-5cee-420e-97e0-b11415e28f5b",
+              "attempt_number": 1,
+              "attempt_type": "WRITE",
+              "request_hash": "523bb342d320470e6bda224785da06bc83912cef886b68f78597df995010de06",
+              "request_sent_at": "2026-10-03T14:14:33.310957Z",
+              "response_received_at": null,
+              "raw_response_json": {
+                "transport_error": "IncompleteRead"
+              },
+              "normalized_result_json": {
+                "outcome": "UNKNOWN"
+              },
+              "result_code": "AMBIGUOUS",
+              "trace_id": "worker:e7230724-b975-4401-bf50-ea4cfeb5b99c"
+            },
+            {
+              "id": "02fcf054-972c-46a2-b7d8-ab6209516900",
+              "attempt_number": 2,
+              "attempt_type": "STATUS_LOOKUP",
+              "request_hash": "523bb342d320470e6bda224785da06bc83912cef886b68f78597df995010de06",
+              "request_sent_at": "2026-10-03T14:14:34.131934Z",
+              "response_received_at": "2026-10-03T14:14:34.131934Z",
+              "raw_response_json": {
+                "status": {
+                  "body": {
+                    "detail": "Provider operation status is unavailable"
+                  },
+                  "status": 503
+                },
+                "resource": {
+                  "body": {
+                    "detail": "Provider resource read is unavailable"
+                  },
+                  "status": 503
+                },
+                "capability": {
+                  "body": {
+                    "config": {
+                      "faults": [
+                        {
+                          "kind": "DROP_RESPONSE",
+                          "stage": "AFTER_COMMIT_BEFORE_RESPONSE",
+                          "request_index": 1
+                        }
+                      ],
+                      "visibility": "UNAVAILABLE",
+                      "idempotency": true,
+                      "held_barriers": [
+                        "AFTER_COMMIT_BEFORE_RESPONSE:1"
+                      ],
+                      "status_lookup": true,
+                      "resource_lookup": true,
+                      "visibility_reads": 0,
+                      "supports_reschedule": false
+                    },
+                    "scenario_id": "6590e4dc-339c-40eb-9cb3-bbfb52cec549"
+                  },
+                  "status": 200
+                }
+              },
+              "normalized_result_json": {
+                "outcome": "UNKNOWN",
+                "authoritative": false
+              },
+              "result_code": "UNKNOWN",
+              "trace_id": "worker:8b6a1fab-056f-4081-9ace-b83d2e76a8e3"
+            },
+            {
+              "id": "e71ba719-031d-44c2-907c-51b7ba76172d",
+              "attempt_number": 3,
+              "attempt_type": "STATUS_LOOKUP",
+              "request_hash": "523bb342d320470e6bda224785da06bc83912cef886b68f78597df995010de06",
+              "request_sent_at": "2026-10-03T14:14:34.436894Z",
+              "response_received_at": "2026-10-03T14:14:34.436894Z",
+              "raw_response_json": {
+                "status": {
+                  "body": {
+                    "detail": "Provider operation status is unavailable"
+                  },
+                  "status": 503
+                },
+                "resource": {
+                  "body": {
+                    "detail": "Provider resource read is unavailable"
+                  },
+                  "status": 503
+                },
+                "capability": {
+                  "body": {
+                    "config": {
+                      "faults": [
+                        {
+                          "kind": "DROP_RESPONSE",
+                          "stage": "AFTER_COMMIT_BEFORE_RESPONSE",
+                          "request_index": 1
+                        }
+                      ],
+                      "visibility": "UNAVAILABLE",
+                      "idempotency": true,
+                      "held_barriers": [
+                        "AFTER_COMMIT_BEFORE_RESPONSE:1"
+                      ],
+                      "status_lookup": true,
+                      "resource_lookup": true,
+                      "visibility_reads": 0,
+                      "supports_reschedule": false
+                    },
+                    "scenario_id": "6590e4dc-339c-40eb-9cb3-bbfb52cec549"
+                  },
+                  "status": 200
+                }
+              },
+              "normalized_result_json": {
+                "outcome": "UNKNOWN",
+                "authoritative": false
+              },
+              "result_code": "UNKNOWN",
+              "trace_id": "worker:9c5a8773-bad2-4c0c-a2e9-7cf9c7ab7b1f"
+            },
+            {
+              "id": "c2b9ac11-5867-4c8c-870c-c2be05072c27",
+              "attempt_number": 4,
+              "attempt_type": "STATUS_LOOKUP",
+              "request_hash": "523bb342d320470e6bda224785da06bc83912cef886b68f78597df995010de06",
+              "request_sent_at": "2026-10-03T14:14:34.760632Z",
+              "response_received_at": "2026-10-03T14:14:34.760632Z",
+              "raw_response_json": {
+                "status": {
+                  "body": {
+                    "detail": "Provider operation status is unavailable"
+                  },
+                  "status": 503
+                },
+                "resource": {
+                  "body": {
+                    "detail": "Provider resource read is unavailable"
+                  },
+                  "status": 503
+                },
+                "capability": {
+                  "body": {
+                    "config": {
+                      "faults": [
+                        {
+                          "kind": "DROP_RESPONSE",
+                          "stage": "AFTER_COMMIT_BEFORE_RESPONSE",
+                          "request_index": 1
+                        }
+                      ],
+                      "visibility": "UNAVAILABLE",
+                      "idempotency": true,
+                      "held_barriers": [
+                        "AFTER_COMMIT_BEFORE_RESPONSE:1"
+                      ],
+                      "status_lookup": true,
+                      "resource_lookup": true,
+                      "visibility_reads": 0,
+                      "supports_reschedule": false
+                    },
+                    "scenario_id": "6590e4dc-339c-40eb-9cb3-bbfb52cec549"
+                  },
+                  "status": 200
+                }
+              },
+              "normalized_result_json": {
+                "outcome": "UNKNOWN",
+                "authoritative": false
+              },
+              "result_code": "UNKNOWN",
+              "trace_id": "worker:b7f11652-de04-4644-8ece-b79d82609cea"
+            },
+            {
+              "id": "b24fe9c4-4755-4c45-a42e-df8f420bb583",
+              "attempt_number": 5,
+              "attempt_type": "STATUS_LOOKUP",
+              "request_hash": "523bb342d320470e6bda224785da06bc83912cef886b68f78597df995010de06",
+              "request_sent_at": "2026-10-03T14:14:35.056985Z",
+              "response_received_at": "2026-10-03T14:14:35.056985Z",
+              "raw_response_json": {
+                "status": {
+                  "body": {
+                    "detail": "Provider operation status is unavailable"
+                  },
+                  "status": 503
+                },
+                "resource": {
+                  "body": {
+                    "detail": "Provider resource read is unavailable"
+                  },
+                  "status": 503
+                },
+                "capability": {
+                  "body": {
+                    "config": {
+                      "faults": [
+                        {
+                          "kind": "DROP_RESPONSE",
+                          "stage": "AFTER_COMMIT_BEFORE_RESPONSE",
+                          "request_index": 1
+                        }
+                      ],
+                      "visibility": "UNAVAILABLE",
+                      "idempotency": true,
+                      "held_barriers": [
+                        "AFTER_COMMIT_BEFORE_RESPONSE:1"
+                      ],
+                      "status_lookup": true,
+                      "resource_lookup": true,
+                      "visibility_reads": 0,
+                      "supports_reschedule": false
+                    },
+                    "scenario_id": "6590e4dc-339c-40eb-9cb3-bbfb52cec549"
+                  },
+                  "status": 200
+                }
+              },
+              "normalized_result_json": {
+                "outcome": "UNKNOWN",
+                "authoritative": false
+              },
+              "result_code": "UNKNOWN",
+              "trace_id": "worker:16acce97-afb6-4cb8-b27e-6f000799d30b"
+            },
+            {
+              "id": "9d0a3567-f5d4-4438-9050-41c2c7b2a694",
+              "attempt_number": 6,
+              "attempt_type": "STATUS_LOOKUP",
+              "request_hash": "523bb342d320470e6bda224785da06bc83912cef886b68f78597df995010de06",
+              "request_sent_at": "2026-10-03T14:14:35.331657Z",
+              "response_received_at": "2026-10-03T14:14:35.331657Z",
+              "raw_response_json": {
+                "status": {
+                  "body": {
+                    "detail": "Provider operation status is unavailable"
+                  },
+                  "status": 503
+                },
+                "resource": {
+                  "body": {
+                    "detail": "Provider resource read is unavailable"
+                  },
+                  "status": 503
+                },
+                "capability": {
+                  "body": {
+                    "config": {
+                      "faults": [
+                        {
+                          "kind": "DROP_RESPONSE",
+                          "stage": "AFTER_COMMIT_BEFORE_RESPONSE",
+                          "request_index": 1
+                        }
+                      ],
+                      "visibility": "UNAVAILABLE",
+                      "idempotency": true,
+                      "held_barriers": [
+                        "AFTER_COMMIT_BEFORE_RESPONSE:1"
+                      ],
+                      "status_lookup": true,
+                      "resource_lookup": true,
+                      "visibility_reads": 0,
+                      "supports_reschedule": false
+                    },
+                    "scenario_id": "6590e4dc-339c-40eb-9cb3-bbfb52cec549"
+                  },
+                  "status": 200
+                }
+              },
+              "normalized_result_json": {
+                "outcome": "UNKNOWN",
+                "authoritative": false
+              },
+              "result_code": "UNKNOWN",
+              "trace_id": "worker:18b1aac8-0c67-4b22-a053-bdf36dd69099"
+            },
+            {
+              "id": "0506df69-896a-4d23-8417-2652e4726f9e",
+              "attempt_number": 7,
+              "attempt_type": "STATUS_LOOKUP",
+              "request_hash": "523bb342d320470e6bda224785da06bc83912cef886b68f78597df995010de06",
+              "request_sent_at": "2026-10-03T14:14:35.645378Z",
+              "response_received_at": "2026-10-03T14:14:35.645378Z",
+              "raw_response_json": {
+                "status": {
+                  "body": {
+                    "detail": "Provider operation status is unavailable"
+                  },
+                  "status": 503
+                },
+                "resource": {
+                  "body": {
+                    "detail": "Provider resource read is unavailable"
+                  },
+                  "status": 503
+                },
+                "capability": {
+                  "body": {
+                    "config": {
+                      "faults": [
+                        {
+                          "kind": "DROP_RESPONSE",
+                          "stage": "AFTER_COMMIT_BEFORE_RESPONSE",
+                          "request_index": 1
+                        }
+                      ],
+                      "visibility": "UNAVAILABLE",
+                      "idempotency": true,
+                      "held_barriers": [
+                        "AFTER_COMMIT_BEFORE_RESPONSE:1"
+                      ],
+                      "status_lookup": true,
+                      "resource_lookup": true,
+                      "visibility_reads": 0,
+                      "supports_reschedule": false
+                    },
+                    "scenario_id": "6590e4dc-339c-40eb-9cb3-bbfb52cec549"
+                  },
+                  "status": 200
+                }
+              },
+              "normalized_result_json": {
+                "outcome": "UNKNOWN",
+                "authoritative": false
+              },
+              "result_code": "UNKNOWN",
+              "trace_id": "worker:e6a5a40a-3582-4b5f-90f6-076353f70bd5"
+            },
+            {
+              "id": "0824e7b4-0559-408f-81e0-3cf736c57efa",
+              "attempt_number": 8,
+              "attempt_type": "STATUS_LOOKUP",
+              "request_hash": "523bb342d320470e6bda224785da06bc83912cef886b68f78597df995010de06",
+              "request_sent_at": "2026-10-03T14:14:36.079329Z",
+              "response_received_at": "2026-10-03T14:14:36.079329Z",
+              "raw_response_json": {
+                "status": {
+                  "body": {
+                    "detail": "Provider operation status is unavailable"
+                  },
+                  "status": 503
+                },
+                "resource": {
+                  "body": {
+                    "detail": "Provider resource read is unavailable"
+                  },
+                  "status": 503
+                },
+                "capability": {
+                  "body": {
+                    "config": {
+                      "faults": [
+                        {
+                          "kind": "DROP_RESPONSE",
+                          "stage": "AFTER_COMMIT_BEFORE_RESPONSE",
+                          "request_index": 1
+                        }
+                      ],
+                      "visibility": "UNAVAILABLE",
+                      "idempotency": true,
+                      "held_barriers": [
+                        "AFTER_COMMIT_BEFORE_RESPONSE:1"
+                      ],
+                      "status_lookup": true,
+                      "resource_lookup": true,
+                      "visibility_reads": 0,
+                      "supports_reschedule": false
+                    },
+                    "scenario_id": "6590e4dc-339c-40eb-9cb3-bbfb52cec549"
+                  },
+                  "status": 200
+                }
+              },
+              "normalized_result_json": {
+                "outcome": "UNKNOWN",
+                "authoritative": false
+              },
+              "result_code": "UNKNOWN",
+              "trace_id": "worker:7a483e4f-f6d4-487e-a58d-b27ac394c61d"
+            },
+            {
+              "id": "2de4b662-e2ff-4d16-acd1-564fbd52596d",
+              "attempt_number": 9,
+              "attempt_type": "STATUS_LOOKUP",
+              "request_hash": "523bb342d320470e6bda224785da06bc83912cef886b68f78597df995010de06",
+              "request_sent_at": "2026-10-03T14:14:36.506273Z",
+              "response_received_at": "2026-10-03T14:14:36.506273Z",
+              "raw_response_json": {
+                "status": {
+                  "body": {
+                    "detail": "Provider operation status is unavailable"
+                  },
+                  "status": 503
+                },
+                "resource": {
+                  "body": {
+                    "detail": "Provider resource read is unavailable"
+                  },
+                  "status": 503
+                },
+                "capability": {
+                  "body": {
+                    "config": {
+                      "faults": [
+                        {
+                          "kind": "DROP_RESPONSE",
+                          "stage": "AFTER_COMMIT_BEFORE_RESPONSE",
+                          "request_index": 1
+                        }
+                      ],
+                      "visibility": "UNAVAILABLE",
+                      "idempotency": true,
+                      "held_barriers": [
+                        "AFTER_COMMIT_BEFORE_RESPONSE:1"
+                      ],
+                      "status_lookup": true,
+                      "resource_lookup": true,
+                      "visibility_reads": 0,
+                      "supports_reschedule": false
+                    },
+                    "scenario_id": "6590e4dc-339c-40eb-9cb3-bbfb52cec549"
+                  },
+                  "status": 200
+                }
+              },
+              "normalized_result_json": {
+                "outcome": "UNKNOWN",
+                "authoritative": false
+              },
+              "result_code": "UNKNOWN",
+              "trace_id": "worker:0b710a90-6ac9-4e9c-9f67-1d123e90270f"
+            }
+          ],
+          "provider_events": [
+            {
+              "id": "17812dd1-e183-49f7-a380-8b54d41264aa",
+              "event_kind": "REQUEST_SENT",
+              "raw_json": {
+                "action": "CREATE",
+                "timezone": "Asia/Karachi",
+                "scenario_id": "6590e4dc-339c-40eb-9cb3-bbfb52cec549",
+                "operation_id": "467b28da-26ad-4312-b006-cb266b79172e",
+                "request_hash": "523bb342d320470e6bda224785da06bc83912cef886b68f78597df995010de06",
+                "resource_key": "property:98395452-fc85-4082-8436-89c907cd19fc:maintenance",
+                "requested_end": "2026-11-05T16:00:00+05:00",
+                "appointment_id": null,
+                "idempotency_key": "phase6:8d79b495-fcb7-4896-9fdf-28196551a386:original",
+                "requested_start": "2026-11-05T15:00:00+05:00",
+                "expected_resource_version": 0
+              },
+              "normalized_json": {
+                "request_hash": "523bb342d320470e6bda224785da06bc83912cef886b68f78597df995010de06"
+              },
+              "content_hash": "8bb93f2068f03cecb02865fc0818daac5e21736e31436ec0b5837d50239d9263",
+              "trace_id": "worker:e7230724-b975-4401-bf50-ea4cfeb5b99c",
+              "occurred_at": "2026-10-03T14:14:33.310957Z"
+            },
+            {
+              "id": "446dac3f-2f95-436a-aa6f-6eced1c6c318",
+              "event_kind": "AMBIGUOUS_RESPONSE",
+              "raw_json": {
+                "transport_error": "IncompleteRead"
+              },
+              "normalized_json": {
+                "outcome": "UNKNOWN"
+              },
+              "content_hash": "73e459087d9c7257ddeb4e9d9c8b5f037b2e23be72704d28e40fbfe40a842998",
+              "trace_id": "worker:e7230724-b975-4401-bf50-ea4cfeb5b99c",
+              "occurred_at": "2026-10-03T14:14:33.767501Z"
+            },
+            {
+              "id": "79579387-ebf6-4455-a4d3-6159f363417b",
+              "event_kind": "STATUS_LOOKUP",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider operation status is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider operation status is unavailable"
+              },
+              "content_hash": "14034ce4936dca5d6d28172112041bb405a2e95d681d98750b0f624a705f7ad1",
+              "trace_id": "worker:8b6a1fab-056f-4081-9ace-b83d2e76a8e3",
+              "occurred_at": "2026-10-03T14:14:34.131934Z"
+            },
+            {
+              "id": "e5cd6e9c-3260-4bf4-b146-2782e8c5831c",
+              "event_kind": "POSTCONDITION_READ",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider resource read is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider resource read is unavailable"
+              },
+              "content_hash": "cc26421502a12b9835a4f4d1b788a7579f46d658b298841f0ca7081a7398cff8",
+              "trace_id": "worker:8b6a1fab-056f-4081-9ace-b83d2e76a8e3",
+              "occurred_at": "2026-10-03T14:14:34.131934Z"
+            },
+            {
+              "id": "4155f6c5-8144-44f7-879a-0f840eacc6c7",
+              "event_kind": "STATUS_LOOKUP",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider operation status is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider operation status is unavailable"
+              },
+              "content_hash": "14034ce4936dca5d6d28172112041bb405a2e95d681d98750b0f624a705f7ad1",
+              "trace_id": "worker:9c5a8773-bad2-4c0c-a2e9-7cf9c7ab7b1f",
+              "occurred_at": "2026-10-03T14:14:34.436894Z"
+            },
+            {
+              "id": "57e1e39e-e019-49b7-a7f2-eeeb569b6cc2",
+              "event_kind": "POSTCONDITION_READ",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider resource read is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider resource read is unavailable"
+              },
+              "content_hash": "cc26421502a12b9835a4f4d1b788a7579f46d658b298841f0ca7081a7398cff8",
+              "trace_id": "worker:9c5a8773-bad2-4c0c-a2e9-7cf9c7ab7b1f",
+              "occurred_at": "2026-10-03T14:14:34.436894Z"
+            },
+            {
+              "id": "1518c14d-034b-4079-84f2-f9d8a6bc4400",
+              "event_kind": "POSTCONDITION_READ",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider resource read is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider resource read is unavailable"
+              },
+              "content_hash": "cc26421502a12b9835a4f4d1b788a7579f46d658b298841f0ca7081a7398cff8",
+              "trace_id": "worker:b7f11652-de04-4644-8ece-b79d82609cea",
+              "occurred_at": "2026-10-03T14:14:34.760632Z"
+            },
+            {
+              "id": "b8ff8d4a-acb1-4d22-8e79-07d886fba3ef",
+              "event_kind": "STATUS_LOOKUP",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider operation status is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider operation status is unavailable"
+              },
+              "content_hash": "14034ce4936dca5d6d28172112041bb405a2e95d681d98750b0f624a705f7ad1",
+              "trace_id": "worker:b7f11652-de04-4644-8ece-b79d82609cea",
+              "occurred_at": "2026-10-03T14:14:34.760632Z"
+            },
+            {
+              "id": "93451a58-ac92-459f-bb9d-ee484c8a2e67",
+              "event_kind": "STATUS_LOOKUP",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider operation status is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider operation status is unavailable"
+              },
+              "content_hash": "14034ce4936dca5d6d28172112041bb405a2e95d681d98750b0f624a705f7ad1",
+              "trace_id": "worker:16acce97-afb6-4cb8-b27e-6f000799d30b",
+              "occurred_at": "2026-10-03T14:14:35.056985Z"
+            },
+            {
+              "id": "ba74e154-e38f-465d-8cfd-5a289fcd97b7",
+              "event_kind": "POSTCONDITION_READ",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider resource read is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider resource read is unavailable"
+              },
+              "content_hash": "cc26421502a12b9835a4f4d1b788a7579f46d658b298841f0ca7081a7398cff8",
+              "trace_id": "worker:16acce97-afb6-4cb8-b27e-6f000799d30b",
+              "occurred_at": "2026-10-03T14:14:35.056985Z"
+            },
+            {
+              "id": "2ceb717c-3307-440b-b992-553be0a0f9e7",
+              "event_kind": "POSTCONDITION_READ",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider resource read is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider resource read is unavailable"
+              },
+              "content_hash": "cc26421502a12b9835a4f4d1b788a7579f46d658b298841f0ca7081a7398cff8",
+              "trace_id": "worker:18b1aac8-0c67-4b22-a053-bdf36dd69099",
+              "occurred_at": "2026-10-03T14:14:35.331657Z"
+            },
+            {
+              "id": "3222210c-e183-478d-a48a-803f7387b4b9",
+              "event_kind": "STATUS_LOOKUP",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider operation status is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider operation status is unavailable"
+              },
+              "content_hash": "14034ce4936dca5d6d28172112041bb405a2e95d681d98750b0f624a705f7ad1",
+              "trace_id": "worker:18b1aac8-0c67-4b22-a053-bdf36dd69099",
+              "occurred_at": "2026-10-03T14:14:35.331657Z"
+            },
+            {
+              "id": "bf9200f6-2796-4bbe-a180-436c584d468b",
+              "event_kind": "POSTCONDITION_READ",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider resource read is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider resource read is unavailable"
+              },
+              "content_hash": "cc26421502a12b9835a4f4d1b788a7579f46d658b298841f0ca7081a7398cff8",
+              "trace_id": "worker:e6a5a40a-3582-4b5f-90f6-076353f70bd5",
+              "occurred_at": "2026-10-03T14:14:35.645378Z"
+            },
+            {
+              "id": "d547a87e-e3b0-4538-8da4-302a1c993afd",
+              "event_kind": "STATUS_LOOKUP",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider operation status is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider operation status is unavailable"
+              },
+              "content_hash": "14034ce4936dca5d6d28172112041bb405a2e95d681d98750b0f624a705f7ad1",
+              "trace_id": "worker:e6a5a40a-3582-4b5f-90f6-076353f70bd5",
+              "occurred_at": "2026-10-03T14:14:35.645378Z"
+            },
+            {
+              "id": "0d53ff5e-c0a6-4758-9b7d-fa6e4d7efe13",
+              "event_kind": "POSTCONDITION_READ",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider resource read is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider resource read is unavailable"
+              },
+              "content_hash": "cc26421502a12b9835a4f4d1b788a7579f46d658b298841f0ca7081a7398cff8",
+              "trace_id": "worker:7a483e4f-f6d4-487e-a58d-b27ac394c61d",
+              "occurred_at": "2026-10-03T14:14:36.079329Z"
+            },
+            {
+              "id": "46b3513e-d371-4467-a90c-b30a851676c5",
+              "event_kind": "STATUS_LOOKUP",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider operation status is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider operation status is unavailable"
+              },
+              "content_hash": "14034ce4936dca5d6d28172112041bb405a2e95d681d98750b0f624a705f7ad1",
+              "trace_id": "worker:7a483e4f-f6d4-487e-a58d-b27ac394c61d",
+              "occurred_at": "2026-10-03T14:14:36.079329Z"
+            },
+            {
+              "id": "160b2cf3-92f6-404a-bbce-4e0adb31f637",
+              "event_kind": "POSTCONDITION_READ",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider resource read is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider resource read is unavailable"
+              },
+              "content_hash": "cc26421502a12b9835a4f4d1b788a7579f46d658b298841f0ca7081a7398cff8",
+              "trace_id": "worker:0b710a90-6ac9-4e9c-9f67-1d123e90270f",
+              "occurred_at": "2026-10-03T14:14:36.506273Z"
+            },
+            {
+              "id": "561ad3f8-38a7-4349-bf39-c117316e8aaf",
+              "event_kind": "STATUS_LOOKUP",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider operation status is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider operation status is unavailable"
+              },
+              "content_hash": "14034ce4936dca5d6d28172112041bb405a2e95d681d98750b0f624a705f7ad1",
+              "trace_id": "worker:0b710a90-6ac9-4e9c-9f67-1d123e90270f",
+              "occurred_at": "2026-10-03T14:14:36.506273Z"
+            },
+            {
+              "id": "ef185065-0f77-4e4f-8a3c-490307baf299",
+              "event_kind": "VERIFICATION_READ",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider operation status is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "result": "UNKNOWN",
+                "claim_type": "HISTORICAL_EFFECT"
+              },
+              "content_hash": "14034ce4936dca5d6d28172112041bb405a2e95d681d98750b0f624a705f7ad1",
+              "trace_id": "bb142d3c-937d-47a2-bd0a-bbe8f9deab91",
+              "occurred_at": "2026-10-03T14:14:36.890080Z"
+            }
+          ],
+          "jobs": [
+            {
+              "id": "5dddf3c8-d98c-4512-b177-85a26c5919bb",
+              "job_type": "DISPATCH_OPERATION",
+              "state": "DONE",
+              "attempt_count": 1,
+              "max_attempts": 8,
+              "next_run_at": "2026-10-03T14:14:33.182159Z",
+              "lease_owner": null,
+              "lease_until": null,
+              "last_error_json": null
+            },
+            {
+              "id": "dcbccf98-da23-452a-bbcb-d9fe3dc843e9",
+              "job_type": "RECONCILE_OPERATION",
+              "state": "HANDOFF",
+              "attempt_count": 8,
+              "max_attempts": 8,
+              "next_run_at": "2026-10-03T14:14:36.079329Z",
+              "lease_owner": null,
+              "lease_until": null,
+              "last_error_json": {
+                "reason": "RECONCILIATION_BUDGET_EXHAUSTED"
+              }
+            }
+          ]
+        }
+      ],
+      "timing_evidence": {
+        "barriers": [
+          {
+            "id": "350541f7-c8b8-49be-8237-e54b7adb1f92",
+            "barrier_name": "P3",
+            "ordinal": 1,
+            "state": "RELEASED",
+            "source_event_id": "AFTER_COMMIT_BEFORE_RESPONSE:1",
+            "reached_at": "2026-10-03 14:14:33.477627+00:00",
+            "released_at": "2026-10-03 14:14:33.751475+00:00"
+          }
+        ],
+        "faults": [
+          {
+            "id": "41ca66b7-1f43-4bad-b7aa-4d24e1eeb2f8",
+            "barrier_name": "P3",
+            "fault_type": "RESPONSE_LOSS",
+            "scheduled_target": {
+              "fault": "RESPONSE_LOSS",
+              "target": "AFTER_COMMIT_BEFORE_RESPONSE:1",
+              "barrier": "P3",
+              "request_index": 1
+            },
+            "actual_event_id": "350541f7-c8b8-49be-8237-e54b7adb1f92",
+            "injected_at": "2026-10-03 14:14:33.828021+00:00",
+            "parameters": {
+              "placement_hash": "fa7d4d83c63f6d4d5196104f6eeb2906cff9b3806f7cf802377e6d730abf1064"
+            }
+          }
+        ]
+      },
+      "provider_delay_evidence": null,
+      "provider_refusal_evidence": null,
+      "unavailable_evidence": {
+        "simulator_config": {
+          "idempotency": true,
+          "status_lookup": true,
+          "resource_lookup": true,
+          "visibility": "UNAVAILABLE",
+          "visibility_reads": 0,
+          "supports_reschedule": false,
+          "held_barriers": [
+            "AFTER_COMMIT_BEFORE_RESPONSE:1"
+          ],
+          "faults": [
+            {
+              "request_index": 1,
+              "stage": "AFTER_COMMIT_BEFORE_RESPONSE",
+              "kind": "DROP_RESPONSE"
+            }
+          ]
+        },
+        "handoff_snapshot": {
+          "workflow": {
+            "current_revision": 2,
+            "resolution_status": "HANDOFF"
+          },
+          "handoffs": [
+            {
+              "id": "663ecc6d-77c8-424b-ae49-abd2dc712824",
+              "reason_code": "RECONCILIATION_BUDGET_EXHAUSTED",
+              "state": "OPEN",
+              "known_facts": {
+                "observations": {
+                  "status": {
+                    "body": {
+                      "detail": "Provider operation status is unavailable"
+                    },
+                    "status": 503
+                  },
+                  "resource": {
+                    "body": {
+                      "detail": "Provider resource read is unavailable"
+                    },
+                    "status": 503
+                  }
+                },
+                "operation_id": "467b28da-26ad-4312-b006-cb266b79172e"
+              },
+              "unknown_facts": {
+                "effect_outcome": "UNKNOWN"
+              },
+              "linked_operation_ids": [
+                "467b28da-26ad-4312-b006-cb266b79172e"
+              ]
+            }
+          ],
+          "jobs": [
+            {
+              "id": "5dddf3c8-d98c-4512-b177-85a26c5919bb",
+              "operation_id": "467b28da-26ad-4312-b006-cb266b79172e",
+              "job_type": "DISPATCH_OPERATION",
+              "state": "DONE",
+              "attempt_count": 1,
+              "max_attempts": 8
+            },
+            {
+              "id": "dcbccf98-da23-452a-bbcb-d9fe3dc843e9",
+              "operation_id": "467b28da-26ad-4312-b006-cb266b79172e",
+              "job_type": "RECONCILE_OPERATION",
+              "state": "HANDOFF",
+              "attempt_count": 8,
+              "max_attempts": 8
+            }
+          ],
+          "counts": {
+            "claims": 0,
+            "claim_permits": 0,
+            "audio_segments": 0
+          }
+        },
+        "unknown_receipt": {
+          "receipt_id": "fcd5e77b-b3c5-40d3-a7c2-76171e5eb63b",
+          "result": "UNKNOWN",
+          "claim_type": "HISTORICAL_EFFECT",
+          "intent_revision": 2,
+          "observed_resource_version": null,
+          "valid_until": "2026-10-03T14:15:06.896556+00:00"
+        },
+        "claim_request": {
+          "command_id": "e748ce70-3a5f-448f-8aa1-907d9b5cddaa",
+          "receipt_id": "fcd5e77b-b3c5-40d3-a7c2-76171e5eb63b",
+          "expected_intent_revision": 2
+        },
+        "claim_denial": {
+          "status": 409,
+          "problem": {
+            "type": "https://example.invalid/problems/receipt-not-applicable",
+            "title": "Receipt not applicable",
+            "status": 409,
+            "detail": "A current SATISFIED receipt is required",
+            "instance": "/internal/phase3/claims",
+            "trace_id": "50a6844f-c3e7-46e4-87bf-d627aef160d5",
+            "retryable": false
+          }
+        }
+      },
+      "simulator_truth": [
+        {
+          "sequence": 3296,
+          "scenario_id": "6590e4dc-339c-40eb-9cb3-bbfb52cec549",
+          "operation_id": "467b28da-26ad-4312-b006-cb266b79172e",
+          "request_hash": "523bb342d320470e6bda224785da06bc83912cef886b68f78597df995010de06",
+          "idempotency_key": "phase6:8d79b495-fcb7-4896-9fdf-28196551a386:original",
+          "action": "CREATE",
+          "appointment_id": "663112d0-e8af-4375-aa77-a27fc695e293",
+          "resource_key": "property:98395452-fc85-4082-8436-89c907cd19fc:maintenance",
+          "before_facts": null,
+          "after_facts": {
+            "status": "CONFIRMED",
+            "ends_at": "2026-11-05T11:00:00+00:00",
+            "version": 0,
+            "timezone": "Asia/Karachi",
+            "starts_at": "2026-11-05T10:00:00+00:00",
+            "resource_key": "property:98395452-fc85-4082-8436-89c907cd19fc:maintenance",
+            "appointment_id": "663112d0-e8af-4375-aa77-a27fc695e293"
+          },
+          "result_code": "PRESENT",
+          "committed_at": "2026-10-03 14:14:33.436730+00:00"
+        }
+      ],
+      "oracle_result": {
+        "oracle_version": "phase6-truth-oracle-v1",
+        "correction_success": false,
+        "unsupported_confirmation": false,
+        "unsupported_event_ids": [],
+        "stale_confirmation_count": 0,
+        "relevant_claim_count": 0,
+        "duplicate_effect": false,
+        "outcome_coverage": false,
+        "safe_resolution": false,
+        "active_final_truth": [
+          {
+            "status": "CONFIRMED",
+            "ends_at": "2026-11-05T11:00:00+00:00",
+            "version": 0,
+            "timezone": "Asia/Karachi",
+            "starts_at": "2026-11-05T10:00:00+00:00",
+            "resource_key": "property:98395452-fc85-4082-8436-89c907cd19fc:maintenance",
+            "appointment_id": "663112d0-e8af-4375-aa77-a27fc695e293"
+          }
+        ],
+        "provider_commit_count": 1,
+        "result_hash": "6612594a8c9648007041dc83fe684b03850acc767dd3b01f0a5d388abf2562f6"
+      },
+      "metrics": [
+        {
+          "metric_name": "correction_success",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "unsupported_confirmation",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "duplicate_effect",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "safe_resolution",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "outcome_coverage",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        }
+      ],
+      "correction_to_outcome_latency": {
+        "duration_ms": 3691.072,
+        "event_observed": false,
+        "censored": true
+      }
+    },
+    {
+      "execution_id": "110d80e3-6a8f-41f9-9142-939d07437d7d",
+      "arm": "P1",
+      "scenario_id": "c51466ac-337e-40b3-9cd7-11da195f25ac",
+      "workflow_id": "dece1d19-7e8d-442d-8827-ef095f07456d",
+      "first_operation_id": "9d913b8b-8a06-43fd-879b-b594180a7134",
+      "current_operation_id": null,
+      "fault_occurrence_id": "b59330b8-d807-485c-9030-0f0b94ff0210",
+      "fault_placement_hash": "fa7d4d83c63f6d4d5196104f6eeb2906cff9b3806f7cf802377e6d730abf1064",
+      "speech_source": "withheld_unknown_provider_evidence",
+      "receipt_id": null,
+      "permit_id": null,
+      "playback_ack": null,
+      "correction_scripted_at": "2026-10-03T14:14:37.992234+00:00",
+      "observation_ended_at": "2026-10-03T14:14:42.136415+00:00",
+      "pre_correction_receipt_id": null,
+      "initial_worker_steps": [
+        {
+          "job_id": "f648b80e-7cf0-445e-a639-51b158af57c7",
+          "action": "dispatch",
+          "state": "DONE",
+          "provider_status": null,
+          "effect_knowledge": "UNKNOWN"
+        }
+      ],
+      "worker_steps": [
+        {
+          "job_id": "35568ffe-4953-4467-bfb0-a656c93f4ec1",
+          "action": "reconcile",
+          "outcome": "UNKNOWN"
+        },
+        {
+          "job_id": "35568ffe-4953-4467-bfb0-a656c93f4ec1",
+          "action": "reconcile",
+          "outcome": "UNKNOWN"
+        },
+        {
+          "job_id": "35568ffe-4953-4467-bfb0-a656c93f4ec1",
+          "action": "reconcile",
+          "outcome": "UNKNOWN"
+        },
+        {
+          "job_id": "35568ffe-4953-4467-bfb0-a656c93f4ec1",
+          "action": "reconcile",
+          "outcome": "UNKNOWN"
+        },
+        {
+          "job_id": "35568ffe-4953-4467-bfb0-a656c93f4ec1",
+          "action": "reconcile",
+          "outcome": "UNKNOWN"
+        },
+        {
+          "job_id": "35568ffe-4953-4467-bfb0-a656c93f4ec1",
+          "action": "reconcile",
+          "outcome": "UNKNOWN"
+        },
+        {
+          "job_id": "35568ffe-4953-4467-bfb0-a656c93f4ec1",
+          "action": "reconcile",
+          "outcome": "UNKNOWN"
+        },
+        {
+          "job_id": "35568ffe-4953-4467-bfb0-a656c93f4ec1",
+          "action": "reconcile",
+          "outcome": "UNKNOWN"
+        }
+      ],
+      "normalized_events": [
+        {
+          "workflow_sequence": 1,
+          "event_name": "IntentRevisionAccepted",
+          "intent_revision": 1,
+          "payload": {
+            "revision": 1,
+            "change_class": "INITIAL",
+            "desired_state_hash": "feb2089798a5b2130ab8b2b50591ad9dcdcd92b91d7129eb6c99c6d2bbfbffda"
+          }
+        },
+        {
+          "workflow_sequence": 2,
+          "event_name": "OperationReady",
+          "intent_revision": 1,
+          "payload": {
+            "request_hash": "841bf46ed5e87b15cdaa38308147b51136eb7900c08214e61e9db619b77d26f4"
+          }
+        },
+        {
+          "workflow_sequence": 3,
+          "event_name": "DispatchRecorded",
+          "intent_revision": 1,
+          "payload": {
+            "attempt_id": "b7592785-bd24-4a6e-8784-d6922fdace7d"
+          }
+        },
+        {
+          "workflow_sequence": 4,
+          "event_name": "ProviderRequestSent",
+          "intent_revision": 1,
+          "payload": {
+            "attempt_id": "b7592785-bd24-4a6e-8784-d6922fdace7d"
+          }
+        },
+        {
+          "workflow_sequence": 5,
+          "event_name": "ReconciliationScheduled",
+          "intent_revision": 2,
+          "payload": {
+            "reason": "accepted_correction"
+          }
+        },
+        {
+          "workflow_sequence": 6,
+          "event_name": "OperationSuperseded",
+          "intent_revision": 2,
+          "payload": {
+            "effect_knowledge": "UNKNOWN",
+            "previous_revision": 1
+          }
+        },
+        {
+          "workflow_sequence": 7,
+          "event_name": "IntentRevisionAccepted",
+          "intent_revision": 2,
+          "payload": {
+            "revision": 2,
+            "change_class": "RETRACTION",
+            "desired_state_hash": "feb2089798a5b2130ab8b2b50591ad9dcdcd92b91d7129eb6c99c6d2bbfbffda"
+          }
+        },
+        {
+          "workflow_sequence": 8,
+          "event_name": "OperationOutcomeUnknown",
+          "intent_revision": 1,
+          "payload": {
+            "reason": {
+              "transport_error": "IncompleteRead"
+            }
+          }
+        },
+        {
+          "workflow_sequence": 9,
+          "event_name": "ReconciliationScheduled",
+          "intent_revision": 1,
+          "payload": {
+            "reason": "ambiguous_dispatch"
+          }
+        },
+        {
+          "workflow_sequence": 10,
+          "event_name": "ReconciliationPending",
+          "intent_revision": 1,
+          "payload": {
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "workflow_sequence": 11,
+          "event_name": "ReconciliationPending",
+          "intent_revision": 1,
+          "payload": {
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "workflow_sequence": 12,
+          "event_name": "ReconciliationPending",
+          "intent_revision": 1,
+          "payload": {
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "workflow_sequence": 13,
+          "event_name": "ReconciliationPending",
+          "intent_revision": 1,
+          "payload": {
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "workflow_sequence": 14,
+          "event_name": "ReconciliationPending",
+          "intent_revision": 1,
+          "payload": {
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "workflow_sequence": 15,
+          "event_name": "ReconciliationPending",
+          "intent_revision": 1,
+          "payload": {
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "workflow_sequence": 16,
+          "event_name": "ReconciliationPending",
+          "intent_revision": 1,
+          "payload": {
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "workflow_sequence": 17,
+          "event_name": "ReconciliationPending",
+          "intent_revision": 1,
+          "payload": {
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "workflow_sequence": 18,
+          "event_name": "WorkflowEscalated",
+          "intent_revision": 2,
+          "payload": {
+            "reason": "RECONCILIATION_BUDGET_EXHAUSTED"
+          }
+        }
+      ],
+      "provider_evidence": [
+        {
+          "operation": {
+            "id": "9d913b8b-8a06-43fd-879b-b594180a7134",
+            "workflow_id": "dece1d19-7e8d-442d-8827-ef095f07456d",
+            "intent_revision": 1,
+            "parent_operation_id": null,
+            "supersedes_operation_id": null,
+            "action_type": "CREATE_APPOINTMENT",
+            "target_resource_type": "appointment",
+            "target_resource_id": null,
+            "processing_phase": "RECONCILING",
+            "effect_knowledge": "UNKNOWN",
+            "applicability": "SUPERSEDED",
+            "speech_eligibility": "BLOCKED",
+            "idempotency_key": "phase6:110d80e3-6a8f-41f9-9142-939d07437d7d:original",
+            "request_hash": "841bf46ed5e87b15cdaa38308147b51136eb7900c08214e61e9db619b77d26f4",
+            "normalized_request_json": {
+              "action": "CREATE",
+              "scenario_id": "c51466ac-337e-40b3-9cd7-11da195f25ac",
+              "workflow_id": "dece1d19-7e8d-442d-8827-ef095f07456d",
+              "resource_key": "property:b7defd9d-272e-4b72-a126-e0341ca8279f:maintenance",
+              "desired_state": {
+                "timezone": "Asia/Karachi",
+                "ticket_id": "9738ad52-71c8-4a7d-adf5-f99b792232c8",
+                "requested_end": "2026-11-05T16:00:00+05:00",
+                "appointment_id": null,
+                "requested_start": "2026-11-05T15:00:00+05:00"
+              },
+              "intent_revision": 1,
+              "expected_resource_version": 0
+            },
+            "provider_adapter": "simulator",
+            "provider_operation_id": null,
+            "reconciliation_required": true,
+            "dispatch_recorded_at": "2026-10-03T14:14:37.675249Z",
+            "response_received_at": null,
+            "effect_observed_at": null,
+            "resolved_at": null,
+            "version": 3,
+            "created_at": "2026-10-03T14:14:37.598516Z",
+            "updated_at": "2026-10-03T14:14:41.355073Z"
+          },
+          "attempts": [
+            {
+              "id": "b7592785-bd24-4a6e-8784-d6922fdace7d",
+              "attempt_number": 1,
+              "attempt_type": "WRITE",
+              "request_hash": "841bf46ed5e87b15cdaa38308147b51136eb7900c08214e61e9db619b77d26f4",
+              "request_sent_at": "2026-10-03T14:14:37.714097Z",
+              "response_received_at": null,
+              "raw_response_json": {
+                "transport_error": "IncompleteRead"
+              },
+              "normalized_result_json": {
+                "outcome": "UNKNOWN"
+              },
+              "result_code": "AMBIGUOUS",
+              "trace_id": "worker:f0803285-2d9b-4259-b849-69a0c68785ef"
+            },
+            {
+              "id": "cebff908-e5a9-4ec2-8d00-5ea5a443836f",
+              "attempt_number": 2,
+              "attempt_type": "STATUS_LOOKUP",
+              "request_hash": "841bf46ed5e87b15cdaa38308147b51136eb7900c08214e61e9db619b77d26f4",
+              "request_sent_at": "2026-10-03T14:14:38.576659Z",
+              "response_received_at": "2026-10-03T14:14:38.576659Z",
+              "raw_response_json": {
+                "status": {
+                  "body": {
+                    "detail": "Provider operation status is unavailable"
+                  },
+                  "status": 503
+                },
+                "resource": {
+                  "body": {
+                    "detail": "Provider resource read is unavailable"
+                  },
+                  "status": 503
+                },
+                "capability": {
+                  "body": {
+                    "config": {
+                      "faults": [
+                        {
+                          "kind": "DROP_RESPONSE",
+                          "stage": "AFTER_COMMIT_BEFORE_RESPONSE",
+                          "request_index": 1
+                        }
+                      ],
+                      "visibility": "UNAVAILABLE",
+                      "idempotency": true,
+                      "held_barriers": [
+                        "AFTER_COMMIT_BEFORE_RESPONSE:1"
+                      ],
+                      "status_lookup": true,
+                      "resource_lookup": true,
+                      "visibility_reads": 0,
+                      "supports_reschedule": false
+                    },
+                    "scenario_id": "c51466ac-337e-40b3-9cd7-11da195f25ac"
+                  },
+                  "status": 200
+                }
+              },
+              "normalized_result_json": {
+                "outcome": "UNKNOWN",
+                "authoritative": false
+              },
+              "result_code": "UNKNOWN",
+              "trace_id": "worker:8cf07d8b-f7df-4623-b47c-8bdf43c1769d"
+            },
+            {
+              "id": "9ca9dfd2-45fb-400f-a3ee-8cacb6d6ec67",
+              "attempt_number": 3,
+              "attempt_type": "STATUS_LOOKUP",
+              "request_hash": "841bf46ed5e87b15cdaa38308147b51136eb7900c08214e61e9db619b77d26f4",
+              "request_sent_at": "2026-10-03T14:14:38.994195Z",
+              "response_received_at": "2026-10-03T14:14:38.994195Z",
+              "raw_response_json": {
+                "status": {
+                  "body": {
+                    "detail": "Provider operation status is unavailable"
+                  },
+                  "status": 503
+                },
+                "resource": {
+                  "body": {
+                    "detail": "Provider resource read is unavailable"
+                  },
+                  "status": 503
+                },
+                "capability": {
+                  "body": {
+                    "config": {
+                      "faults": [
+                        {
+                          "kind": "DROP_RESPONSE",
+                          "stage": "AFTER_COMMIT_BEFORE_RESPONSE",
+                          "request_index": 1
+                        }
+                      ],
+                      "visibility": "UNAVAILABLE",
+                      "idempotency": true,
+                      "held_barriers": [
+                        "AFTER_COMMIT_BEFORE_RESPONSE:1"
+                      ],
+                      "status_lookup": true,
+                      "resource_lookup": true,
+                      "visibility_reads": 0,
+                      "supports_reschedule": false
+                    },
+                    "scenario_id": "c51466ac-337e-40b3-9cd7-11da195f25ac"
+                  },
+                  "status": 200
+                }
+              },
+              "normalized_result_json": {
+                "outcome": "UNKNOWN",
+                "authoritative": false
+              },
+              "result_code": "UNKNOWN",
+              "trace_id": "worker:cd9847d8-793c-4d41-aa78-95097baa498b"
+            },
+            {
+              "id": "54724109-8e8a-47a9-9f33-9b882922923e",
+              "attempt_number": 4,
+              "attempt_type": "STATUS_LOOKUP",
+              "request_hash": "841bf46ed5e87b15cdaa38308147b51136eb7900c08214e61e9db619b77d26f4",
+              "request_sent_at": "2026-10-03T14:14:39.388103Z",
+              "response_received_at": "2026-10-03T14:14:39.388103Z",
+              "raw_response_json": {
+                "status": {
+                  "body": {
+                    "detail": "Provider operation status is unavailable"
+                  },
+                  "status": 503
+                },
+                "resource": {
+                  "body": {
+                    "detail": "Provider resource read is unavailable"
+                  },
+                  "status": 503
+                },
+                "capability": {
+                  "body": {
+                    "config": {
+                      "faults": [
+                        {
+                          "kind": "DROP_RESPONSE",
+                          "stage": "AFTER_COMMIT_BEFORE_RESPONSE",
+                          "request_index": 1
+                        }
+                      ],
+                      "visibility": "UNAVAILABLE",
+                      "idempotency": true,
+                      "held_barriers": [
+                        "AFTER_COMMIT_BEFORE_RESPONSE:1"
+                      ],
+                      "status_lookup": true,
+                      "resource_lookup": true,
+                      "visibility_reads": 0,
+                      "supports_reschedule": false
+                    },
+                    "scenario_id": "c51466ac-337e-40b3-9cd7-11da195f25ac"
+                  },
+                  "status": 200
+                }
+              },
+              "normalized_result_json": {
+                "outcome": "UNKNOWN",
+                "authoritative": false
+              },
+              "result_code": "UNKNOWN",
+              "trace_id": "worker:9bbe2203-dd50-46ed-88c3-4b1fbf2bdb24"
+            },
+            {
+              "id": "f57ee7ca-f8a8-46cd-93b8-86a468975c95",
+              "attempt_number": 5,
+              "attempt_type": "STATUS_LOOKUP",
+              "request_hash": "841bf46ed5e87b15cdaa38308147b51136eb7900c08214e61e9db619b77d26f4",
+              "request_sent_at": "2026-10-03T14:14:39.788366Z",
+              "response_received_at": "2026-10-03T14:14:39.788366Z",
+              "raw_response_json": {
+                "status": {
+                  "body": {
+                    "detail": "Provider operation status is unavailable"
+                  },
+                  "status": 503
+                },
+                "resource": {
+                  "body": {
+                    "detail": "Provider resource read is unavailable"
+                  },
+                  "status": 503
+                },
+                "capability": {
+                  "body": {
+                    "config": {
+                      "faults": [
+                        {
+                          "kind": "DROP_RESPONSE",
+                          "stage": "AFTER_COMMIT_BEFORE_RESPONSE",
+                          "request_index": 1
+                        }
+                      ],
+                      "visibility": "UNAVAILABLE",
+                      "idempotency": true,
+                      "held_barriers": [
+                        "AFTER_COMMIT_BEFORE_RESPONSE:1"
+                      ],
+                      "status_lookup": true,
+                      "resource_lookup": true,
+                      "visibility_reads": 0,
+                      "supports_reschedule": false
+                    },
+                    "scenario_id": "c51466ac-337e-40b3-9cd7-11da195f25ac"
+                  },
+                  "status": 200
+                }
+              },
+              "normalized_result_json": {
+                "outcome": "UNKNOWN",
+                "authoritative": false
+              },
+              "result_code": "UNKNOWN",
+              "trace_id": "worker:8eeea54d-b854-4476-a667-af766d559cb0"
+            },
+            {
+              "id": "4475032c-8ed0-449a-b7d7-fd2fe55eec71",
+              "attempt_number": 6,
+              "attempt_type": "STATUS_LOOKUP",
+              "request_hash": "841bf46ed5e87b15cdaa38308147b51136eb7900c08214e61e9db619b77d26f4",
+              "request_sent_at": "2026-10-03T14:14:40.181658Z",
+              "response_received_at": "2026-10-03T14:14:40.181658Z",
+              "raw_response_json": {
+                "status": {
+                  "body": {
+                    "detail": "Provider operation status is unavailable"
+                  },
+                  "status": 503
+                },
+                "resource": {
+                  "body": {
+                    "detail": "Provider resource read is unavailable"
+                  },
+                  "status": 503
+                },
+                "capability": {
+                  "body": {
+                    "config": {
+                      "faults": [
+                        {
+                          "kind": "DROP_RESPONSE",
+                          "stage": "AFTER_COMMIT_BEFORE_RESPONSE",
+                          "request_index": 1
+                        }
+                      ],
+                      "visibility": "UNAVAILABLE",
+                      "idempotency": true,
+                      "held_barriers": [
+                        "AFTER_COMMIT_BEFORE_RESPONSE:1"
+                      ],
+                      "status_lookup": true,
+                      "resource_lookup": true,
+                      "visibility_reads": 0,
+                      "supports_reschedule": false
+                    },
+                    "scenario_id": "c51466ac-337e-40b3-9cd7-11da195f25ac"
+                  },
+                  "status": 200
+                }
+              },
+              "normalized_result_json": {
+                "outcome": "UNKNOWN",
+                "authoritative": false
+              },
+              "result_code": "UNKNOWN",
+              "trace_id": "worker:facff213-c3f8-49e4-bf1b-77a2d0170602"
+            },
+            {
+              "id": "a930d979-f3d7-4a6f-b680-995dff6800ff",
+              "attempt_number": 7,
+              "attempt_type": "STATUS_LOOKUP",
+              "request_hash": "841bf46ed5e87b15cdaa38308147b51136eb7900c08214e61e9db619b77d26f4",
+              "request_sent_at": "2026-10-03T14:14:40.560318Z",
+              "response_received_at": "2026-10-03T14:14:40.560318Z",
+              "raw_response_json": {
+                "status": {
+                  "body": {
+                    "detail": "Provider operation status is unavailable"
+                  },
+                  "status": 503
+                },
+                "resource": {
+                  "body": {
+                    "detail": "Provider resource read is unavailable"
+                  },
+                  "status": 503
+                },
+                "capability": {
+                  "body": {
+                    "config": {
+                      "faults": [
+                        {
+                          "kind": "DROP_RESPONSE",
+                          "stage": "AFTER_COMMIT_BEFORE_RESPONSE",
+                          "request_index": 1
+                        }
+                      ],
+                      "visibility": "UNAVAILABLE",
+                      "idempotency": true,
+                      "held_barriers": [
+                        "AFTER_COMMIT_BEFORE_RESPONSE:1"
+                      ],
+                      "status_lookup": true,
+                      "resource_lookup": true,
+                      "visibility_reads": 0,
+                      "supports_reschedule": false
+                    },
+                    "scenario_id": "c51466ac-337e-40b3-9cd7-11da195f25ac"
+                  },
+                  "status": 200
+                }
+              },
+              "normalized_result_json": {
+                "outcome": "UNKNOWN",
+                "authoritative": false
+              },
+              "result_code": "UNKNOWN",
+              "trace_id": "worker:362f0df9-b789-4ef3-96a1-debccec6b7b7"
+            },
+            {
+              "id": "6475c5a5-18d9-4e90-91ed-978b55d3d541",
+              "attempt_number": 8,
+              "attempt_type": "STATUS_LOOKUP",
+              "request_hash": "841bf46ed5e87b15cdaa38308147b51136eb7900c08214e61e9db619b77d26f4",
+              "request_sent_at": "2026-10-03T14:14:40.955736Z",
+              "response_received_at": "2026-10-03T14:14:40.955736Z",
+              "raw_response_json": {
+                "status": {
+                  "body": {
+                    "detail": "Provider operation status is unavailable"
+                  },
+                  "status": 503
+                },
+                "resource": {
+                  "body": {
+                    "detail": "Provider resource read is unavailable"
+                  },
+                  "status": 503
+                },
+                "capability": {
+                  "body": {
+                    "config": {
+                      "faults": [
+                        {
+                          "kind": "DROP_RESPONSE",
+                          "stage": "AFTER_COMMIT_BEFORE_RESPONSE",
+                          "request_index": 1
+                        }
+                      ],
+                      "visibility": "UNAVAILABLE",
+                      "idempotency": true,
+                      "held_barriers": [
+                        "AFTER_COMMIT_BEFORE_RESPONSE:1"
+                      ],
+                      "status_lookup": true,
+                      "resource_lookup": true,
+                      "visibility_reads": 0,
+                      "supports_reschedule": false
+                    },
+                    "scenario_id": "c51466ac-337e-40b3-9cd7-11da195f25ac"
+                  },
+                  "status": 200
+                }
+              },
+              "normalized_result_json": {
+                "outcome": "UNKNOWN",
+                "authoritative": false
+              },
+              "result_code": "UNKNOWN",
+              "trace_id": "worker:2e22c47f-852e-4703-b8af-07daf6001feb"
+            },
+            {
+              "id": "23d9f2d9-8cdc-4aba-8e8f-5347cc80de53",
+              "attempt_number": 9,
+              "attempt_type": "STATUS_LOOKUP",
+              "request_hash": "841bf46ed5e87b15cdaa38308147b51136eb7900c08214e61e9db619b77d26f4",
+              "request_sent_at": "2026-10-03T14:14:41.355073Z",
+              "response_received_at": "2026-10-03T14:14:41.355073Z",
+              "raw_response_json": {
+                "status": {
+                  "body": {
+                    "detail": "Provider operation status is unavailable"
+                  },
+                  "status": 503
+                },
+                "resource": {
+                  "body": {
+                    "detail": "Provider resource read is unavailable"
+                  },
+                  "status": 503
+                },
+                "capability": {
+                  "body": {
+                    "config": {
+                      "faults": [
+                        {
+                          "kind": "DROP_RESPONSE",
+                          "stage": "AFTER_COMMIT_BEFORE_RESPONSE",
+                          "request_index": 1
+                        }
+                      ],
+                      "visibility": "UNAVAILABLE",
+                      "idempotency": true,
+                      "held_barriers": [
+                        "AFTER_COMMIT_BEFORE_RESPONSE:1"
+                      ],
+                      "status_lookup": true,
+                      "resource_lookup": true,
+                      "visibility_reads": 0,
+                      "supports_reschedule": false
+                    },
+                    "scenario_id": "c51466ac-337e-40b3-9cd7-11da195f25ac"
+                  },
+                  "status": 200
+                }
+              },
+              "normalized_result_json": {
+                "outcome": "UNKNOWN",
+                "authoritative": false
+              },
+              "result_code": "UNKNOWN",
+              "trace_id": "worker:84e1494d-a272-4ef7-bd3f-9581ad67f642"
+            }
+          ],
+          "provider_events": [
+            {
+              "id": "b81ec5b8-0035-4fe3-a763-838f22d8d35c",
+              "event_kind": "REQUEST_SENT",
+              "raw_json": {
+                "action": "CREATE",
+                "timezone": "Asia/Karachi",
+                "scenario_id": "c51466ac-337e-40b3-9cd7-11da195f25ac",
+                "operation_id": "9d913b8b-8a06-43fd-879b-b594180a7134",
+                "request_hash": "841bf46ed5e87b15cdaa38308147b51136eb7900c08214e61e9db619b77d26f4",
+                "resource_key": "property:b7defd9d-272e-4b72-a126-e0341ca8279f:maintenance",
+                "requested_end": "2026-11-05T16:00:00+05:00",
+                "appointment_id": null,
+                "idempotency_key": "phase6:110d80e3-6a8f-41f9-9142-939d07437d7d:original",
+                "requested_start": "2026-11-05T15:00:00+05:00",
+                "expected_resource_version": 0
+              },
+              "normalized_json": {
+                "request_hash": "841bf46ed5e87b15cdaa38308147b51136eb7900c08214e61e9db619b77d26f4"
+              },
+              "content_hash": "b02bcecbe6f9be6a5e94d0117d8dabc2d35ac3910ec2326ad9190794c1bd65c2",
+              "trace_id": "worker:f0803285-2d9b-4259-b849-69a0c68785ef",
+              "occurred_at": "2026-10-03T14:14:37.714097Z"
+            },
+            {
+              "id": "ef914632-f90d-489f-a2ca-a5122dd91a49",
+              "event_kind": "AMBIGUOUS_RESPONSE",
+              "raw_json": {
+                "transport_error": "IncompleteRead"
+              },
+              "normalized_json": {
+                "outcome": "UNKNOWN"
+              },
+              "content_hash": "73e459087d9c7257ddeb4e9d9c8b5f037b2e23be72704d28e40fbfe40a842998",
+              "trace_id": "worker:f0803285-2d9b-4259-b849-69a0c68785ef",
+              "occurred_at": "2026-10-03T14:14:38.119405Z"
+            },
+            {
+              "id": "71f4e7cc-edd1-449d-b09a-e837b630b2ab",
+              "event_kind": "POSTCONDITION_READ",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider resource read is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider resource read is unavailable"
+              },
+              "content_hash": "cc26421502a12b9835a4f4d1b788a7579f46d658b298841f0ca7081a7398cff8",
+              "trace_id": "worker:8cf07d8b-f7df-4623-b47c-8bdf43c1769d",
+              "occurred_at": "2026-10-03T14:14:38.576659Z"
+            },
+            {
+              "id": "9f63aaa4-04a2-4a95-9745-f4e9132089ec",
+              "event_kind": "STATUS_LOOKUP",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider operation status is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider operation status is unavailable"
+              },
+              "content_hash": "14034ce4936dca5d6d28172112041bb405a2e95d681d98750b0f624a705f7ad1",
+              "trace_id": "worker:8cf07d8b-f7df-4623-b47c-8bdf43c1769d",
+              "occurred_at": "2026-10-03T14:14:38.576659Z"
+            },
+            {
+              "id": "bbf2baa9-1ea6-4b09-9e84-568428c3fdff",
+              "event_kind": "STATUS_LOOKUP",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider operation status is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider operation status is unavailable"
+              },
+              "content_hash": "14034ce4936dca5d6d28172112041bb405a2e95d681d98750b0f624a705f7ad1",
+              "trace_id": "worker:cd9847d8-793c-4d41-aa78-95097baa498b",
+              "occurred_at": "2026-10-03T14:14:38.994195Z"
+            },
+            {
+              "id": "d6780fee-aea7-4c89-b722-394a03b1b87e",
+              "event_kind": "POSTCONDITION_READ",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider resource read is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider resource read is unavailable"
+              },
+              "content_hash": "cc26421502a12b9835a4f4d1b788a7579f46d658b298841f0ca7081a7398cff8",
+              "trace_id": "worker:cd9847d8-793c-4d41-aa78-95097baa498b",
+              "occurred_at": "2026-10-03T14:14:38.994195Z"
+            },
+            {
+              "id": "1db9eaf4-1eb7-42ed-b26f-1eee22bc9847",
+              "event_kind": "STATUS_LOOKUP",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider operation status is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider operation status is unavailable"
+              },
+              "content_hash": "14034ce4936dca5d6d28172112041bb405a2e95d681d98750b0f624a705f7ad1",
+              "trace_id": "worker:9bbe2203-dd50-46ed-88c3-4b1fbf2bdb24",
+              "occurred_at": "2026-10-03T14:14:39.388103Z"
+            },
+            {
+              "id": "8aef19b6-6189-4824-89c0-11bae5b954c1",
+              "event_kind": "POSTCONDITION_READ",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider resource read is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider resource read is unavailable"
+              },
+              "content_hash": "cc26421502a12b9835a4f4d1b788a7579f46d658b298841f0ca7081a7398cff8",
+              "trace_id": "worker:9bbe2203-dd50-46ed-88c3-4b1fbf2bdb24",
+              "occurred_at": "2026-10-03T14:14:39.388103Z"
+            },
+            {
+              "id": "104fb354-9868-4f86-9d73-930411cda11e",
+              "event_kind": "POSTCONDITION_READ",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider resource read is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider resource read is unavailable"
+              },
+              "content_hash": "cc26421502a12b9835a4f4d1b788a7579f46d658b298841f0ca7081a7398cff8",
+              "trace_id": "worker:8eeea54d-b854-4476-a667-af766d559cb0",
+              "occurred_at": "2026-10-03T14:14:39.788366Z"
+            },
+            {
+              "id": "59361707-9e10-45a2-a0ca-55fd9621ade5",
+              "event_kind": "STATUS_LOOKUP",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider operation status is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider operation status is unavailable"
+              },
+              "content_hash": "14034ce4936dca5d6d28172112041bb405a2e95d681d98750b0f624a705f7ad1",
+              "trace_id": "worker:8eeea54d-b854-4476-a667-af766d559cb0",
+              "occurred_at": "2026-10-03T14:14:39.788366Z"
+            },
+            {
+              "id": "a1d9951c-1728-4174-93ca-a2b2de053631",
+              "event_kind": "STATUS_LOOKUP",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider operation status is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider operation status is unavailable"
+              },
+              "content_hash": "14034ce4936dca5d6d28172112041bb405a2e95d681d98750b0f624a705f7ad1",
+              "trace_id": "worker:facff213-c3f8-49e4-bf1b-77a2d0170602",
+              "occurred_at": "2026-10-03T14:14:40.181658Z"
+            },
+            {
+              "id": "d7f35398-58c8-4ee5-9f4f-dc6006d6fa6e",
+              "event_kind": "POSTCONDITION_READ",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider resource read is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider resource read is unavailable"
+              },
+              "content_hash": "cc26421502a12b9835a4f4d1b788a7579f46d658b298841f0ca7081a7398cff8",
+              "trace_id": "worker:facff213-c3f8-49e4-bf1b-77a2d0170602",
+              "occurred_at": "2026-10-03T14:14:40.181658Z"
+            },
+            {
+              "id": "d29fa582-d11d-47bb-a4cf-483a845932ca",
+              "event_kind": "POSTCONDITION_READ",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider resource read is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider resource read is unavailable"
+              },
+              "content_hash": "cc26421502a12b9835a4f4d1b788a7579f46d658b298841f0ca7081a7398cff8",
+              "trace_id": "worker:362f0df9-b789-4ef3-96a1-debccec6b7b7",
+              "occurred_at": "2026-10-03T14:14:40.560318Z"
+            },
+            {
+              "id": "d8f7efd2-37e9-40eb-99e2-2ea587a20ffb",
+              "event_kind": "STATUS_LOOKUP",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider operation status is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider operation status is unavailable"
+              },
+              "content_hash": "14034ce4936dca5d6d28172112041bb405a2e95d681d98750b0f624a705f7ad1",
+              "trace_id": "worker:362f0df9-b789-4ef3-96a1-debccec6b7b7",
+              "occurred_at": "2026-10-03T14:14:40.560318Z"
+            },
+            {
+              "id": "29dae3b5-694a-48a8-b52f-bcafdc72cdeb",
+              "event_kind": "STATUS_LOOKUP",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider operation status is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider operation status is unavailable"
+              },
+              "content_hash": "14034ce4936dca5d6d28172112041bb405a2e95d681d98750b0f624a705f7ad1",
+              "trace_id": "worker:2e22c47f-852e-4703-b8af-07daf6001feb",
+              "occurred_at": "2026-10-03T14:14:40.955736Z"
+            },
+            {
+              "id": "5c836586-d7be-4d63-b1e2-9e9a90e794c0",
+              "event_kind": "POSTCONDITION_READ",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider resource read is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider resource read is unavailable"
+              },
+              "content_hash": "cc26421502a12b9835a4f4d1b788a7579f46d658b298841f0ca7081a7398cff8",
+              "trace_id": "worker:2e22c47f-852e-4703-b8af-07daf6001feb",
+              "occurred_at": "2026-10-03T14:14:40.955736Z"
+            },
+            {
+              "id": "1267c742-df35-4225-9633-8cec90221162",
+              "event_kind": "POSTCONDITION_READ",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider resource read is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider resource read is unavailable"
+              },
+              "content_hash": "cc26421502a12b9835a4f4d1b788a7579f46d658b298841f0ca7081a7398cff8",
+              "trace_id": "worker:84e1494d-a272-4ef7-bd3f-9581ad67f642",
+              "occurred_at": "2026-10-03T14:14:41.355073Z"
+            },
+            {
+              "id": "80f254d2-09dd-47eb-8198-f350f82a70fb",
+              "event_kind": "STATUS_LOOKUP",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider operation status is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider operation status is unavailable"
+              },
+              "content_hash": "14034ce4936dca5d6d28172112041bb405a2e95d681d98750b0f624a705f7ad1",
+              "trace_id": "worker:84e1494d-a272-4ef7-bd3f-9581ad67f642",
+              "occurred_at": "2026-10-03T14:14:41.355073Z"
+            },
+            {
+              "id": "639bc5c5-a637-48d2-b9d5-992e21d4e68d",
+              "event_kind": "VERIFICATION_READ",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider operation status is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "result": "UNKNOWN",
+                "claim_type": "HISTORICAL_EFFECT"
+              },
+              "content_hash": "14034ce4936dca5d6d28172112041bb405a2e95d681d98750b0f624a705f7ad1",
+              "trace_id": "154a786b-87b6-4967-b5fc-08162c39d9d2",
+              "occurred_at": "2026-10-03T14:14:41.652751Z"
+            }
+          ],
+          "jobs": [
+            {
+              "id": "f648b80e-7cf0-445e-a639-51b158af57c7",
+              "job_type": "DISPATCH_OPERATION",
+              "state": "DONE",
+              "attempt_count": 1,
+              "max_attempts": 8,
+              "next_run_at": "2026-10-03T14:14:37.598516Z",
+              "lease_owner": null,
+              "lease_until": null,
+              "last_error_json": null
+            },
+            {
+              "id": "35568ffe-4953-4467-bfb0-a656c93f4ec1",
+              "job_type": "RECONCILE_OPERATION",
+              "state": "HANDOFF",
+              "attempt_count": 8,
+              "max_attempts": 8,
+              "next_run_at": "2026-10-03T14:14:40.955736Z",
+              "lease_owner": null,
+              "lease_until": null,
+              "last_error_json": {
+                "reason": "RECONCILIATION_BUDGET_EXHAUSTED"
+              }
+            }
+          ]
+        }
+      ],
+      "timing_evidence": {
+        "barriers": [
+          {
+            "id": "160a1bb2-e350-4b68-a966-8ed8679b2eba",
+            "barrier_name": "P3",
+            "ordinal": 1,
+            "state": "RELEASED",
+            "source_event_id": "AFTER_COMMIT_BEFORE_RESPONSE:1",
+            "reached_at": "2026-10-03 14:14:37.867608+00:00",
+            "released_at": "2026-10-03 14:14:38.111946+00:00"
+          }
+        ],
+        "faults": [
+          {
+            "id": "b59330b8-d807-485c-9030-0f0b94ff0210",
+            "barrier_name": "P3",
+            "fault_type": "RESPONSE_LOSS",
+            "scheduled_target": {
+              "fault": "RESPONSE_LOSS",
+              "target": "AFTER_COMMIT_BEFORE_RESPONSE:1",
+              "barrier": "P3",
+              "request_index": 1
+            },
+            "actual_event_id": "160a1bb2-e350-4b68-a966-8ed8679b2eba",
+            "injected_at": "2026-10-03 14:14:38.184270+00:00",
+            "parameters": {
+              "placement_hash": "fa7d4d83c63f6d4d5196104f6eeb2906cff9b3806f7cf802377e6d730abf1064"
+            }
+          }
+        ]
+      },
+      "provider_delay_evidence": null,
+      "provider_refusal_evidence": null,
+      "unavailable_evidence": {
+        "simulator_config": {
+          "idempotency": true,
+          "status_lookup": true,
+          "resource_lookup": true,
+          "visibility": "UNAVAILABLE",
+          "visibility_reads": 0,
+          "supports_reschedule": false,
+          "held_barriers": [
+            "AFTER_COMMIT_BEFORE_RESPONSE:1"
+          ],
+          "faults": [
+            {
+              "request_index": 1,
+              "stage": "AFTER_COMMIT_BEFORE_RESPONSE",
+              "kind": "DROP_RESPONSE"
+            }
+          ]
+        },
+        "handoff_snapshot": {
+          "workflow": {
+            "current_revision": 2,
+            "resolution_status": "HANDOFF"
+          },
+          "handoffs": [
+            {
+              "id": "662cb768-5851-4935-bf0d-ac1b76fd7bed",
+              "reason_code": "RECONCILIATION_BUDGET_EXHAUSTED",
+              "state": "OPEN",
+              "known_facts": {
+                "observations": {
+                  "status": {
+                    "body": {
+                      "detail": "Provider operation status is unavailable"
+                    },
+                    "status": 503
+                  },
+                  "resource": {
+                    "body": {
+                      "detail": "Provider resource read is unavailable"
+                    },
+                    "status": 503
+                  }
+                },
+                "operation_id": "9d913b8b-8a06-43fd-879b-b594180a7134"
+              },
+              "unknown_facts": {
+                "effect_outcome": "UNKNOWN"
+              },
+              "linked_operation_ids": [
+                "9d913b8b-8a06-43fd-879b-b594180a7134"
+              ]
+            }
+          ],
+          "jobs": [
+            {
+              "id": "35568ffe-4953-4467-bfb0-a656c93f4ec1",
+              "operation_id": "9d913b8b-8a06-43fd-879b-b594180a7134",
+              "job_type": "RECONCILE_OPERATION",
+              "state": "HANDOFF",
+              "attempt_count": 8,
+              "max_attempts": 8
+            },
+            {
+              "id": "f648b80e-7cf0-445e-a639-51b158af57c7",
+              "operation_id": "9d913b8b-8a06-43fd-879b-b594180a7134",
+              "job_type": "DISPATCH_OPERATION",
+              "state": "DONE",
+              "attempt_count": 1,
+              "max_attempts": 8
+            }
+          ],
+          "counts": {
+            "claims": 0,
+            "claim_permits": 0,
+            "audio_segments": 0
+          }
+        },
+        "unknown_receipt": {
+          "receipt_id": "6d4736d9-00d1-4b66-8e53-1a72f4dfffdc",
+          "result": "UNKNOWN",
+          "claim_type": "HISTORICAL_EFFECT",
+          "intent_revision": 2,
+          "observed_resource_version": null,
+          "valid_until": "2026-10-03T14:15:11.660858+00:00"
+        },
+        "claim_request": {
+          "command_id": "857fc491-fc1e-47c7-b833-658ef46f26e7",
+          "receipt_id": "6d4736d9-00d1-4b66-8e53-1a72f4dfffdc",
+          "expected_intent_revision": 2
+        },
+        "claim_denial": {
+          "status": 409,
+          "problem": {
+            "type": "https://example.invalid/problems/receipt-not-applicable",
+            "title": "Receipt not applicable",
+            "status": 409,
+            "detail": "A current SATISFIED receipt is required",
+            "instance": "/internal/phase3/claims",
+            "trace_id": "0810e0b3-9854-4f5a-a137-0916e04a062e",
+            "retryable": false
+          }
+        }
+      },
+      "simulator_truth": [
+        {
+          "sequence": 3297,
+          "scenario_id": "c51466ac-337e-40b3-9cd7-11da195f25ac",
+          "operation_id": "9d913b8b-8a06-43fd-879b-b594180a7134",
+          "request_hash": "841bf46ed5e87b15cdaa38308147b51136eb7900c08214e61e9db619b77d26f4",
+          "idempotency_key": "phase6:110d80e3-6a8f-41f9-9142-939d07437d7d:original",
+          "action": "CREATE",
+          "appointment_id": "9438869b-9647-40e7-a7d4-9ff41537b19c",
+          "resource_key": "property:b7defd9d-272e-4b72-a126-e0341ca8279f:maintenance",
+          "before_facts": null,
+          "after_facts": {
+            "status": "CONFIRMED",
+            "ends_at": "2026-11-05T11:00:00+00:00",
+            "version": 0,
+            "timezone": "Asia/Karachi",
+            "starts_at": "2026-11-05T10:00:00+00:00",
+            "resource_key": "property:b7defd9d-272e-4b72-a126-e0341ca8279f:maintenance",
+            "appointment_id": "9438869b-9647-40e7-a7d4-9ff41537b19c"
+          },
+          "result_code": "PRESENT",
+          "committed_at": "2026-10-03 14:14:37.835874+00:00"
+        }
+      ],
+      "oracle_result": {
+        "oracle_version": "phase6-truth-oracle-v1",
+        "correction_success": false,
+        "unsupported_confirmation": false,
+        "unsupported_event_ids": [],
+        "stale_confirmation_count": 0,
+        "relevant_claim_count": 0,
+        "duplicate_effect": false,
+        "outcome_coverage": false,
+        "safe_resolution": false,
+        "active_final_truth": [
+          {
+            "status": "CONFIRMED",
+            "ends_at": "2026-11-05T11:00:00+00:00",
+            "version": 0,
+            "timezone": "Asia/Karachi",
+            "starts_at": "2026-11-05T10:00:00+00:00",
+            "resource_key": "property:b7defd9d-272e-4b72-a126-e0341ca8279f:maintenance",
+            "appointment_id": "9438869b-9647-40e7-a7d4-9ff41537b19c"
+          }
+        ],
+        "provider_commit_count": 1,
+        "result_hash": "2c70cd476c71dee5a6032ac38f50e55e8c538ac30b3c31035405361e854d2913"
+      },
+      "metrics": [
+        {
+          "metric_name": "correction_success",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "unsupported_confirmation",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "duplicate_effect",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "safe_resolution",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "outcome_coverage",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        }
+      ],
+      "correction_to_outcome_latency": {
+        "duration_ms": 4144.181,
+        "event_observed": false,
+        "censored": true
+      }
+    },
+    {
+      "execution_id": "425e5fa9-e247-4667-8ff2-6f8919e770d9",
+      "arm": "P2",
+      "scenario_id": "29b34763-2aef-4ea1-8d0c-3837a9301e95",
+      "workflow_id": "e484b34b-a46a-429f-a3a2-b04575a286a1",
+      "first_operation_id": "81d5ff39-cfaa-4c04-b583-a00551488728",
+      "current_operation_id": null,
+      "fault_occurrence_id": "eb027aee-a022-4c78-9357-0332f71b2cab",
+      "fault_placement_hash": "fa7d4d83c63f6d4d5196104f6eeb2906cff9b3806f7cf802377e6d730abf1064",
+      "speech_source": "withheld_unknown_provider_evidence",
+      "receipt_id": null,
+      "permit_id": null,
+      "playback_ack": null,
+      "correction_scripted_at": "2026-10-03T14:14:43.109268+00:00",
+      "observation_ended_at": "2026-10-03T14:14:47.118800+00:00",
+      "pre_correction_receipt_id": null,
+      "initial_worker_steps": [
+        {
+          "job_id": "afe567d4-b311-41b2-847b-0028c897404d",
+          "action": "dispatch",
+          "state": "DONE",
+          "provider_status": null,
+          "effect_knowledge": "UNKNOWN"
+        }
+      ],
+      "worker_steps": [
+        {
+          "job_id": "8e7b652c-7f34-43d3-a499-f3a73ebc67d7",
+          "action": "reconcile",
+          "outcome": "UNKNOWN"
+        },
+        {
+          "job_id": "8e7b652c-7f34-43d3-a499-f3a73ebc67d7",
+          "action": "reconcile",
+          "outcome": "UNKNOWN"
+        },
+        {
+          "job_id": "8e7b652c-7f34-43d3-a499-f3a73ebc67d7",
+          "action": "reconcile",
+          "outcome": "UNKNOWN"
+        },
+        {
+          "job_id": "8e7b652c-7f34-43d3-a499-f3a73ebc67d7",
+          "action": "reconcile",
+          "outcome": "UNKNOWN"
+        },
+        {
+          "job_id": "8e7b652c-7f34-43d3-a499-f3a73ebc67d7",
+          "action": "reconcile",
+          "outcome": "UNKNOWN"
+        },
+        {
+          "job_id": "8e7b652c-7f34-43d3-a499-f3a73ebc67d7",
+          "action": "reconcile",
+          "outcome": "UNKNOWN"
+        },
+        {
+          "job_id": "8e7b652c-7f34-43d3-a499-f3a73ebc67d7",
+          "action": "reconcile",
+          "outcome": "UNKNOWN"
+        },
+        {
+          "job_id": "8e7b652c-7f34-43d3-a499-f3a73ebc67d7",
+          "action": "reconcile",
+          "outcome": "UNKNOWN"
+        }
+      ],
+      "normalized_events": [
+        {
+          "workflow_sequence": 1,
+          "event_name": "IntentRevisionAccepted",
+          "intent_revision": 1,
+          "payload": {
+            "revision": 1,
+            "change_class": "INITIAL",
+            "desired_state_hash": "0d68e5a85f8d35a6e0f7b366a60a67d00cdbfd981d353e5fa27495e56e7a5ca8"
+          }
+        },
+        {
+          "workflow_sequence": 2,
+          "event_name": "OperationReady",
+          "intent_revision": 1,
+          "payload": {
+            "request_hash": "06713ba00be27cf36ded030085347b22fb3c63f7ff35e9ace4b2309267d4a72c"
+          }
+        },
+        {
+          "workflow_sequence": 3,
+          "event_name": "DispatchRecorded",
+          "intent_revision": 1,
+          "payload": {
+            "attempt_id": "f120477d-0712-4994-987d-c5ced0c85ead"
+          }
+        },
+        {
+          "workflow_sequence": 4,
+          "event_name": "ProviderRequestSent",
+          "intent_revision": 1,
+          "payload": {
+            "attempt_id": "f120477d-0712-4994-987d-c5ced0c85ead"
+          }
+        },
+        {
+          "workflow_sequence": 5,
+          "event_name": "ReconciliationScheduled",
+          "intent_revision": 2,
+          "payload": {
+            "reason": "accepted_correction"
+          }
+        },
+        {
+          "workflow_sequence": 6,
+          "event_name": "OperationSuperseded",
+          "intent_revision": 2,
+          "payload": {
+            "effect_knowledge": "UNKNOWN",
+            "previous_revision": 1
+          }
+        },
+        {
+          "workflow_sequence": 7,
+          "event_name": "IntentRevisionAccepted",
+          "intent_revision": 2,
+          "payload": {
+            "revision": 2,
+            "change_class": "RETRACTION",
+            "desired_state_hash": "0d68e5a85f8d35a6e0f7b366a60a67d00cdbfd981d353e5fa27495e56e7a5ca8"
+          }
+        },
+        {
+          "workflow_sequence": 8,
+          "event_name": "OperationOutcomeUnknown",
+          "intent_revision": 1,
+          "payload": {
+            "reason": {
+              "transport_error": "IncompleteRead"
+            }
+          }
+        },
+        {
+          "workflow_sequence": 9,
+          "event_name": "ReconciliationScheduled",
+          "intent_revision": 1,
+          "payload": {
+            "reason": "ambiguous_dispatch"
+          }
+        },
+        {
+          "workflow_sequence": 10,
+          "event_name": "ReconciliationPending",
+          "intent_revision": 1,
+          "payload": {
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "workflow_sequence": 11,
+          "event_name": "ReconciliationPending",
+          "intent_revision": 1,
+          "payload": {
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "workflow_sequence": 12,
+          "event_name": "ReconciliationPending",
+          "intent_revision": 1,
+          "payload": {
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "workflow_sequence": 13,
+          "event_name": "ReconciliationPending",
+          "intent_revision": 1,
+          "payload": {
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "workflow_sequence": 14,
+          "event_name": "ReconciliationPending",
+          "intent_revision": 1,
+          "payload": {
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "workflow_sequence": 15,
+          "event_name": "ReconciliationPending",
+          "intent_revision": 1,
+          "payload": {
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "workflow_sequence": 16,
+          "event_name": "ReconciliationPending",
+          "intent_revision": 1,
+          "payload": {
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "workflow_sequence": 17,
+          "event_name": "ReconciliationPending",
+          "intent_revision": 1,
+          "payload": {
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "workflow_sequence": 18,
+          "event_name": "WorkflowEscalated",
+          "intent_revision": 2,
+          "payload": {
+            "reason": "RECONCILIATION_BUDGET_EXHAUSTED"
+          }
+        }
+      ],
+      "provider_evidence": [
+        {
+          "operation": {
+            "id": "81d5ff39-cfaa-4c04-b583-a00551488728",
+            "workflow_id": "e484b34b-a46a-429f-a3a2-b04575a286a1",
+            "intent_revision": 1,
+            "parent_operation_id": null,
+            "supersedes_operation_id": null,
+            "action_type": "CREATE_APPOINTMENT",
+            "target_resource_type": "appointment",
+            "target_resource_id": null,
+            "processing_phase": "RECONCILING",
+            "effect_knowledge": "UNKNOWN",
+            "applicability": "SUPERSEDED",
+            "speech_eligibility": "BLOCKED",
+            "idempotency_key": "phase6:425e5fa9-e247-4667-8ff2-6f8919e770d9:original",
+            "request_hash": "06713ba00be27cf36ded030085347b22fb3c63f7ff35e9ace4b2309267d4a72c",
+            "normalized_request_json": {
+              "action": "CREATE",
+              "scenario_id": "29b34763-2aef-4ea1-8d0c-3837a9301e95",
+              "workflow_id": "e484b34b-a46a-429f-a3a2-b04575a286a1",
+              "resource_key": "property:1dba1130-d75c-4314-b704-28443a278d2d:maintenance",
+              "desired_state": {
+                "timezone": "Asia/Karachi",
+                "ticket_id": "ae91fe02-a14f-4974-9e1f-99dcd27065d0",
+                "requested_end": "2026-11-05T16:00:00+05:00",
+                "appointment_id": null,
+                "requested_start": "2026-11-05T15:00:00+05:00"
+              },
+              "intent_revision": 1,
+              "expected_resource_version": 0
+            },
+            "provider_adapter": "simulator",
+            "provider_operation_id": null,
+            "reconciliation_required": true,
+            "dispatch_recorded_at": "2026-10-03T14:14:42.812387Z",
+            "response_received_at": null,
+            "effect_observed_at": null,
+            "resolved_at": null,
+            "version": 3,
+            "created_at": "2026-10-03T14:14:42.672709Z",
+            "updated_at": "2026-10-03T14:14:46.449307Z"
+          },
+          "attempts": [
+            {
+              "id": "f120477d-0712-4994-987d-c5ced0c85ead",
+              "attempt_number": 1,
+              "attempt_type": "WRITE",
+              "request_hash": "06713ba00be27cf36ded030085347b22fb3c63f7ff35e9ace4b2309267d4a72c",
+              "request_sent_at": "2026-10-03T14:14:42.857198Z",
+              "response_received_at": null,
+              "raw_response_json": {
+                "transport_error": "IncompleteRead"
+              },
+              "normalized_result_json": {
+                "outcome": "UNKNOWN"
+              },
+              "result_code": "AMBIGUOUS",
+              "trace_id": "worker:b554a7bb-a122-4ebb-89d3-1c5dc6742b3e"
+            },
+            {
+              "id": "7f2da2bc-4b6b-4fcb-b536-36978ee68262",
+              "attempt_number": 2,
+              "attempt_type": "STATUS_LOOKUP",
+              "request_hash": "06713ba00be27cf36ded030085347b22fb3c63f7ff35e9ace4b2309267d4a72c",
+              "request_sent_at": "2026-10-03T14:14:43.718560Z",
+              "response_received_at": "2026-10-03T14:14:43.718560Z",
+              "raw_response_json": {
+                "status": {
+                  "body": {
+                    "detail": "Provider operation status is unavailable"
+                  },
+                  "status": 503
+                },
+                "resource": {
+                  "body": {
+                    "detail": "Provider resource read is unavailable"
+                  },
+                  "status": 503
+                },
+                "capability": {
+                  "body": {
+                    "config": {
+                      "faults": [
+                        {
+                          "kind": "DROP_RESPONSE",
+                          "stage": "AFTER_COMMIT_BEFORE_RESPONSE",
+                          "request_index": 1
+                        }
+                      ],
+                      "visibility": "UNAVAILABLE",
+                      "idempotency": true,
+                      "held_barriers": [
+                        "AFTER_COMMIT_BEFORE_RESPONSE:1"
+                      ],
+                      "status_lookup": true,
+                      "resource_lookup": true,
+                      "visibility_reads": 0,
+                      "supports_reschedule": false
+                    },
+                    "scenario_id": "29b34763-2aef-4ea1-8d0c-3837a9301e95"
+                  },
+                  "status": 200
+                }
+              },
+              "normalized_result_json": {
+                "outcome": "UNKNOWN",
+                "authoritative": false
+              },
+              "result_code": "UNKNOWN",
+              "trace_id": "worker:d7383724-da9e-4ac9-84ca-2ea16e3cf037"
+            },
+            {
+              "id": "7d570bb5-7ac2-4b9b-b7ee-6d07ad562731",
+              "attempt_number": 3,
+              "attempt_type": "STATUS_LOOKUP",
+              "request_hash": "06713ba00be27cf36ded030085347b22fb3c63f7ff35e9ace4b2309267d4a72c",
+              "request_sent_at": "2026-10-03T14:14:44.181707Z",
+              "response_received_at": "2026-10-03T14:14:44.181707Z",
+              "raw_response_json": {
+                "status": {
+                  "body": {
+                    "detail": "Provider operation status is unavailable"
+                  },
+                  "status": 503
+                },
+                "resource": {
+                  "body": {
+                    "detail": "Provider resource read is unavailable"
+                  },
+                  "status": 503
+                },
+                "capability": {
+                  "body": {
+                    "config": {
+                      "faults": [
+                        {
+                          "kind": "DROP_RESPONSE",
+                          "stage": "AFTER_COMMIT_BEFORE_RESPONSE",
+                          "request_index": 1
+                        }
+                      ],
+                      "visibility": "UNAVAILABLE",
+                      "idempotency": true,
+                      "held_barriers": [
+                        "AFTER_COMMIT_BEFORE_RESPONSE:1"
+                      ],
+                      "status_lookup": true,
+                      "resource_lookup": true,
+                      "visibility_reads": 0,
+                      "supports_reschedule": false
+                    },
+                    "scenario_id": "29b34763-2aef-4ea1-8d0c-3837a9301e95"
+                  },
+                  "status": 200
+                }
+              },
+              "normalized_result_json": {
+                "outcome": "UNKNOWN",
+                "authoritative": false
+              },
+              "result_code": "UNKNOWN",
+              "trace_id": "worker:3a26e3a3-d16e-4413-86df-212d9742d9e7"
+            },
+            {
+              "id": "4d1b6177-1988-4a2a-9bb8-c1fa6ce74340",
+              "attempt_number": 4,
+              "attempt_type": "STATUS_LOOKUP",
+              "request_hash": "06713ba00be27cf36ded030085347b22fb3c63f7ff35e9ace4b2309267d4a72c",
+              "request_sent_at": "2026-10-03T14:14:44.611366Z",
+              "response_received_at": "2026-10-03T14:14:44.611366Z",
+              "raw_response_json": {
+                "status": {
+                  "body": {
+                    "detail": "Provider operation status is unavailable"
+                  },
+                  "status": 503
+                },
+                "resource": {
+                  "body": {
+                    "detail": "Provider resource read is unavailable"
+                  },
+                  "status": 503
+                },
+                "capability": {
+                  "body": {
+                    "config": {
+                      "faults": [
+                        {
+                          "kind": "DROP_RESPONSE",
+                          "stage": "AFTER_COMMIT_BEFORE_RESPONSE",
+                          "request_index": 1
+                        }
+                      ],
+                      "visibility": "UNAVAILABLE",
+                      "idempotency": true,
+                      "held_barriers": [
+                        "AFTER_COMMIT_BEFORE_RESPONSE:1"
+                      ],
+                      "status_lookup": true,
+                      "resource_lookup": true,
+                      "visibility_reads": 0,
+                      "supports_reschedule": false
+                    },
+                    "scenario_id": "29b34763-2aef-4ea1-8d0c-3837a9301e95"
+                  },
+                  "status": 200
+                }
+              },
+              "normalized_result_json": {
+                "outcome": "UNKNOWN",
+                "authoritative": false
+              },
+              "result_code": "UNKNOWN",
+              "trace_id": "worker:f1425cb2-bd95-4383-96e2-9f4e660874d2"
+            },
+            {
+              "id": "59716892-de83-44fb-abaa-29c97400f79b",
+              "attempt_number": 5,
+              "attempt_type": "STATUS_LOOKUP",
+              "request_hash": "06713ba00be27cf36ded030085347b22fb3c63f7ff35e9ace4b2309267d4a72c",
+              "request_sent_at": "2026-10-03T14:14:44.995537Z",
+              "response_received_at": "2026-10-03T14:14:44.995537Z",
+              "raw_response_json": {
+                "status": {
+                  "body": {
+                    "detail": "Provider operation status is unavailable"
+                  },
+                  "status": 503
+                },
+                "resource": {
+                  "body": {
+                    "detail": "Provider resource read is unavailable"
+                  },
+                  "status": 503
+                },
+                "capability": {
+                  "body": {
+                    "config": {
+                      "faults": [
+                        {
+                          "kind": "DROP_RESPONSE",
+                          "stage": "AFTER_COMMIT_BEFORE_RESPONSE",
+                          "request_index": 1
+                        }
+                      ],
+                      "visibility": "UNAVAILABLE",
+                      "idempotency": true,
+                      "held_barriers": [
+                        "AFTER_COMMIT_BEFORE_RESPONSE:1"
+                      ],
+                      "status_lookup": true,
+                      "resource_lookup": true,
+                      "visibility_reads": 0,
+                      "supports_reschedule": false
+                    },
+                    "scenario_id": "29b34763-2aef-4ea1-8d0c-3837a9301e95"
+                  },
+                  "status": 200
+                }
+              },
+              "normalized_result_json": {
+                "outcome": "UNKNOWN",
+                "authoritative": false
+              },
+              "result_code": "UNKNOWN",
+              "trace_id": "worker:63598dcb-78c3-402d-8b18-a3847bbcce98"
+            },
+            {
+              "id": "d8989c9d-933c-4b88-830b-e73ad90e94a4",
+              "attempt_number": 6,
+              "attempt_type": "STATUS_LOOKUP",
+              "request_hash": "06713ba00be27cf36ded030085347b22fb3c63f7ff35e9ace4b2309267d4a72c",
+              "request_sent_at": "2026-10-03T14:14:45.476404Z",
+              "response_received_at": "2026-10-03T14:14:45.476404Z",
+              "raw_response_json": {
+                "status": {
+                  "body": {
+                    "detail": "Provider operation status is unavailable"
+                  },
+                  "status": 503
+                },
+                "resource": {
+                  "body": {
+                    "detail": "Provider resource read is unavailable"
+                  },
+                  "status": 503
+                },
+                "capability": {
+                  "body": {
+                    "config": {
+                      "faults": [
+                        {
+                          "kind": "DROP_RESPONSE",
+                          "stage": "AFTER_COMMIT_BEFORE_RESPONSE",
+                          "request_index": 1
+                        }
+                      ],
+                      "visibility": "UNAVAILABLE",
+                      "idempotency": true,
+                      "held_barriers": [
+                        "AFTER_COMMIT_BEFORE_RESPONSE:1"
+                      ],
+                      "status_lookup": true,
+                      "resource_lookup": true,
+                      "visibility_reads": 0,
+                      "supports_reschedule": false
+                    },
+                    "scenario_id": "29b34763-2aef-4ea1-8d0c-3837a9301e95"
+                  },
+                  "status": 200
+                }
+              },
+              "normalized_result_json": {
+                "outcome": "UNKNOWN",
+                "authoritative": false
+              },
+              "result_code": "UNKNOWN",
+              "trace_id": "worker:96412822-f26a-4816-bed3-28c6f7beec71"
+            },
+            {
+              "id": "321b4836-c299-488d-863c-e61b21bfc96c",
+              "attempt_number": 7,
+              "attempt_type": "STATUS_LOOKUP",
+              "request_hash": "06713ba00be27cf36ded030085347b22fb3c63f7ff35e9ace4b2309267d4a72c",
+              "request_sent_at": "2026-10-03T14:14:45.739776Z",
+              "response_received_at": "2026-10-03T14:14:45.739776Z",
+              "raw_response_json": {
+                "status": {
+                  "body": {
+                    "detail": "Provider operation status is unavailable"
+                  },
+                  "status": 503
+                },
+                "resource": {
+                  "body": {
+                    "detail": "Provider resource read is unavailable"
+                  },
+                  "status": 503
+                },
+                "capability": {
+                  "body": {
+                    "config": {
+                      "faults": [
+                        {
+                          "kind": "DROP_RESPONSE",
+                          "stage": "AFTER_COMMIT_BEFORE_RESPONSE",
+                          "request_index": 1
+                        }
+                      ],
+                      "visibility": "UNAVAILABLE",
+                      "idempotency": true,
+                      "held_barriers": [
+                        "AFTER_COMMIT_BEFORE_RESPONSE:1"
+                      ],
+                      "status_lookup": true,
+                      "resource_lookup": true,
+                      "visibility_reads": 0,
+                      "supports_reschedule": false
+                    },
+                    "scenario_id": "29b34763-2aef-4ea1-8d0c-3837a9301e95"
+                  },
+                  "status": 200
+                }
+              },
+              "normalized_result_json": {
+                "outcome": "UNKNOWN",
+                "authoritative": false
+              },
+              "result_code": "UNKNOWN",
+              "trace_id": "worker:c8e6199d-7900-4e5a-91d1-66c358d9e6a1"
+            },
+            {
+              "id": "af354d2a-39fb-43b7-99d2-78df0aafefff",
+              "attempt_number": 8,
+              "attempt_type": "STATUS_LOOKUP",
+              "request_hash": "06713ba00be27cf36ded030085347b22fb3c63f7ff35e9ace4b2309267d4a72c",
+              "request_sent_at": "2026-10-03T14:14:46.056774Z",
+              "response_received_at": "2026-10-03T14:14:46.056774Z",
+              "raw_response_json": {
+                "status": {
+                  "body": {
+                    "detail": "Provider operation status is unavailable"
+                  },
+                  "status": 503
+                },
+                "resource": {
+                  "body": {
+                    "detail": "Provider resource read is unavailable"
+                  },
+                  "status": 503
+                },
+                "capability": {
+                  "body": {
+                    "config": {
+                      "faults": [
+                        {
+                          "kind": "DROP_RESPONSE",
+                          "stage": "AFTER_COMMIT_BEFORE_RESPONSE",
+                          "request_index": 1
+                        }
+                      ],
+                      "visibility": "UNAVAILABLE",
+                      "idempotency": true,
+                      "held_barriers": [
+                        "AFTER_COMMIT_BEFORE_RESPONSE:1"
+                      ],
+                      "status_lookup": true,
+                      "resource_lookup": true,
+                      "visibility_reads": 0,
+                      "supports_reschedule": false
+                    },
+                    "scenario_id": "29b34763-2aef-4ea1-8d0c-3837a9301e95"
+                  },
+                  "status": 200
+                }
+              },
+              "normalized_result_json": {
+                "outcome": "UNKNOWN",
+                "authoritative": false
+              },
+              "result_code": "UNKNOWN",
+              "trace_id": "worker:2d9b7049-9560-45b7-b04c-ba7dc04ca8e9"
+            },
+            {
+              "id": "7c005edb-e8f7-4c23-99e4-349ca46aefc6",
+              "attempt_number": 9,
+              "attempt_type": "STATUS_LOOKUP",
+              "request_hash": "06713ba00be27cf36ded030085347b22fb3c63f7ff35e9ace4b2309267d4a72c",
+              "request_sent_at": "2026-10-03T14:14:46.449307Z",
+              "response_received_at": "2026-10-03T14:14:46.449307Z",
+              "raw_response_json": {
+                "status": {
+                  "body": {
+                    "detail": "Provider operation status is unavailable"
+                  },
+                  "status": 503
+                },
+                "resource": {
+                  "body": {
+                    "detail": "Provider resource read is unavailable"
+                  },
+                  "status": 503
+                },
+                "capability": {
+                  "body": {
+                    "config": {
+                      "faults": [
+                        {
+                          "kind": "DROP_RESPONSE",
+                          "stage": "AFTER_COMMIT_BEFORE_RESPONSE",
+                          "request_index": 1
+                        }
+                      ],
+                      "visibility": "UNAVAILABLE",
+                      "idempotency": true,
+                      "held_barriers": [
+                        "AFTER_COMMIT_BEFORE_RESPONSE:1"
+                      ],
+                      "status_lookup": true,
+                      "resource_lookup": true,
+                      "visibility_reads": 0,
+                      "supports_reschedule": false
+                    },
+                    "scenario_id": "29b34763-2aef-4ea1-8d0c-3837a9301e95"
+                  },
+                  "status": 200
+                }
+              },
+              "normalized_result_json": {
+                "outcome": "UNKNOWN",
+                "authoritative": false
+              },
+              "result_code": "UNKNOWN",
+              "trace_id": "worker:d7a517d9-f527-48fa-bb13-f538691d5578"
+            }
+          ],
+          "provider_events": [
+            {
+              "id": "1bcf3c7d-e5c1-476a-abd1-223b7cd17f13",
+              "event_kind": "REQUEST_SENT",
+              "raw_json": {
+                "action": "CREATE",
+                "timezone": "Asia/Karachi",
+                "scenario_id": "29b34763-2aef-4ea1-8d0c-3837a9301e95",
+                "operation_id": "81d5ff39-cfaa-4c04-b583-a00551488728",
+                "request_hash": "06713ba00be27cf36ded030085347b22fb3c63f7ff35e9ace4b2309267d4a72c",
+                "resource_key": "property:1dba1130-d75c-4314-b704-28443a278d2d:maintenance",
+                "requested_end": "2026-11-05T16:00:00+05:00",
+                "appointment_id": null,
+                "idempotency_key": "phase6:425e5fa9-e247-4667-8ff2-6f8919e770d9:original",
+                "requested_start": "2026-11-05T15:00:00+05:00",
+                "expected_resource_version": 0
+              },
+              "normalized_json": {
+                "request_hash": "06713ba00be27cf36ded030085347b22fb3c63f7ff35e9ace4b2309267d4a72c"
+              },
+              "content_hash": "3cc4b27a787113629e22ec218692c391a65110719041a259782ad3287cef8b8c",
+              "trace_id": "worker:b554a7bb-a122-4ebb-89d3-1c5dc6742b3e",
+              "occurred_at": "2026-10-03T14:14:42.857198Z"
+            },
+            {
+              "id": "6c4dbb07-b873-4f2b-8ecb-803fec0902ef",
+              "event_kind": "AMBIGUOUS_RESPONSE",
+              "raw_json": {
+                "transport_error": "IncompleteRead"
+              },
+              "normalized_json": {
+                "outcome": "UNKNOWN"
+              },
+              "content_hash": "73e459087d9c7257ddeb4e9d9c8b5f037b2e23be72704d28e40fbfe40a842998",
+              "trace_id": "worker:b554a7bb-a122-4ebb-89d3-1c5dc6742b3e",
+              "occurred_at": "2026-10-03T14:14:43.330857Z"
+            },
+            {
+              "id": "1a5d9631-c01c-44fd-a23d-9193dbb51780",
+              "event_kind": "POSTCONDITION_READ",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider resource read is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider resource read is unavailable"
+              },
+              "content_hash": "cc26421502a12b9835a4f4d1b788a7579f46d658b298841f0ca7081a7398cff8",
+              "trace_id": "worker:d7383724-da9e-4ac9-84ca-2ea16e3cf037",
+              "occurred_at": "2026-10-03T14:14:43.718560Z"
+            },
+            {
+              "id": "2b11b4da-2f0e-4bad-87b3-539f6d605bf0",
+              "event_kind": "STATUS_LOOKUP",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider operation status is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider operation status is unavailable"
+              },
+              "content_hash": "14034ce4936dca5d6d28172112041bb405a2e95d681d98750b0f624a705f7ad1",
+              "trace_id": "worker:d7383724-da9e-4ac9-84ca-2ea16e3cf037",
+              "occurred_at": "2026-10-03T14:14:43.718560Z"
+            },
+            {
+              "id": "518474e9-e56d-4b33-99f8-7797b99b250b",
+              "event_kind": "STATUS_LOOKUP",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider operation status is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider operation status is unavailable"
+              },
+              "content_hash": "14034ce4936dca5d6d28172112041bb405a2e95d681d98750b0f624a705f7ad1",
+              "trace_id": "worker:3a26e3a3-d16e-4413-86df-212d9742d9e7",
+              "occurred_at": "2026-10-03T14:14:44.181707Z"
+            },
+            {
+              "id": "b5fa8460-acd0-431f-9bd5-70c64e3b664a",
+              "event_kind": "POSTCONDITION_READ",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider resource read is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider resource read is unavailable"
+              },
+              "content_hash": "cc26421502a12b9835a4f4d1b788a7579f46d658b298841f0ca7081a7398cff8",
+              "trace_id": "worker:3a26e3a3-d16e-4413-86df-212d9742d9e7",
+              "occurred_at": "2026-10-03T14:14:44.181707Z"
+            },
+            {
+              "id": "bbd28767-17f8-4f0d-a9b9-82bd80eefded",
+              "event_kind": "STATUS_LOOKUP",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider operation status is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider operation status is unavailable"
+              },
+              "content_hash": "14034ce4936dca5d6d28172112041bb405a2e95d681d98750b0f624a705f7ad1",
+              "trace_id": "worker:f1425cb2-bd95-4383-96e2-9f4e660874d2",
+              "occurred_at": "2026-10-03T14:14:44.611366Z"
+            },
+            {
+              "id": "db1a6e32-440b-44e3-98bf-dc8d4d760301",
+              "event_kind": "POSTCONDITION_READ",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider resource read is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider resource read is unavailable"
+              },
+              "content_hash": "cc26421502a12b9835a4f4d1b788a7579f46d658b298841f0ca7081a7398cff8",
+              "trace_id": "worker:f1425cb2-bd95-4383-96e2-9f4e660874d2",
+              "occurred_at": "2026-10-03T14:14:44.611366Z"
+            },
+            {
+              "id": "112f8ab0-8fcb-4066-8e69-5569a663fca1",
+              "event_kind": "STATUS_LOOKUP",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider operation status is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider operation status is unavailable"
+              },
+              "content_hash": "14034ce4936dca5d6d28172112041bb405a2e95d681d98750b0f624a705f7ad1",
+              "trace_id": "worker:63598dcb-78c3-402d-8b18-a3847bbcce98",
+              "occurred_at": "2026-10-03T14:14:44.995537Z"
+            },
+            {
+              "id": "e33f7f4c-4df4-459a-a215-795fbc956557",
+              "event_kind": "POSTCONDITION_READ",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider resource read is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider resource read is unavailable"
+              },
+              "content_hash": "cc26421502a12b9835a4f4d1b788a7579f46d658b298841f0ca7081a7398cff8",
+              "trace_id": "worker:63598dcb-78c3-402d-8b18-a3847bbcce98",
+              "occurred_at": "2026-10-03T14:14:44.995537Z"
+            },
+            {
+              "id": "3a70a9d8-9baa-4f66-8c5e-34ab14481810",
+              "event_kind": "POSTCONDITION_READ",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider resource read is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider resource read is unavailable"
+              },
+              "content_hash": "cc26421502a12b9835a4f4d1b788a7579f46d658b298841f0ca7081a7398cff8",
+              "trace_id": "worker:96412822-f26a-4816-bed3-28c6f7beec71",
+              "occurred_at": "2026-10-03T14:14:45.476404Z"
+            },
+            {
+              "id": "8feef846-7b4d-4192-8917-b81f7ffa99b2",
+              "event_kind": "STATUS_LOOKUP",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider operation status is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider operation status is unavailable"
+              },
+              "content_hash": "14034ce4936dca5d6d28172112041bb405a2e95d681d98750b0f624a705f7ad1",
+              "trace_id": "worker:96412822-f26a-4816-bed3-28c6f7beec71",
+              "occurred_at": "2026-10-03T14:14:45.476404Z"
+            },
+            {
+              "id": "9c47ec8e-9063-4e42-b8f9-b024348bae5f",
+              "event_kind": "POSTCONDITION_READ",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider resource read is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider resource read is unavailable"
+              },
+              "content_hash": "cc26421502a12b9835a4f4d1b788a7579f46d658b298841f0ca7081a7398cff8",
+              "trace_id": "worker:c8e6199d-7900-4e5a-91d1-66c358d9e6a1",
+              "occurred_at": "2026-10-03T14:14:45.739776Z"
+            },
+            {
+              "id": "a4dc6be2-e607-4b3f-b616-b70fff0d01f2",
+              "event_kind": "STATUS_LOOKUP",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider operation status is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider operation status is unavailable"
+              },
+              "content_hash": "14034ce4936dca5d6d28172112041bb405a2e95d681d98750b0f624a705f7ad1",
+              "trace_id": "worker:c8e6199d-7900-4e5a-91d1-66c358d9e6a1",
+              "occurred_at": "2026-10-03T14:14:45.739776Z"
+            },
+            {
+              "id": "20fdf98a-ba18-48c4-b66a-f43c3dc2d210",
+              "event_kind": "POSTCONDITION_READ",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider resource read is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider resource read is unavailable"
+              },
+              "content_hash": "cc26421502a12b9835a4f4d1b788a7579f46d658b298841f0ca7081a7398cff8",
+              "trace_id": "worker:2d9b7049-9560-45b7-b04c-ba7dc04ca8e9",
+              "occurred_at": "2026-10-03T14:14:46.056774Z"
+            },
+            {
+              "id": "837b3a19-eb3e-4601-8162-5995e7ba935c",
+              "event_kind": "STATUS_LOOKUP",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider operation status is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider operation status is unavailable"
+              },
+              "content_hash": "14034ce4936dca5d6d28172112041bb405a2e95d681d98750b0f624a705f7ad1",
+              "trace_id": "worker:2d9b7049-9560-45b7-b04c-ba7dc04ca8e9",
+              "occurred_at": "2026-10-03T14:14:46.056774Z"
+            },
+            {
+              "id": "77df9895-0cea-4f8f-909d-258386220080",
+              "event_kind": "STATUS_LOOKUP",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider operation status is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider operation status is unavailable"
+              },
+              "content_hash": "14034ce4936dca5d6d28172112041bb405a2e95d681d98750b0f624a705f7ad1",
+              "trace_id": "worker:d7a517d9-f527-48fa-bb13-f538691d5578",
+              "occurred_at": "2026-10-03T14:14:46.449307Z"
+            },
+            {
+              "id": "c2e1bcee-552a-4230-93a4-f7e40d365a18",
+              "event_kind": "POSTCONDITION_READ",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider resource read is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "detail": "Provider resource read is unavailable"
+              },
+              "content_hash": "cc26421502a12b9835a4f4d1b788a7579f46d658b298841f0ca7081a7398cff8",
+              "trace_id": "worker:d7a517d9-f527-48fa-bb13-f538691d5578",
+              "occurred_at": "2026-10-03T14:14:46.449307Z"
+            },
+            {
+              "id": "5d2e3be1-89fa-42d6-ba3c-d10ee38a58f3",
+              "event_kind": "VERIFICATION_READ",
+              "raw_json": {
+                "body": {
+                  "detail": "Provider operation status is unavailable"
+                },
+                "status": 503
+              },
+              "normalized_json": {
+                "result": "UNKNOWN",
+                "claim_type": "HISTORICAL_EFFECT"
+              },
+              "content_hash": "14034ce4936dca5d6d28172112041bb405a2e95d681d98750b0f624a705f7ad1",
+              "trace_id": "9f35df64-d3f1-44fa-a51e-8e2745280109",
+              "occurred_at": "2026-10-03T14:14:46.671332Z"
+            }
+          ],
+          "jobs": [
+            {
+              "id": "afe567d4-b311-41b2-847b-0028c897404d",
+              "job_type": "DISPATCH_OPERATION",
+              "state": "DONE",
+              "attempt_count": 1,
+              "max_attempts": 8,
+              "next_run_at": "2026-10-03T14:14:42.672709Z",
+              "lease_owner": null,
+              "lease_until": null,
+              "last_error_json": null
+            },
+            {
+              "id": "8e7b652c-7f34-43d3-a499-f3a73ebc67d7",
+              "job_type": "RECONCILE_OPERATION",
+              "state": "HANDOFF",
+              "attempt_count": 8,
+              "max_attempts": 8,
+              "next_run_at": "2026-10-03T14:14:46.056774Z",
+              "lease_owner": null,
+              "lease_until": null,
+              "last_error_json": {
+                "reason": "RECONCILIATION_BUDGET_EXHAUSTED"
+              }
+            }
+          ]
+        }
+      ],
+      "timing_evidence": {
+        "barriers": [
+          {
+            "id": "f24fab6f-1eaf-4726-87d6-f5bc7d96e23d",
+            "barrier_name": "P3",
+            "ordinal": 1,
+            "state": "RELEASED",
+            "source_event_id": "AFTER_COMMIT_BEFORE_RESPONSE:1",
+            "reached_at": "2026-10-03 14:14:42.991883+00:00",
+            "released_at": "2026-10-03 14:14:43.311524+00:00"
+          }
+        ],
+        "faults": [
+          {
+            "id": "eb027aee-a022-4c78-9357-0332f71b2cab",
+            "barrier_name": "P3",
+            "fault_type": "RESPONSE_LOSS",
+            "scheduled_target": {
+              "fault": "RESPONSE_LOSS",
+              "target": "AFTER_COMMIT_BEFORE_RESPONSE:1",
+              "barrier": "P3",
+              "request_index": 1
+            },
+            "actual_event_id": "f24fab6f-1eaf-4726-87d6-f5bc7d96e23d",
+            "injected_at": "2026-10-03 14:14:43.459094+00:00",
+            "parameters": {
+              "placement_hash": "fa7d4d83c63f6d4d5196104f6eeb2906cff9b3806f7cf802377e6d730abf1064"
+            }
+          }
+        ]
+      },
+      "provider_delay_evidence": null,
+      "provider_refusal_evidence": null,
+      "unavailable_evidence": {
+        "simulator_config": {
+          "idempotency": true,
+          "status_lookup": true,
+          "resource_lookup": true,
+          "visibility": "UNAVAILABLE",
+          "visibility_reads": 0,
+          "supports_reschedule": false,
+          "held_barriers": [
+            "AFTER_COMMIT_BEFORE_RESPONSE:1"
+          ],
+          "faults": [
+            {
+              "request_index": 1,
+              "stage": "AFTER_COMMIT_BEFORE_RESPONSE",
+              "kind": "DROP_RESPONSE"
+            }
+          ]
+        },
+        "handoff_snapshot": {
+          "workflow": {
+            "current_revision": 2,
+            "resolution_status": "HANDOFF"
+          },
+          "handoffs": [
+            {
+              "id": "ffb943a1-7693-417e-ad9a-142e8626f870",
+              "reason_code": "RECONCILIATION_BUDGET_EXHAUSTED",
+              "state": "OPEN",
+              "known_facts": {
+                "observations": {
+                  "status": {
+                    "body": {
+                      "detail": "Provider operation status is unavailable"
+                    },
+                    "status": 503
+                  },
+                  "resource": {
+                    "body": {
+                      "detail": "Provider resource read is unavailable"
+                    },
+                    "status": 503
+                  }
+                },
+                "operation_id": "81d5ff39-cfaa-4c04-b583-a00551488728"
+              },
+              "unknown_facts": {
+                "effect_outcome": "UNKNOWN"
+              },
+              "linked_operation_ids": [
+                "81d5ff39-cfaa-4c04-b583-a00551488728"
+              ]
+            }
+          ],
+          "jobs": [
+            {
+              "id": "8e7b652c-7f34-43d3-a499-f3a73ebc67d7",
+              "operation_id": "81d5ff39-cfaa-4c04-b583-a00551488728",
+              "job_type": "RECONCILE_OPERATION",
+              "state": "HANDOFF",
+              "attempt_count": 8,
+              "max_attempts": 8
+            },
+            {
+              "id": "afe567d4-b311-41b2-847b-0028c897404d",
+              "operation_id": "81d5ff39-cfaa-4c04-b583-a00551488728",
+              "job_type": "DISPATCH_OPERATION",
+              "state": "DONE",
+              "attempt_count": 1,
+              "max_attempts": 8
+            }
+          ],
+          "counts": {
+            "claims": 0,
+            "claim_permits": 0,
+            "audio_segments": 0
+          }
+        },
+        "unknown_receipt": {
+          "receipt_id": "ca3fecf4-97ff-46f6-a08f-26d1d72e763b",
+          "result": "UNKNOWN",
+          "claim_type": "HISTORICAL_EFFECT",
+          "intent_revision": 2,
+          "observed_resource_version": null,
+          "valid_until": "2026-10-03T14:15:16.678143+00:00"
+        },
+        "claim_request": {
+          "command_id": "dce38443-c50c-46be-8dc1-3c92ef58956f",
+          "receipt_id": "ca3fecf4-97ff-46f6-a08f-26d1d72e763b",
+          "expected_intent_revision": 2
+        },
+        "claim_denial": {
+          "status": 409,
+          "problem": {
+            "type": "https://example.invalid/problems/receipt-not-applicable",
+            "title": "Receipt not applicable",
+            "status": 409,
+            "detail": "A current SATISFIED receipt is required",
+            "instance": "/internal/phase3/claims",
+            "trace_id": "7111146a-3ed4-483e-bf15-644713f0433b",
+            "retryable": false
+          }
+        }
+      },
+      "simulator_truth": [
+        {
+          "sequence": 3298,
+          "scenario_id": "29b34763-2aef-4ea1-8d0c-3837a9301e95",
+          "operation_id": "81d5ff39-cfaa-4c04-b583-a00551488728",
+          "request_hash": "06713ba00be27cf36ded030085347b22fb3c63f7ff35e9ace4b2309267d4a72c",
+          "idempotency_key": "phase6:425e5fa9-e247-4667-8ff2-6f8919e770d9:original",
+          "action": "CREATE",
+          "appointment_id": "04108fa7-b8e6-496d-b11a-9331d778a17d",
+          "resource_key": "property:1dba1130-d75c-4314-b704-28443a278d2d:maintenance",
+          "before_facts": null,
+          "after_facts": {
+            "status": "CONFIRMED",
+            "ends_at": "2026-11-05T11:00:00+00:00",
+            "version": 0,
+            "timezone": "Asia/Karachi",
+            "starts_at": "2026-11-05T10:00:00+00:00",
+            "resource_key": "property:1dba1130-d75c-4314-b704-28443a278d2d:maintenance",
+            "appointment_id": "04108fa7-b8e6-496d-b11a-9331d778a17d"
+          },
+          "result_code": "PRESENT",
+          "committed_at": "2026-10-03 14:14:42.964112+00:00"
+        }
+      ],
+      "oracle_result": {
+        "oracle_version": "phase6-truth-oracle-v1",
+        "correction_success": false,
+        "unsupported_confirmation": false,
+        "unsupported_event_ids": [],
+        "stale_confirmation_count": 0,
+        "relevant_claim_count": 0,
+        "duplicate_effect": false,
+        "outcome_coverage": false,
+        "safe_resolution": false,
+        "active_final_truth": [
+          {
+            "status": "CONFIRMED",
+            "ends_at": "2026-11-05T11:00:00+00:00",
+            "version": 0,
+            "timezone": "Asia/Karachi",
+            "starts_at": "2026-11-05T10:00:00+00:00",
+            "resource_key": "property:1dba1130-d75c-4314-b704-28443a278d2d:maintenance",
+            "appointment_id": "04108fa7-b8e6-496d-b11a-9331d778a17d"
+          }
+        ],
+        "provider_commit_count": 1,
+        "result_hash": "2e5d3f72c49480f5f405492730166c8e4e498fd60eabffae99f8a19c11cc3b72"
+      },
+      "metrics": [
+        {
+          "metric_name": "correction_success",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "unsupported_confirmation",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "duplicate_effect",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "safe_resolution",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        },
+        {
+          "metric_name": "outcome_coverage",
+          "metric_version": "phase6-primary-v1",
+          "numeric_value": 0,
+          "numerator": 0,
+          "denominator": 1,
+          "details": {
+            "unit": "independent_scenario_execution"
+          }
+        }
+      ],
+      "correction_to_outcome_latency": {
+        "duration_ms": 4009.532,
+        "event_observed": false,
+        "censored": true
+      }
+    }
+  ],
+  "latency_summary": {
+    "B0": {
+      "reference_arm": "B3",
+      "comparison_arm": "B0",
+      "independent_scenarios": 1,
+      "observed_pairs": 0,
+      "censored_pairs": 1,
+      "mean_difference_ms": null,
+      "bootstrap_95_interval_ms": null,
+      "interpretation": "observed_pairs_only; censored_pairs_retained_in_counts"
+    },
+    "B1": {
+      "reference_arm": "B3",
+      "comparison_arm": "B1",
+      "independent_scenarios": 1,
+      "observed_pairs": 0,
+      "censored_pairs": 1,
+      "mean_difference_ms": null,
+      "bootstrap_95_interval_ms": null,
+      "interpretation": "observed_pairs_only; censored_pairs_retained_in_counts"
+    },
+    "B2": {
+      "reference_arm": "B3",
+      "comparison_arm": "B2",
+      "independent_scenarios": 1,
+      "observed_pairs": 0,
+      "censored_pairs": 1,
+      "mean_difference_ms": null,
+      "bootstrap_95_interval_ms": null,
+      "interpretation": "observed_pairs_only; censored_pairs_retained_in_counts"
+    },
+    "P1": {
+      "reference_arm": "B3",
+      "comparison_arm": "P1",
+      "independent_scenarios": 1,
+      "observed_pairs": 0,
+      "censored_pairs": 1,
+      "mean_difference_ms": null,
+      "bootstrap_95_interval_ms": null,
+      "interpretation": "observed_pairs_only; censored_pairs_retained_in_counts"
+    },
+    "P2": {
+      "reference_arm": "B3",
+      "comparison_arm": "P2",
+      "independent_scenarios": 1,
+      "observed_pairs": 0,
+      "censored_pairs": 1,
+      "mean_difference_ms": null,
+      "bootstrap_95_interval_ms": null,
+      "interpretation": "observed_pairs_only; censored_pairs_retained_in_counts"
+    }
+  },
+  "bundle_hash": "bc57106d86bb2debbeaf4ee17505493add33964b1abb6c62cfc8b2a56dd80713"
+}

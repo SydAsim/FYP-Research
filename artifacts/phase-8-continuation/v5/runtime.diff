@@ -1,0 +1,908 @@
+--- /dev/null
++++ candidate-v5/closed_restart.py
+@@ -0,0 +1,176 @@
++"""Reviewed 82-original metadata continuation, including stopped-host reuse."""
++
++from __future__ import annotations
++
++import shutil
++import sqlite3
++from pathlib import Path
++from typing import Any
++
++from controls import Journal, hash_file, read, write_new
++
++HERE = Path(__file__).resolve().parent
++COUNT = 82
++IDENTITY = ("sequence", "case_id", "arm", "attempt", "execution_id", "fixture_hash")
++NEXT = "01a11705-11f1-792b-ae1e-36bfc6773842"
++PARENT_FREEZE = "cf6d4ff9e6e8916a8204c420076676fe9d9c746545ad686357b4e65a8f78710c"
++
++
++def boundary(rows: list[dict[str, Any]], saved: list[dict[str, Any]]) -> None:
++    pinned = read(HERE / "closed-82/ledger-read-only.json")["rows"]
++    if len(rows) != 1500 or len(saved) != 1500:
++        raise ValueError("EXACT_1500_IDENTITIES_REQUIRED")
++    for actual, original, schedule in zip(rows, pinned, saved, strict=True):
++        if any(actual[k] != original[k] for k in IDENTITY) or any(
++            actual[k] != schedule[k] for k in IDENTITY if k != "execution_id"
++        ):
++            raise ValueError("CLOSED82_IDENTITY_OR_ORDER_DRIFT")
++    if rows[:COUNT] != pinned[:COUNT]:
++        raise ValueError("CLOSED82_ORIGINAL_STATUS_OR_BACKUP_DRIFT")
++    if any(
++        r["state"] != "PLANNED"
++        or any(r[k] is not None for k in ("deadline", "backup_hash", "error"))
++        for r in rows[COUNT:]
++    ):
++        raise ValueError("CLOSED82_ACTIVE_OR_CHANGED_SLOT")
++    if rows[COUNT]["execution_id"] != NEXT or rows[COUNT]["arm"] != "B3":
++        raise ValueError("NEXT_SEQUENCE83_DRIFT")
++
++
++def master_check(master: Path) -> list[dict[str, Any]]:
++    from handover import original_policy, ro_rows
++
++    for name, digest in read(HERE / "closed-82-members.json").items():
++        target = (master / name).resolve()
++        if master.resolve() not in target.parents or hash_file(target) != digest:
++            raise ValueError("CLOSED82_MEMBER_DRIFT: " + name)
++    rows = ro_rows(master)
++    boundary(rows, read(HERE / "closed-82/ledger-read-only.json")["rows"])
++    original_policy(read(master / "run.json")["policy"])
++    if read(master / "pause.json")["reason"] != "PROTOCOL_STOP":
++        raise ValueError("EXACT_REVIEWED_STOP_REQUIRED")
++    for row in rows[:COUNT]:
++        receipt = master / "backups" / (row["execution_id"] + ".json")
++        proof = read(receipt)
++        raw = read(master / "exports" / f"{row['sequence']:04d}" / "export.json")
++        if (
++            hash_file(receipt) != row["backup_hash"]
++            or proof["execution_id"] != row["execution_id"]
++            or proof["sha256"] != proof["cloud"]["sha256"]
++            or not proof["cloud"]["version_id"]
++            or any(raw[k] != row[k] for k in ("execution_id", "arm", "attempt", "fixture_hash"))
++        ):
++            raise ValueError("CLOSED82_INCOMPLETE_BACKUP_OR_EXPORT")
++    return rows
++
++
++def stage(master: Path, destination: Path) -> dict[str, Any]:
++    master_check(master)
++    if destination.exists():
++        raise ValueError("FRESH_METADATA_ROOT_ONLY")
++    destination.mkdir(parents=True)
++    # Preserve legacy 38-original history and timing sidecars byte for byte.
++    for name in (
++        "campaign.sqlite3",
++        "bindings.json",
++        "cloud.json",
++        "handover.json",
++        "saved-identities.json",
++        "historical-evidence.tar.gz",
++    ):
++        shutil.copyfile(master / name, destination / name)
++    shutil.copytree(master / "backups", destination / "backups")
++    shutil.copytree(master, destination / "restart-history")
++    config = read(master / "run.json")
++    config.update(
++        source="/opt/fyp-phase8-continuation-v5",
++        manifest="/opt/fyp-phase8-continuation-v5/artifacts/phase-8-review-freeze/v2/review-inventory.json",
++        continuation={
++            "manifest": "artifacts/phase-8-runner-amendment/v4-complete/candidate-inventory.json",
++            "receipts": "/var/lib/fyp-owner/continuation-v5-receipts",
++        },
++    )
++    # Original backup paths remain valid on the retained root; never restore SQL.
++    write_new(destination / "run.json", config)
++    write_new(
++        destination / "binding-seal.json",
++        {
++            "run": hash_file(destination / "run.json"),
++            "bindings": hash_file(destination / "bindings.json"),
++        },
++    )
++    record = {
++        "version": "phase85-continuation-v5",
++        "backed_up": COUNT,
++        "planned": 1418,
++        "next_execution_id": NEXT,
++        "parent_freeze_sha256": PARENT_FREEZE,
++        "history_files": read(HERE / "closed-82-members.json"),
++        "driver_calls": 0,
++        "live_application_state_restored": False,
++        "clock_reset": False,
++    }
++    write_new(destination / "restart-boundary.json", record)
++    journal = Journal(destination)
++    journal.verify()
++    journal.event(
++        "CLOSED_82_METADATA_IMPORT", proof=hash_file(destination / "restart-boundary.json")
++    )
++    journal.event(
++        "BINDINGS_SEALED",
++        run=hash_file(destination / "run.json"),
++        bindings=hash_file(destination / "bindings.json"),
++    )
++    journal.pause("CONTINUATION_REVIEW_REQUIRED")
++    verify(destination)
++    return record
++
++
++def verify(root: Path) -> None:
++    from handover import ro_rows
++
++    record = read(root / "restart-boundary.json")
++    if (
++        record["parent_freeze_sha256"] != PARENT_FREEZE
++        or record["backed_up"] != COUNT
++        or record["planned"] != 1418
++        or record["next_execution_id"] != NEXT
++        or record["history_files"] != read(HERE / "closed-82-members.json")
++    ):
++        raise ValueError("CLOSED82_HANDOVER_BINDING_DRIFT")
++    history = root / "restart-history"
++    for name, digest in record["history_files"].items():
++        target = (history / name).resolve()
++        if history.resolve() not in target.parents or hash_file(target) != digest:
++            raise ValueError("CLOSED82_HISTORY_DRIFT")
++    rows = ro_rows(root)
++    saved = read(history / "ledger-read-only.json")["rows"]
++    if (
++        len(rows) != 1500
++        or rows[:COUNT] != saved[:COUNT]
++        or any(any(a[k] != b[k] for k in IDENTITY) for a, b in zip(rows, saved, strict=True))
++    ):
++        raise ValueError("CLOSED82_LIVE_IDENTITY_OR_ORIGINAL_DRIFT")
++
++    def notices(folder: Path) -> list[tuple[Any, ...]]:
++        with sqlite3.connect(
++            (folder / "campaign.sqlite3").resolve().as_uri() + "?mode=ro", uri=True
++        ) as db:
++            db.execute("BEGIN")
++            return db.execute("SELECT * FROM notices ORDER BY n").fetchall()
++
++    historical = notices(history)
++    if notices(root)[: len(historical)] != historical:
++        raise ValueError("CLOSED82_NOTICE_PREFIX_DRIFT")
++    for row in saved[:COUNT]:
++        if hash_file(root / "backups" / (row["execution_id"] + ".json")) != row["backup_hash"]:
++            raise ValueError("CLOSED82_BACKUP_RECEIPT_DRIFT")
++
++
++def imported(root: Path, execution_id: str) -> bool:
++    if not (root / "restart-boundary.json").exists():
++        return False
++    return execution_id in {
++        r["execution_id"]
++        for r in read(root / "restart-history/ledger-read-only.json")["rows"][:COUNT]
++    }
+--- accepted-v4/handover.py
++++ candidate-v5/handover.py
+@@ -75,16 +75,15 @@
+ 
+ 
+ def closed_boundary(rows: list[dict[str, Any]], saved: list[dict[str, Any]]) -> None:
+-    from closed_prefix import boundary
+-
+-    pinned = read(HERE / "saved-boundary.json")["rows"]
++    from closed_restart import boundary
++
+     # Verify frozen schedule columns as well as every existing execution identity.
+     if len(saved) != 1500 or any(
+         any(a[k] != b[k] for k in ("sequence", "case_id", "arm", "attempt", "fixture_hash"))
+         for a, b in zip(rows, saved, strict=True)
+     ):
+         raise ValueError("SAVED_ORDER_OR_BINDING_DRIFT")
+-    boundary(rows, pinned)
++    boundary(rows, saved)
+ 
+ 
+ def original_policy(raw: dict[str, Any]) -> Policy:
+@@ -100,16 +99,19 @@
+ 
+ 
+ def stage(master: Path, destination: Path) -> dict[str, Any]:
+-    from closed_prefix import stage as import_closed
++    from closed_restart import stage as import_closed
+ 
+     return import_closed(master, destination)
+ 
+ 
+ def verify_imported_first(root: Path) -> None:
+-    """Compatibility entry point verifies all 38 imported originals."""
++    """Compatibility entry point verifies all 82 retained originals."""
+     from closed_prefix import verify
+ 
+     verify(root)
++    from closed_restart import verify as verify_closed82
++
++    verify_closed82(root)
+ 
+ 
+ def record_provenance(root: Path, folder: Path, execution_id: str) -> None:
+@@ -118,7 +120,7 @@
+     config = read(root / "run.json")
+     inventory = read(Path(config["source"]) / config["continuation"]["manifest"])
+     value = {
+-        "version": "phase85-complete-continuation-v4",
++        "version": "phase85-continuation-v5",
+         "execution_id": execution_id,
+         "run_id": RUN,
+         "parent_freeze_sha256": PARENT_FREEZE,
+@@ -131,6 +133,10 @@
+         "two_originals_sha256": hash_file(HERE / "two_originals.py"),
+         "closed_prefix_sha256": hash_file(HERE / "closed_prefix.py"),
+         "controls_sha256": hash_file(HERE / "controls.py"),
++        "inventory_read_sha256": hash_file(HERE / "inventory_read.py"),
++        "storage_sha256": hash_file(HERE / "storage.py"),
++        "closed_restart_sha256": hash_file(HERE / "closed_restart.py"),
++        "restart_boundary_sha256": hash_file(root / "restart-boundary.json"),
+         "handover_sha256": hash_file(root / "handover.json"),
+         "boot_anchor_sha256": hash_file(root / "host-clock.json"),
+         "readiness_sha256": hash_file(root / "continuation-readiness.json"),
+@@ -160,7 +166,7 @@
+         "bd4d32f4968eaff243d65d9cfe8fad36c603cd709c09ee7fdebd29746e90da42"
+     ]
+     immediate_parent_freeze_sha256: Literal[
+-        "49ec78e719d9d28e017f62e6a40dd69cc236a45c5406d5be1a209ef59b9d2c86"
++        "cf6d4ff9e6e8916a8204c420076676fe9d9c746545ad686357b4e65a8f78710c"
+     ]
+     expires_at: datetime
+     signer: str
+--- /dev/null
++++ candidate-v5/inventory_read.py
+@@ -0,0 +1,212 @@
++"""Bounded, read-only S3 version inventory; never returns an incomplete total."""
++
++from __future__ import annotations
++
++import argparse
++import json
++import subprocess
++import sys
++import time
++from collections.abc import Callable
++from pathlib import Path
++from typing import Any, Protocol
++
++from botocore.exceptions import (
++    ClientError,
++    ConnectionClosedError,
++    ConnectTimeoutError,
++    EndpointConnectionError,
++    ReadTimeoutError,
++)
++from pydantic import BaseModel, ConfigDict, Field
++
++ATTEMPTS = 3
++BACKOFF_SECONDS = (1.0, 2.0)
++TOTAL_SECONDS = 120.0
++RETRYABLE_CODES = frozenset(
++    {"SlowDown", "InternalError", "ServiceUnavailable", "RequestTimeout", "Throttling"}
++)
++
++
++class InventoryUnavailable(RuntimeError):
++    pass
++
++
++class Version(BaseModel):
++    model_config = ConfigDict(extra="ignore")
++    Key: str
++    VersionId: str = Field(min_length=1)
++    Size: int = Field(ge=0, strict=True)
++
++
++class Page(BaseModel):
++    model_config = ConfigDict(extra="ignore")
++    IsTruncated: bool = Field(strict=True)
++    Versions: list[Version] = []
++    NextKeyMarker: str | None = None
++    NextVersionIdMarker: str | None = None
++
++
++class InventoryClient(Protocol):
++    def list_object_versions(self, **kwargs: Any) -> dict[str, Any]: ...
++
++
++def retryable(error: Exception) -> bool:
++    if isinstance(
++        error,
++        (ConnectionClosedError, ConnectTimeoutError, EndpointConnectionError, ReadTimeoutError),
++    ):
++        return True
++    return (
++        isinstance(error, ClientError)
++        and error.response.get("Error", {}).get("Code") in RETRYABLE_CODES
++    )
++
++
++def read_inventory(
++    client: InventoryClient,
++    bucket: str,
++    prefix: str,
++    *,
++    clock: Callable[[], float] = time.monotonic,
++    sleep: Callable[[float], None] = time.sleep,
++    seconds: float = TOTAL_SECONDS,
++) -> int:
++    deadline = clock() + seconds
++    for attempt in range(1, ATTEMPTS + 1):
++        # A failed later page invalidates the entire attempt. Never keep a partial sum.
++        total = 0
++        markers: dict[str, Any] = {}
++        seen_markers: set[tuple[str, str | None]] = set()
++        seen_versions: set[tuple[str, str]] = set()
++        pages = 0
++        try:
++            while True:
++                if clock() >= deadline:
++                    raise InventoryUnavailable("S3_INVENTORY_TOTAL_TIME_LIMIT")
++                raw = client.list_object_versions(Bucket=bucket, Prefix=prefix, **markers)
++                page = Page.model_validate(raw)
++                pages += 1
++                if clock() >= deadline:
++                    raise InventoryUnavailable("S3_INVENTORY_TOTAL_TIME_LIMIT")
++                for item in page.Versions:
++                    identity = (item.Key, item.VersionId)
++                    if not item.Key.startswith(prefix) or identity in seen_versions:
++                        raise InventoryUnavailable("S3_INVENTORY_SCOPE_OR_DUPLICATE_VERSION")
++                    seen_versions.add(identity)
++                    total += item.Size
++                if not page.IsTruncated:
++                    return total
++                # A version marker may be absent when the boundary is a delete marker.
++                if not page.NextKeyMarker:
++                    raise InventoryUnavailable("S3_INVENTORY_INCOMPLETE_PAGINATION")
++                marker = (page.NextKeyMarker, page.NextVersionIdMarker)
++                if marker in seen_markers:
++                    raise InventoryUnavailable("S3_INVENTORY_REPEATED_PAGINATION")
++                seen_markers.add(marker)
++                markers = {"KeyMarker": page.NextKeyMarker}
++                if page.NextVersionIdMarker:
++                    markers["VersionIdMarker"] = page.NextVersionIdMarker
++        except Exception as error:
++            print(
++                json.dumps(
++                    {
++                        "event": "S3_INVENTORY_ATTEMPT_FAILED",
++                        "prefix": prefix,
++                        "attempt": attempt,
++                        "pages": pages,
++                        "type": type(error).__name__,
++                        "detail": str(error),
++                        "retryable": retryable(error),
++                    }
++                ),
++                file=sys.stderr,
++                flush=True,
++            )
++            if not retryable(error):
++                raise
++            if attempt == ATTEMPTS:
++                raise InventoryUnavailable("S3_INVENTORY_RETRY_EXHAUSTED") from error
++            delay = BACKOFF_SECONDS[attempt - 1]
++            if clock() + delay >= deadline:
++                raise InventoryUnavailable("S3_INVENTORY_TOTAL_TIME_LIMIT") from error
++            sleep(delay)
++    raise AssertionError("unreachable")
++
++
++def bounded_inventory(bucket: str, prefix: str, *, seconds: float = TOTAL_SECONDS) -> int:
++    # Isolated read process makes the whole listing (including DNS/credentials)
++    # killable. SDK socket timeouts alone do not bound a complete pagination.
++    try:
++        result = subprocess.run(
++            [
++                sys.executable,
++                "-B",
++                str(Path(__file__).resolve()),
++                "--bucket",
++                bucket,
++                "--prefix",
++                prefix,
++                "--seconds",
++                str(seconds),
++            ],
++            capture_output=True,
++            text=True,
++            timeout=seconds,
++        )
++    except subprocess.TimeoutExpired as error:
++        if error.stderr:
++            print(
++                error.stderr.decode() if isinstance(error.stderr, bytes) else error.stderr,
++                file=sys.stderr,
++                flush=True,
++            )
++        raise InventoryUnavailable("S3_INVENTORY_TOTAL_TIME_LIMIT") from error
++    if result.stderr:
++        print(result.stderr, file=sys.stderr, end="", flush=True)
++    if result.returncode:
++        raise InventoryUnavailable("S3_INVENTORY_UNAVAILABLE: " + result.stderr[-4000:])
++    value = json.loads(result.stdout)
++    if (
++        value.get("bucket") != bucket
++        or value.get("prefix") != prefix
++        or value.get("complete") is not True
++        or type(value.get("bytes")) is not int
++        or value["bytes"] < 0
++    ):
++        raise InventoryUnavailable("S3_INVENTORY_INVALID_COMPLETE_RESULT")
++    return int(value["bytes"])
++
++
++def main() -> None:
++    import boto3
++    from botocore.config import Config
++
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--bucket", required=True)
++    parser.add_argument("--prefix", required=True)
++    parser.add_argument("--seconds", type=float, default=TOTAL_SECONDS)
++    args = parser.parse_args()
++    # This client can only be used by this inventory program. Existing shared
++    # PUT/HEAD/find clients and all appointment adapters are unchanged.
++    client = boto3.Session(region_name="ap-southeast-2").client(
++        "s3",
++        config=Config(
++            connect_timeout=5,
++            read_timeout=10,
++            retries={"total_max_attempts": 1, "mode": "standard"},
++        ),
++    )
++    try:
++        total = read_inventory(client, args.bucket, args.prefix, seconds=args.seconds)
++        print(
++            json.dumps(
++                {"bucket": args.bucket, "prefix": args.prefix, "bytes": total, "complete": True}
++            )
++        )
++    finally:
++        client.close()
++
++
++if __name__ == "__main__":
++    main()
+--- /dev/null
++++ candidate-v5/reuse_prepare.py
+@@ -0,0 +1,148 @@
++"""Post-authorization, closed-boundary preparation. Never launches a driver."""
++
++from __future__ import annotations
++
++import argparse
++import hmac
++import json
++import os
++import socket
++import sqlite3
++import subprocess
++from datetime import datetime
++from pathlib import Path
++
++from closed_restart import NEXT, boundary, stage
++from controls import Journal, canonical, hash_file, read, utc, write_new
++from handover import ContinuationAuthority, bind_host_segment, ro_rows, verify_imported_first
++
++OLD = Path("/var/lib/p8-combined-v4/run")
++INSTANCE = "i-057344e5372faf62f"
++
++
++def prepare(root: Path, external: Path) -> None:
++    """Called only after exact freeze and deployment authorization are verified."""
++    if root.exists() or os.name != "posix":
++        raise ValueError("FRESH_LINUX_METADATA_ROOT_REQUIRED")
++    proof = read(external)
++    key = Path("/var/lib/fyp-owner/owner.key").read_bytes()
++    body = {k: v for k, v in proof.items() if k != "signature"}
++    if not hmac.compare_digest(
++        hmac.new(key, canonical(body), "sha256").hexdigest(), proof["signature"]
++    ):
++        raise ValueError("UNSIGNED_EXTERNAL_REUSE_GATES")
++    required = (
++        "freeze_verified",
++        "explicit_deployment_authorization",
++        "host_ownership",
++        "prestart_independent_preparation_stop",
++        "source_archive_and_members",
++        "dependency_records_and_versions",
++        "same_instance_and_root",
++        "no_inbound_access",
++        "original_deadline_and_budget_fit",
++    )
++    if proof["instance_id"] != INSTANCE or any(
++        proof["checks"].get(k) is not True for k in required
++    ):
++        raise ValueError("REUSE_EXTERNAL_GATES_NOT_VERIFIED")
++    expiration = datetime.fromisoformat(proof["expires_at"].replace("Z", "+00:00"))
++    if expiration.tzinfo is None or expiration <= utc():
++        raise ValueError("STALE_REUSE_EXTERNAL_GATES")
++    # Quiesce operational units only. The old durable pause and entire old root remain.
++    subprocess.run(
++        ["systemctl", "stop", "fyp-phase8-campaign.service", "fyp-phase8-watchdog.service"],
++        check=True,
++        timeout=40,
++    )
++    for unit in ("fyp-phase8-campaign.service", "fyp-phase8-watchdog.service"):
++        result = subprocess.run(
++            ["systemctl", "show", unit, "--property=MainPID", "--value"],
++            check=True,
++            text=True,
++            capture_output=True,
++            timeout=10,
++        )
++        if result.stdout.strip() != "0":
++            raise ValueError("OLD_OPERATIONAL_PROCESS_NOT_QUIESCED")
++    pinned = read(Path(__file__).parent / "closed-82/ledger-read-only.json")["rows"]
++    boundary(ro_rows(OLD), pinned)
++    if read(OLD / "pause.json")["reason"] != "PROTOCOL_STOP":
++        raise ValueError("OLD_PAUSE_DRIFT")
++    for port in (16432, 16433, 19100, 19101, 19102, 19110):
++        with socket.socket() as handle:
++            handle.bind(("127.0.0.1", port))
++    stage(Path(__file__).parent / "closed-82", root)
++    # Retain additional old operational notices emitted during boot, separately
++    # from the accepted snapshot; neither historical source is overwritten.
++    folder = root / "postboot-old-operational-evidence"
++    folder.mkdir()
++    uri = (OLD / "campaign.sqlite3").resolve().as_uri() + "?mode=ro"
++    with (
++        sqlite3.connect(uri, uri=True) as original,
++        sqlite3.connect(folder / "campaign.sqlite3") as saved,
++    ):
++        original.execute("BEGIN")
++        original.backup(saved)
++    (folder / "pause.json").write_bytes((OLD / "pause.json").read_bytes())
++    journal = subprocess.run(
++        [
++            "journalctl",
++            "-u",
++            "fyp-phase8-campaign.service",
++            "-u",
++            "fyp-phase8-watchdog.service",
++            "--no-pager",
++            "-o",
++            "short-iso-precise",
++        ],
++        check=True,
++        text=True,
++        capture_output=True,
++        timeout=30,
++    )
++    (folder / "journal.log").write_text(journal.stdout)
++    write_new(folder / "external-readiness.json", proof)
++    authority = ContinuationAuthority(root, read(root / "run.json"))
++    if (
++        read(
++            Path(read(root / "run.json")["source"])
++            / read(root / "run.json")["continuation"]["manifest"]
++        )["package_hash"]
++        != proof["package_hash"]
++    ):
++        raise ValueError("REUSE_EXTERNAL_PACKAGE_BINDING_DRIFT")
++    authority.verify(prelaunch=True)  # no launch receipt means no main admission
++    verify_imported_first(root)
++    bind_host_segment(root)  # fresh monotonic boot anchor; original start/deadline unchanged
++    write_new(
++        root / "reuse-preparation.json",
++        {
++            "status": "PASS_PREPARATION_NOT_LAUNCH",
++            "instance_id": INSTANCE,
++            "next_execution_id": NEXT,
++            "backed_up": 82,
++            "planned": 1418,
++            "external_sha256": hash_file(external),
++            "original_deadline": authority.policy.stop_at.isoformat(),
++            "original_policy_unchanged": True,
++            "old_root_untouched": True,
++            "driver_calls": 0,
++        },
++    )
++    Journal(root).event(
++        "REUSED_HOST_CLOSED82_PREPARED", hash=hash_file(root / "reuse-preparation.json")
++    )
++
++
++def main() -> None:
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--root", type=Path, required=True)
++    parser.add_argument("--external-gates", type=Path, required=True)
++    args = parser.parse_args()
++    prepare(args.root.resolve(), args.external_gates.resolve())
++    print(json.dumps(read(args.root / "reuse-preparation.json")))
++
++
++if __name__ == "__main__":
++    main()
+--- accepted-v4/runner.py
++++ candidate-v5/runner.py
+@@ -17,7 +17,7 @@
+ REPO = HERE.parents[2]
+ sys.path.insert(0, str(REPO))
+ 
+-from closed_prefix import imported as imported_closed  # noqa: E402
++from closed_restart import imported as imported_closed  # noqa: E402
+ from controls import (  # noqa: E402
+     Authority,
+     Journal,
+--- accepted-v4/storage.py
++++ candidate-v5/storage.py
+@@ -80,14 +80,9 @@
+             raise ValueError("VERSIONED_CLOUD_REQUIRED")
+ 
+     def inventory(self) -> int:
+-        total = 0
+-        for page in self.client.get_paginator("list_object_versions").paginate(
+-            Bucket=self.bucket, Prefix=self.prefix
+-        ):
+-            for value in VersionPage.model_validate(page).Versions:
+-                total += value.Size
+-        # Single PUT only, so no unaccounted multipart upload parts.
+-        return total
++        from inventory_read import bounded_inventory
++
++        return bounded_inventory(self.bucket, self.prefix)
+ 
+     def put(self, path: Path, key: str) -> ObjectProof:
+         if not key.startswith(self.prefix) or path.stat().st_size >= 5 * 1024**3:
+--- /dev/null
++++ candidate-v5/test_closed_restart.py
+@@ -0,0 +1,67 @@
++from __future__ import annotations
++
++import copy
++import sqlite3
++from pathlib import Path
++
++import pytest
++from closed_restart import HERE, NEXT, boundary, master_check, stage, verify
++from controls import Journal, hash_file, read
++
++MASTER = HERE / "closed-82"
++
++
++def test_closed82_stage_preserves_all_identities_notices_and_sidecars(tmp_path: Path) -> None:
++    from handover import verify_imported_first
++
++    root = tmp_path / "cal-closed82"
++    result = stage(MASTER, root)
++    verify_imported_first(root)
++    assert result["driver_calls"] == 0 and result["planned"] == 1418
++    rows = Journal(root).rows()
++    assert rows[82]["execution_id"] == NEXT and rows[82]["state"] == "PLANNED"
++    assert hash_file(root / "historical-evidence.tar.gz") == hash_file(
++        MASTER / "historical-evidence.tar.gz"
++    )
++    assert read(root / "run.json")["policy"] == read(MASTER / "run.json")["policy"]
++    assert read(root / "pause.json")["reason"] == "CONTINUATION_REVIEW_REQUIRED"
++    assert (root / "restart-history/pause.json").read_bytes() == (
++        MASTER / "pause.json"
++    ).read_bytes()
++
++
++@pytest.mark.parametrize("alteration", ["active", "identity", "backup"])
++def test_closed82_rejects_changed_boundary(alteration: str) -> None:
++    rows = copy.deepcopy(read(MASTER / "ledger-read-only.json")["rows"])
++    saved = read(MASTER / "ledger-read-only.json")["rows"]
++    if alteration == "active":
++        rows[82]["state"] = "RUNNING"
++    elif alteration == "identity":
++        rows[82]["execution_id"] = rows[83]["execution_id"]
++    else:
++        rows[81]["backup_hash"] = None
++    with pytest.raises(ValueError):
++        boundary(rows, saved)
++
++
++def test_closed82_rejects_notice_and_receipt_drift(tmp_path: Path) -> None:
++    root = tmp_path / "cal-closed82-drift"
++    stage(MASTER, root)
++    with sqlite3.connect(root / "campaign.sqlite3") as db:
++        db.execute("UPDATE notices SET body='{}' WHERE n=1")
++    with pytest.raises(ValueError):
++        verify(root)
++    root2 = tmp_path / "cal-closed82-receipt"
++    stage(MASTER, root2)
++    path = root2 / "backups" / (Journal(root2).rows()[81]["execution_id"] + ".json")
++    path.write_text("{}")
++    with pytest.raises(ValueError, match="BACKUP_RECEIPT_DRIFT"):
++        verify(root2)
++
++
++def test_closed82_requires_empty_destination(tmp_path: Path) -> None:
++    master_check(MASTER)
++    root = tmp_path / "cal-existing"
++    root.mkdir()
++    with pytest.raises(ValueError, match="FRESH_METADATA_ROOT_ONLY"):
++        stage(MASTER, root)
+--- /dev/null
++++ candidate-v5/test_inventory_read.py
+@@ -0,0 +1,186 @@
++from __future__ import annotations
++
++import json
++import subprocess
++import sys
++import time
++from pathlib import Path
++from typing import Any
++
++import pytest
++from botocore.exceptions import ClientError, ConnectionClosedError
++from inventory_read import InventoryUnavailable, bounded_inventory, read_inventory
++
++
++class Stub:
++    def __init__(self, values: list[Any]) -> None:
++        self.values = iter(values)
++        self.calls: list[dict[str, Any]] = []
++
++    def list_object_versions(self, **kwargs: Any) -> dict[str, Any]:
++        self.calls.append(kwargs)
++        value = next(self.values)
++        if isinstance(value, Exception):
++            raise value
++        return dict(value)
++
++
++def page(size: int = 7, *, truncated: bool = False) -> dict[str, Any]:
++    value: dict[str, Any] = {
++        "IsTruncated": truncated,
++        "Versions": [{"Key": "cal/item", "VersionId": "v1", "Size": size}],
++    }
++    if truncated:
++        value.update(NextKeyMarker="cal/item", NextVersionIdMarker="v1")
++    return value
++
++
++def lost() -> ConnectionClosedError:
++    return ConnectionClosedError(endpoint_url="https://offline-stub.invalid")
++
++
++def test_connection_failure_then_success() -> None:
++    client = Stub([lost(), page()])
++    waits: list[float] = []
++    assert read_inventory(client, "cal-only", "cal/", sleep=waits.append) == 7
++    assert len(client.calls) == 2 and waits == [1]
++
++
++def test_retry_exhaustion_has_no_total() -> None:
++    client = Stub([lost(), lost(), lost()])
++    waits: list[float] = []
++    with pytest.raises(InventoryUnavailable, match="RETRY_EXHAUSTED"):
++        read_inventory(client, "cal-only", "cal/", sleep=waits.append)
++    assert len(client.calls) == 3 and waits == [1, 2]
++
++
++def test_later_page_failure_restarts_whole_listing() -> None:
++    second = page(11)
++    second["Versions"][0].update(Key="cal/next", VersionId="v2")
++    client = Stub([page(999, truncated=True), lost(), page(7, truncated=True), second])
++    assert read_inventory(client, "cal-only", "cal/", sleep=lambda _: None) == 18
++    assert "KeyMarker" in client.calls[1] and "KeyMarker" not in client.calls[2]
++
++
++def test_later_page_exhaustion_never_returns_partial() -> None:
++    client = Stub([page(truncated=True), lost()] * 3)
++    with pytest.raises(InventoryUnavailable, match="RETRY_EXHAUSTED"):
++        read_inventory(client, "cal-only", "cal/", sleep=lambda _: None)
++    assert len(client.calls) == 6
++
++
++@pytest.mark.parametrize("code", ["AccessDenied", "NoSuchBucket", "InvalidArgument"])
++def test_non_retryable_service_error(code: str) -> None:
++    error = ClientError(
++        {
++            "Error": {"Code": code, "Message": "offline"},
++            "ResponseMetadata": {"HTTPStatusCode": 500},
++        },
++        "ListObjectVersions",
++    )
++    client = Stub([error])
++    waits: list[float] = []
++    with pytest.raises(ClientError):
++        read_inventory(client, "cal-only", "cal/", sleep=waits.append)
++    assert len(client.calls) == 1 and not waits
++
++
++def test_missing_completion_flag_is_not_zero_usage() -> None:
++    from pydantic import ValidationError
++
++    with pytest.raises(ValidationError):
++        read_inventory(Stub([{}]), "cal-only", "cal/")
++
++
++def test_missing_pagination_marker_pauses() -> None:
++    value = page()
++    value["IsTruncated"] = True
++    with pytest.raises(InventoryUnavailable, match="INCOMPLETE_PAGINATION"):
++        read_inventory(Stub([value]), "cal-only", "cal/")
++
++
++def test_repeated_marker_pauses() -> None:
++    value = page(truncated=True)
++    value["Versions"] = []
++    with pytest.raises(InventoryUnavailable, match="REPEATED_PAGINATION"):
++        read_inventory(Stub([value, value]), "cal-only", "cal/")
++
++
++def test_delete_marker_boundary_and_complete_empty_page() -> None:
++    value = {"IsTruncated": True, "NextKeyMarker": "cal/deleted", "DeleteMarkers": []}
++    client = Stub([value, {"IsTruncated": False}])
++    assert read_inventory(client, "cal-only", "cal/") == 0
++    assert client.calls[-1]["KeyMarker"] == "cal/deleted"
++    assert "VersionIdMarker" not in client.calls[-1]
++
++
++def test_total_budget_blocks_more_attempts() -> None:
++    ticks = [0.0]
++
++    def sleep(seconds: float) -> None:
++        ticks[0] += seconds
++
++    client = Stub([lost(), lost()])
++    with pytest.raises(InventoryUnavailable, match="TOTAL_TIME_LIMIT"):
++        read_inventory(client, "cal-only", "cal/", clock=lambda: ticks[0], sleep=sleep, seconds=2)
++    assert len(client.calls) == 2 and ticks[0] == 1
++
++
++def test_hard_parent_deadline_kills_stalled_read(tmp_path: Path, monkeypatch: Any) -> None:
++    import inventory_read
++
++    script = tmp_path / "blocked-read.py"
++    script.write_text("import time; time.sleep(5)")
++    monkeypatch.setattr(inventory_read, "__file__", str(script))
++    started = time.monotonic()
++    with pytest.raises(InventoryUnavailable, match="TOTAL_TIME_LIMIT"):
++        bounded_inventory("cal-only", "cal/", seconds=0.05)
++    assert time.monotonic() - started < 1
++
++
++def test_inventory_delegate_does_not_use_upload_client(monkeypatch: Any) -> None:
++    import inventory_read
++    from storage import S3Cloud
++
++    cloud = object.__new__(S3Cloud)
++    cloud.bucket = "cal-only"
++    cloud.prefix = "cal/"
++    cloud.client = object()
++    monkeypatch.setattr(inventory_read, "bounded_inventory", lambda b, p: 123)
++    assert cloud.inventory() == 123
++
++
++def test_unavailable_inventory_durably_pauses_without_admission(
++    tmp_path: Path, monkeypatch: Any
++) -> None:
++    import runner
++    from controls import Journal, read, utc
++    from test_controls import calibration, sample
++
++    root, authority = calibration(tmp_path)
++
++    class Unavailable:
++        def inventory(self) -> int:
++            raise InventoryUnavailable("S3_INVENTORY_RETRY_EXHAUSTED")
++
++    monkeypatch.setattr(runner, "cloud_for", lambda _: Unavailable())
++    monkeypatch.setattr(runner, "meter", lambda _: sample())
++    monkeypatch.setattr(sys, "argv", ["runner.py", "watchdog", "--root", str(root)])
++    with pytest.raises(SystemExit) as result:
++        runner.main()
++    assert result.value.code == 1 and read(root / "pause.json")["reason"] == "PROTOCOL_STOP"
++    assert all(r["state"] == "PLANNED" for r in Journal(root).rows())
++    with pytest.raises(ValueError, match="PAUSED_ADMISSIONS"):
++        Journal(root).admit(authority, sample(), utc(), 0)
++
++
++def test_unverified_child_result_is_rejected(monkeypatch: Any) -> None:
++    import inventory_read
++
++    monkeypatch.setattr(
++        inventory_read.subprocess,
++        "run",
++        lambda *a, **k: subprocess.CompletedProcess(a, 0, json.dumps({"bytes": 0}), ""),
++    )
++    with pytest.raises(InventoryUnavailable, match="INVALID_COMPLETE_RESULT"):
++        bounded_inventory("cal-only", "cal/")

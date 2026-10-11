@@ -1,0 +1,95 @@
+# Standalone project: no host ports, independent empty volumes, immutable source mount.
+x-python: &python
+  image: ${PHASE7_PYTHON_IMAGE:?Set the verified frozen Python image ID}
+  working_dir: /protocol
+  volumes:
+    - ${PHASE7_SOURCE_DIR:?Set extracted verified source archive}:/protocol:ro
+  environment: &environment
+    PYTHONPATH: /protocol
+    DATABASE_SYNC_URL: postgresql://voice_agent:voice_agent_local@postgres:5432/voice_agent
+    DATABASE_URL: postgresql+asyncpg://voice_agent:voice_agent_local@postgres:5432/voice_agent
+    SIMULATOR_BASE_URL: http://provider-simulator:8010
+    EXPERIMENT_MODE: "true"
+
+services:
+  postgres:
+    image: postgres:16.9
+    environment:
+      POSTGRES_DB: voice_agent
+      POSTGRES_USER: voice_agent
+      POSTGRES_PASSWORD: voice_agent_local
+    volumes: [controller:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U voice_agent -d voice_agent]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+  simulator-postgres:
+    image: postgres:16.9
+    environment:
+      POSTGRES_DB: simulator_truth
+      POSTGRES_USER: simulator
+      POSTGRES_PASSWORD: simulator_local
+    volumes: [simulator:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U simulator -d simulator_truth]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+  migrate:
+    <<: *python
+    command: [/app/.venv/bin/alembic, upgrade, head]
+    environment:
+      <<: *environment
+      DATABASE_ADMIN_URL: postgresql+psycopg://voice_agent:voice_agent_local@postgres:5432/voice_agent
+    depends_on:
+      postgres: {condition: service_healthy}
+  api-controller:
+    <<: *python
+    command: [/app/.venv/bin/uvicorn, apps.api_controller.main:app, --host, 0.0.0.0, --port, "8000"]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    healthcheck:
+      test: [CMD, /app/.venv/bin/python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8000/health/ready',timeout=3)"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+  durable-worker:
+    <<: *python
+    command: [/app/.venv/bin/uvicorn, apps.durable_worker.main:app, --host, 0.0.0.0, --port, "8002"]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    healthcheck:
+      test: [CMD, /app/.venv/bin/python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8002/health/ready',timeout=3)"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+  provider-simulator:
+    <<: *python
+    command: [/app/.venv/bin/uvicorn, research.provider_simulator.main:app, --host, 0.0.0.0, --port, "8010"]
+    environment:
+      <<: *environment
+      SIMULATOR_DATABASE_URL: postgresql://simulator:simulator_local@simulator-postgres:5432/simulator_truth
+    depends_on:
+      simulator-postgres: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, /app/.venv/bin/python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8010/health/live',timeout=3)"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+  runner:
+    <<: *python
+    command: [/app/.venv/bin/python, -m, research.pilot.clean]
+    profiles: [replay]
+    volumes:
+      - ${PHASE7_SOURCE_DIR}:/protocol:ro
+      - ${PHASE7_EVIDENCE_DIR:?Set clean replay output directory}:/evidence
+    environment:
+      <<: *environment
+      PHASE2_API_URL: http://api-controller:8000
+      PHASE2_WORKER_URL: http://durable-worker:8002
+      PHASE2_SIMULATOR_URL: http://provider-simulator:8010
+      SIMULATOR_DATABASE_URL: postgresql://simulator:simulator_local@simulator-postgres:5432/simulator_truth
+volumes:
+  controller:
+  simulator:

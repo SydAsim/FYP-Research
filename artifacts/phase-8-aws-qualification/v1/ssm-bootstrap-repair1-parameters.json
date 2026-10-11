@@ -1,0 +1,8 @@
+{
+  "commands": [
+    "set -eu\nchown fyp:fyp /opt/fyp-phase82-qualification/bootstrap-lf.sh\nchmod 600 /opt/fyp-phase82-qualification/bootstrap-lf.sh\nrunuser -u fyp -- bash -c 'cd /opt/fyp-phase8-linux-v1; bash /opt/fyp-phase82-qualification/bootstrap-lf.sh' > /srv/fyp-p82/bootstrap-attempt2.log 2>&1\ncat >/etc/systemd/system/fyp-p82-qualification.service <<'UNIT'\n[Unit]\nDescription=Finite Phase 8.2 calibration only, main study disabled\nAfter=docker.service network-online.target\n[Service]\nType=oneshot\nUser=fyp\nGroup=fyp\nSupplementaryGroups=docker\nWorkingDirectory=/opt/fyp-phase8-linux-v1\nEnvironment=PYTHONUNBUFFERED=1\nEnvironment=P8_DOCKER_DATA_PATH=/srv/fyp-p82\nExecStart=/opt/fyp-phase8-linux-v1/.venv/bin/python /opt/fyp-phase82-qualification/qualify.py /srv/fyp-p82/native-original /srv/fyp-p82-backup/native-original\nKillMode=process\nTimeoutStartSec=40min\nRestart=no\nStandardOutput=journal\nStandardError=journal\nUNIT\n# Explicit alternative probe path is permitted only on the same filesystem.\ntest \"$(stat -c %d /var/lib/docker)\" = \"$(stat -c %d /srv/fyp-p82)\"\nsystemctl daemon-reload\nprintf '%s\\n' READY_FOR_QUALIFICATION_MAIN_BLOCKED >/srv/fyp-p82/bootstrap-ready-attempt2.txt\nrunuser -u fyp -- bash -c 'cd /opt/fyp-phase8-linux-v1; PYTHONPATH=/opt/fyp-phase8-linux-v1/.venv-analysis/lib/python3.12/site-packages:/opt/fyp-phase8-linux-v1 .venv/bin/python -m pytest artifacts/phase-8-linux-setup/v1/test_linux.py tests/test_execution_setup.py artifacts/phase-8-execution-setup/v2/test_storage.py tests/unit/test_phase8_candidate_v4.py -q' > /srv/fyp-p82/linux-regression-attempt2.txt 2>&1\ncat /srv/fyp-p82/linux-regression-attempt2.txt\n"
+  ],
+  "executionTimeout": [
+    "900"
+  ]
+}

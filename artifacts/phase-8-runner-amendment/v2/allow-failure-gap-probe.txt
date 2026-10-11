@@ -1,0 +1,28 @@
+import io,json,sys,time,uuid
+from pathlib import Path
+from email.message import Message
+from urllib.error import HTTPError
+from unittest.mock import patch
+root=Path('artifacts/phase-8-runner-amendment/v2').resolve()
+sys.path.insert(0,str(root))
+from collector import Trial
+started=time.monotonic()
+rows=[]
+for arm in ['B3','P1','P2']:
+ for status in [409,500]:
+  if time.monotonic()-started>60:raise TimeoutError('CONTROL_BUDGET_EXHAUSTED')
+  trial=Trial.__new__(Trial)
+  trial.id=str(uuid.uuid4());trial.arm=arm;trial.item={'call_id':str(uuid.uuid4())}
+  trial.row={'http':[],'client_playback':[]};trial.save=lambda:None
+  problem={'type':'https://example.invalid/problems/calibration-unrecognized-defect','title':'Unrecognized injected defect','status':status,'detail':'No declared scenario authorizes this problem','instance':f"/v1/calls/{trial.item['call_id']}/playback-events",'trace_id':str(uuid.uuid4()),'retryable':False}
+  def reject(request,timeout):
+   headers=Message();headers['x-trace-id']=problem['trace_id']
+   raise HTTPError(request.full_url,status,'control only',headers,io.BytesIO(json.dumps(problem).encode()))
+  raised=None
+  try:
+   with patch('research.study_v4.calibration.urlopen',reject):
+    returned=trial.ack({},'STARTED',body={'event_id':str(uuid.uuid4()),'kind':'STARTED'},allow_failure=True)
+  except Exception as error:raised={'type':type(error).__name__,'detail':str(error)}
+  rows.append({'id':f'cal-v4-preflight-v2-control-{arm.lower()}-{status}','arm':arm,'injected_response':problem,'request_record':trial.row['http'][-1],'raised':raised,'control_status':'PASS' if raised else 'FAIL','interpretation':'Actual request/ack path swallowed unrecognized response; catch-only collector cannot pause on this call if subsequent driver steps succeed. This is a control counterexample, not a new main outcome.'})
+with (root/'allow-failure-gap-result.json').open('x',encoding='utf-8') as f:json.dump({'status':'FAIL' if any(r['control_status']=='FAIL' for r in rows) else 'PASS','rows':rows,'elapsed_seconds':time.monotonic()-started,'business_executions':0,'main_executions':0,'cloud_operations':0,'network_requests':0,'limitation':'HTTPError is injected locally. No actual backend or campaign execution is replaced.'},f,indent=2)
+print('Control checks:',len(rows),'failed pause contract:',sum(r['control_status']=='FAIL' for r in rows))

@@ -1,0 +1,54 @@
+[project]
+name = "commit-aware-voice-agent"
+version = "0.0.0"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+  "alembic>=1.16,<2",
+  "asyncpg>=0.30,<1",
+  "fastapi>=0.116,<1",
+  "livekit==1.1.13",
+  "pydantic>=2.11,<3",
+  "psycopg[binary]>=3.2,<4",
+  "sqlalchemy>=2.0,<3",
+  "structlog>=25.4,<26",
+  "uvicorn>=0.35,<1",
+  "vosk==0.3.45",
+]
+
+[dependency-groups]
+dev = [
+  "httpx>=0.28,<1",
+  "mypy>=1.17,<2",
+  "pytest>=8.4,<9",
+  "pytest-asyncio>=1.1,<2",
+  "ruff>=0.12,<1",
+]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+include = ["*.py"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.per-file-ignores]
+# SQL statement literals are kept readable and checked by PostgreSQL integration tests.
+"apps/api_controller/phase1_service.py" = ["E501"]
+"apps/api_controller/phase2_service.py" = ["E501"]
+"apps/durable_worker/phase2.py" = ["E501"]
+"packages/provider_adapters/simulator.py" = ["E501"]
+"research/provider_simulator/store.py" = ["E501"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["apps", "packages", "research"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+pythonpath = ["."]

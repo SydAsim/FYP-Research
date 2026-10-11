@@ -1,0 +1,61 @@
+name: phased-ci
+on:
+  push:
+  pull_request:
+jobs:
+  static-and-unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.9.24"
+      - uses: pnpm/action-setup@v4
+        with:
+          version: "11.0.8"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24.14.1"
+          cache: pnpm
+      - run: uv sync --locked
+      - run: uv run ruff format --check .
+      - run: uv run ruff check .
+      - run: uv run mypy
+      - run: uv run pytest -q tests/unit tests/contract
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm format:check
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build
+      - run: pnpm --dir apps/web test:e2e
+  compose-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.9.24"
+      - run: uv sync --locked
+      - run: docker compose up --build -d --wait
+      - run: docker compose --profile redis up -d --wait redis
+      - run: uv run pytest -q tests/integration
+        env:
+          DATABASE_SYNC_URL: postgresql://voice_agent:voice_agent_local@127.0.0.1:5432/voice_agent
+          SIMULATOR_DATABASE_URL: postgresql://simulator:simulator_local@127.0.0.1:5433/simulator_truth
+          SIMULATOR_BASE_URL: http://127.0.0.1:8010
+      - run: uv run python -m research.replay.phase2_decisive > phase-2-replay.json
+      - run: uv run python -m research.replay.phase3_decisive > phase-3-replay.json
+      - run: docker compose --profile media up -d --wait livekit voice-worker
+      - run: uv run python -m research.replay.phase4_p8 > phase-4-p8-replay.json
+        env:
+          PHASE4_LIVEKIT_SMOKE: "true"
+      - run: docker compose run --rm migrate alembic downgrade base
+      - run: docker compose run --rm migrate alembic upgrade head
+      - run: curl --fail http://127.0.0.1:8000/health/ready
+      - run: curl --fail http://127.0.0.1:8001/health/live
+      - run: curl --fail http://127.0.0.1:8002/health/ready
+      - run: curl --fail http://127.0.0.1:8010/health/live
+      - run: curl --fail http://127.0.0.1:3000/api/health
+      - if: always()
+        run: docker compose down -v

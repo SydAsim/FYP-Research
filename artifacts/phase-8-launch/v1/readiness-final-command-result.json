@@ -1,0 +1,60 @@
+{
+  "status": "success",
+  "stdout": "",
+  "return_value": {
+    "Command": {
+      "CommandId": "5b9bfd6c-b0a1-48ab-a72d-ad64a46b7217",
+      "DocumentName": "AWS-RunShellScript",
+      "DocumentVersion": "$DEFAULT",
+      "Comment": "Final readiness and real master backup before first original; no main start",
+      "ExpiresAfter": "2026-10-07T16:44:34.959000+00:00",
+      "Parameters": {
+        "commands": [
+          "#!/bin/bash\nset -euo pipefail\numask 077\ncd /opt/fyp-phase8-linux-v1\nexport PYTHONPATH=\"$PWD:$PWD/.venv-analysis/lib/python3.12/site-packages:$PWD/.venv-transport/lib/python3.12/site-packages\"\nexport PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1\n.venv/bin/python -B - <<'PY'\nimport hashlib,json,shutil,sqlite3,sys,tarfile\nfrom pathlib import Path\nsys.path.insert(0,str(Path.cwd()/'artifacts/phase-8-review-freeze/v2'))\nfrom controls import Journal,guard,hash_file,read,utc,write_new\nfrom runner import cloud_for,meter,verify_host_timer,verify_run\nfrom storage import upload,verify_local\nroot=Path('/var/lib/p8/run'); journal=Journal(root); authority=verify_run(root)\nverify_host_timer(root)\nrows=journal.rows()\nif len(rows)!=1500 or any(r['state']!='PLANNED' for r in rows): raise ValueError('MAIN_ADMITTED_BEFORE_READINESS')\nif (root/'pause.json').exists(): raise ValueError('PRELAUNCH_PAUSE_RETAIN_AND_REVIEW')\ncloud=cloud_for(root); sample=meter(root); cloud_bytes=cloud.inventory()\nguard(authority.policy,sample,utc(),cloud_bytes,extra_bytes=authority.policy.slot_capacity_reserve_bytes)\nexpected={'launch-policy.json':'80831c99b3def500b86335ef038142148f8f04025ca530e38673de2ef573e61d','receipts/REVIEW_ACCEPTED.json':'95e337416773c6ed99cc8bc1caa82736c30ee829c606317a8837b51c4c0d1461','receipts/FREEZE.json':'0435a37f534b8a8cde77104840c0fb81323011f7f21d93b4ebc38260a09222b2','receipts/LAUNCH.json':'35b9d06c9676baadffd4561bf2489b2bc1b08afce28fca5f1e259657f841bcd9'}\nowner=Path('/var/lib/fyp-owner')\nfor name,digest in expected.items():\n    if hash_file(owner/name)!=digest: raise ValueError('ORIGINAL_RECEIPT_BYTES_DRIFT: '+name)\nif owner.stat().st_mode&0o777!=0o700 or (owner/'owner.key').stat().st_mode&0o777!=0o600: raise ValueError('PRIVATE_OWNER_PERMISSIONS')\nfolder=Path('/var/lib/p8/backup/prelaunch-attempt1');folder.mkdir(exist_ok=False)\nwith journal.connect() as source,sqlite3.connect(folder/'campaign.sqlite3') as target:\n    source.backup(target)\n    if target.execute('PRAGMA integrity_check').fetchone()[0]!='ok':raise ValueError('PRELAUNCH_SQLITE_BACKUP')\nfor name in ('run.json','bindings.json','binding-seal.json','cloud.json','host-clock.json'):shutil.copyfile(root/name,folder/name)\nfor name in expected:\n    dest=folder/'owner-public'/name;dest.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(owner/name,dest)\nfor name in ('dependencies-ready.json','source-download.json','image-identities.json','preinitialize-readiness.json'):\n    shutil.copyfile(Path('/var/lib/p8-deployment')/name,folder/name)\nfiles={p.relative_to(folder).as_posix():hash_file(p) for p in folder.rglob('*') if p.is_file()}\nwrite_new(folder/'manifest.json',{'kind':'PRELAUNCH_MASTER_BACKUP_NOT_EXECUTION_OR_COMPLETION','postgres_dumps':False,'files':files})\narchive=folder.with_suffix('.tar.gz')\nwith tarfile.open(archive,'x:gz') as f:f.add(folder,arcname='slot')\ndigest=hash_file(archive);verify_local(archive,digest)\nproof=upload(journal,cloud,authority.policy,archive);cloud.verify(proof)\nwrite_new(Path('/var/lib/p8-deployment/prelaunch-backup.json'),{'classification':'PRELAUNCH_NOT_SCIENTIFIC_OUTCOME','local':str(archive),'sha256':digest,'cloud':proof.model_dump()})\njournal.event('PRELAUNCH_BACKUP_VERIFIED',proof=proof.model_dump())\nwrite_new(Path('/var/lib/p8-deployment/final-readiness.json'),{'status':'PASS','at_utc':utc().isoformat(),'run_id':authority.policy.run_id,'operational_clock_start_utc':authority.policy.host_started_at.isoformat(),'deadline_utc':authority.policy.stop_at.isoformat(),'host':sample,'cloud_bytes_before_backup':cloud_bytes,'backup':proof.model_dump(),'source_and_receipt_chain':'PASS','original_receipt_file_hashes':expected,'active_independent_timers':'PASS','serial_originals_reserved':len(rows),'main_executions_admitted':0,'pause_present':False,'estimated_committed_usd_now':authority.policy.committed_cost(utc())})\nprint(json.dumps(read(Path('/var/lib/p8-deployment/final-readiness.json'))))\nPY\nsystemctl is-active fyp-phase8-hardstop.timer fyp-phase8-watchdog.service\nprintf '%s\\n' VERIFIED_READY_FOR_SEPARATE_MAIN_SERVICE_START\n"
+        ],
+        "executionTimeout": [
+          "180"
+        ]
+      },
+      "InstanceIds": [
+        "i-0a6196aff6f8098ac"
+      ],
+      "Targets": [],
+      "RequestedDateTime": "2026-10-07T15:41:34.959000+00:00",
+      "Status": "Pending",
+      "StatusDetails": "Pending",
+      "OutputS3Region": "ap-southeast-2",
+      "OutputS3BucketName": "fyp-p82-20261005-018da1d6-803656589923",
+      "OutputS3KeyPrefix": "exports/phase8/p85-01a116f7-3b82-7a79-8653-3aee62dc99e9/deployment/final-readiness",
+      "MaxConcurrency": "50",
+      "MaxErrors": "0",
+      "TargetCount": 1,
+      "CompletedCount": 0,
+      "ErrorCount": 0,
+      "DeliveryTimedOutCount": 0,
+      "ServiceRole": "",
+      "NotificationConfig": {
+        "NotificationArn": "",
+        "NotificationEvents": [],
+        "NotificationType": ""
+      },
+      "CloudWatchOutputConfig": {
+        "CloudWatchLogGroupName": "",
+        "CloudWatchOutputEnabled": false
+      },
+      "TimeoutSeconds": 3600,
+      "AlarmConfiguration": {
+        "IgnorePollAlarmFailure": false,
+        "Alarms": []
+      },
+      "TriggeredAlarms": []
+    }
+  },
+  "api_calls": [
+    {
+      "service": "ssm",
+      "operation": "SendCommand",
+      "status": "success"
+    }
+  ]
+}

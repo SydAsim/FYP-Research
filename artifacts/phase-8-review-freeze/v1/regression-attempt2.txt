@@ -1,0 +1,281 @@
+........................................................................ [ 78%]
+..FFFF........FFF...                                                     [100%]
+================================== FAILURES ===================================
+___________ test_lock_rejects_other_process_and_releases_after_exit ___________
+
+tmp_path = WindowsPath('C:/Users/syeda/AppData/Local/Temp/pytest-of-syeda/pytest-164/test_lock_rejects_other_proces0')
+
+    def test_lock_rejects_other_process_and_releases_after_exit(tmp_path: Path) -> None:
+        code = (
+            "from pathlib import Path; from research.execution_linux_v1.platform import runner_lock; "
+            f"\nwith runner_lock(Path({str(tmp_path)!r})): print('ACQUIRED')"
+        )
+>       with runner_lock(tmp_path):
+             ^^^^^^^^^^^^^^^^^^^^^
+
+artifacts\phase-8-linux-setup\v1\test_linux.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+research\execution_linux_v1\platform.py:67: in runner_lock
+    require_linux()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def require_linux() -> None:
+        if sys.platform != "linux":
+>           raise RuntimeError("LINUX_ONLY: use the historical Windows runner on Windows")
+E           RuntimeError: LINUX_ONLY: use the historical Windows runner on Windows
+
+research\execution_linux_v1\platform.py:19: RuntimeError
+_______________ test_identity_mismatch_does_not_signal_process ________________
+
+    def test_identity_mismatch_does_not_signal_process() -> None:
+        child = sleeper()
+        try:
+            assert child.stdout and child.stdout.readline().strip() == "READY"
+>           identity = process_identity(child.pid)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+artifacts\phase-8-linux-setup\v1\test_linux.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+research\execution_linux_v1\platform.py:83: in process_identity
+    require_linux()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def require_linux() -> None:
+        if sys.platform != "linux":
+>           raise RuntimeError("LINUX_ONLY: use the historical Windows runner on Windows")
+E           RuntimeError: LINUX_ONLY: use the historical Windows runner on Windows
+
+research\execution_linux_v1\platform.py:19: RuntimeError
+---------------------------- Captured stderr call -----------------------------
+Traceback (most recent call last):
+
+  File "<string>", line 1, in <module>
+
+AttributeError: module 'signal' has no attribute 'pause'
+
+___________ test_detached_child_survives_launching_terminal_process ___________
+
+tmp_path = WindowsPath('C:/Users/syeda/AppData/Local/Temp/pytest-of-syeda/pytest-164/test_detached_child_survives_l0')
+
+    def test_detached_child_survives_launching_terminal_process(tmp_path: Path) -> None:
+        pid_file = tmp_path / "pid.json"
+        child_code = "import signal;signal.pause()"
+        code = (
+            "import subprocess,sys,json,pathlib; "
+            f"p=subprocess.Popen([sys.executable,'-c',{child_code!r}],start_new_session=True); "
+            f"pathlib.Path({str(pid_file)!r}).write_text(json.dumps({{'pid':p.pid}}))"
+        )
+        parent = subprocess.run([sys.executable, "-c", code], timeout=5)
+        assert parent.returncode == 0
+        pid = json.loads(pid_file.read_text())["pid"]
+>       identity = process_identity(pid)
+                   ^^^^^^^^^^^^^^^^^^^^^
+
+artifacts\phase-8-linux-setup\v1\test_linux.py:81: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+research\execution_linux_v1\platform.py:83: in process_identity
+    require_linux()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def require_linux() -> None:
+        if sys.platform != "linux":
+>           raise RuntimeError("LINUX_ONLY: use the historical Windows runner on Windows")
+E           RuntimeError: LINUX_ONLY: use the historical Windows runner on Windows
+
+research\execution_linux_v1\platform.py:19: RuntimeError
+________________ test_new_linux_main_guard_and_fixed_deadline _________________
+
+tmp_path = WindowsPath('C:/Users/syeda/AppData/Local/Temp/pytest-of-syeda/pytest-164/test_new_linux_main_guard_and_0')
+
+    def test_new_linux_main_guard_and_fixed_deadline(tmp_path: Path) -> None:
+        # Run installation in a separate process: never mutate the Windows regression suite.
+        code = """
+    from pathlib import Path
+    from research.execution_linux_v1.runner import install, PREFIX
+    from research.execution_setup.core import Ledger
+    install()
+    ledger=Ledger(Path(__import__('sys').argv[1]))
+    with ledger.connect() as c:
+     c.execute("INSERT INTO slots(sequence,case_id,arm,state,attempt,label) "
+               "VALUES (1,?,'P2','PLANNED',1,'ORIGINAL_PLANNED')",(PREFIX+'0001',))
+    slot=ledger.admit()
+    ledger.update(slot['execution_id'], deadline='2030-01-01T00:10:00+00:00',state='CHECKPOINTED')
+    assert ledger.admit()['execution_id']==slot['execution_id']
+    try: ledger.update(slot['execution_id'],deadline='2030-01-01T00:20:00+00:00')
+    except ValueError: pass
+    else: raise AssertionError('deadline reset allowed')
+    with ledger.connect() as c:
+     c.execute("UPDATE slots SET state='PLANNED',case_id='p8v4-0001',execution_id=NULL")
+    try: ledger.admit()
+    except ValueError as e: assert 'MAIN_CAMPAIGN_GUARD' in str(e)
+    else: raise AssertionError('main admitted')
+    print('PASS MAIN GUARD AND SAME DEADLINE')
+    """
+        result = subprocess.run(
+            [sys.executable, "-c", code, str(tmp_path)], capture_output=True, text=True
+        )
+>       assert result.returncode == 0, result.stderr
+E       AssertionError: Traceback (most recent call last):
+E           File "<string>", line 5, in <module>
+E           File "C:\Users\syeda\OneDrive\\u30c9\u30ad\u30e5\u30e1\u30f3\u30c8\ChatGPT\Final Year Project\research\execution_linux_v1\runner.py", line 310, in install
+E             platform.require_linux()
+E           File "C:\Users\syeda\OneDrive\\u30c9\u30ad\u30e5\u30e1\u30f3\u30c8\ChatGPT\Final Year Project\research\execution_linux_v1\platform.py", line 19, in require_linux
+E             raise RuntimeError("LINUX_ONLY: use the historical Windows runner on Windows")
+E         RuntimeError: LINUX_ONLY: use the historical Windows runner on Windows
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['C:\\\\Users\\\\syeda\\\\OneDrive\\\\\u30c9\u30ad\u30e5\u30e1\u30f3\u30c8\\\\ChatGPT\\\\Final Year Project\\\\.venv\\\\Scripts\\\\python.exe', ... the historical Windows runner on Windows")\\nRuntimeError: LINUX_ONLY: use the historical Windows runner on Windows\\n').returncode
+
+artifacts\phase-8-linux-setup\v1\test_linux.py:113: AssertionError
+---------------------------- Captured stderr call -----------------------------
+Traceback (most recent call last):
+
+  File "<string>", line 1, in <module>
+
+AttributeError: module 'signal' has no attribute 'pause'
+
+_____________________ test_lock_released_by_process_crash _____________________
+
+tmp_path = WindowsPath('C:/Users/syeda/AppData/Local/Temp/pytest-of-syeda/pytest-164/test_lock_released_by_process_0')
+
+    def test_lock_released_by_process_crash(tmp_path: Path) -> None:
+        code = (
+            "import signal;from pathlib import Path;"
+            "from research.execution_linux_v1.platform import runner_lock;"
+            f"\nwith runner_lock(Path({str(tmp_path)!r})): print('LOCKED',flush=True);signal.pause()"
+        )
+        holder = subprocess.Popen([sys.executable, "-c", code], stdout=subprocess.PIPE, text=True)
+        try:
+>           assert holder.stdout and holder.stdout.readline().strip() == "LOCKED"
+E           AssertionError: assert (<_io.TextIOWrapper name=11 encoding='cp1252'> and '' == 'LOCKED'
+E            +  where <_io.TextIOWrapper name=11 encoding='cp1252'> = <Popen: returncode: None args: ['C:\\\\Users\\\\syeda\\\\OneDrive\\\\\u30c9\u30ad\u30e5\u30e1\u30f3\u30c8\\\\ChatGPT...>.stdout
+E             
+E             - LOCKED)
+
+artifacts\phase-8-linux-setup\v1\test_linux.py:186: AssertionError
+---------------------------- Captured stderr call -----------------------------
+Traceback (most recent call last):
+
+  File "<string>", line 2, in <module>
+
+  File "C:\Users\syeda\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\contextlib.py", line 137, in __enter__
+
+    return next(self.gen)
+
+           ^^^^^^^^^^^^^^
+
+  File "C:\Users\syeda\OneDrive\\u30c9\u30ad\u30e5\u30e1\u30f3\u30c8\ChatGPT\Final Year Project\research\execution_linux_v1\platform.py", line 67, in runner_lock
+
+    require_linux()
+
+  File "C:\Users\syeda\OneDrive\\u30c9\u30ad\u30e5\u30e1\u30f3\u30c8\ChatGPT\Final Year Project\research\execution_linux_v1\platform.py", line 19, in require_linux
+
+    raise RuntimeError("LINUX_ONLY: use the historical Windows runner on Windows")
+
+RuntimeError: LINUX_ONLY: use the historical Windows runner on Windows
+
+____________ test_service_attach_rejects_lost_pid_and_host_reboot _____________
+
+tmp_path = WindowsPath('C:/Users/syeda/AppData/Local/Temp/pytest-of-syeda/pytest-164/test_service_attach_rejects_lo0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000027DC3A072F0>
+
+    def test_service_attach_rejects_lost_pid_and_host_reboot(tmp_path: Path, monkeypatch: Any) -> None:
+        from research.execution_linux_v1.runtime import Runtime
+        from research.execution_setup.core import immutable
+    
+        root, execution = tmp_path / "root", tmp_path / "services"
+        root.mkdir()
+        immutable(root / "resources.json", {"database": "local-test", "sim_database": "local-truth"})
+>       original = Runtime(root, execution)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+
+artifacts\phase-8-linux-setup\v1\test_linux.py:204: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+research\execution_linux_v1\runtime.py:30: in __init__
+    immutable(stamp, {"boot_id": boot_id(), "at": now()})
+                                 ^^^^^^^^^
+research\execution_linux_v1\platform.py:92: in boot_id
+    return Path("/proc/sys/kernel/random/boot_id").read_text().strip()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\pathlib.py:1027: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('/proc/sys/kernel/random/boot_id'), mode = 'r'
+buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '\\proc\\sys\\kernel\\random\\boot_id'
+
+..\..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\pathlib.py:1013: FileNotFoundError
+_______ test_application_environment_excludes_aws_and_analysis_overlay ________
+
+tmp_path = WindowsPath('C:/Users/syeda/AppData/Local/Temp/pytest-of-syeda/pytest-164/test_application_environment_e0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000027DC5A3F050>
+
+    def test_application_environment_excludes_aws_and_analysis_overlay(
+        tmp_path: Path, monkeypatch: Any
+    ) -> None:
+        from research.execution_linux_v1.runtime import Runtime
+        from research.execution_setup.core import ROOT, immutable
+    
+        monkeypatch.setenv("AWS_ACCESS_KEY_ID", "synthetic-test-value")
+        monkeypatch.setenv("GEMINI_API_KEY", "synthetic-test-value")
+        monkeypatch.setenv("PYTHONPATH", "/different-analysis/site-packages")
+        immutable(
+            tmp_path / "resources.json", {"database": "local-test", "sim_database": "local-truth"}
+        )
+>       service = Runtime(tmp_path, tmp_path / "services")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+artifacts\phase-8-linux-setup\v1\test_linux.py:228: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+research\execution_linux_v1\runtime.py:30: in __init__
+    immutable(stamp, {"boot_id": boot_id(), "at": now()})
+                                 ^^^^^^^^^
+research\execution_linux_v1\platform.py:92: in boot_id
+    return Path("/proc/sys/kernel/random/boot_id").read_text().strip()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\pathlib.py:1027: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('/proc/sys/kernel/random/boot_id'), mode = 'r'
+buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '\\proc\\sys\\kernel\\random\\boot_id'
+
+..\..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\pathlib.py:1013: FileNotFoundError
+=========================== short test summary info ===========================
+FAILED artifacts/phase-8-linux-setup/v1/test_linux.py::test_lock_rejects_other_process_and_releases_after_exit
+FAILED artifacts/phase-8-linux-setup/v1/test_linux.py::test_identity_mismatch_does_not_signal_process
+FAILED artifacts/phase-8-linux-setup/v1/test_linux.py::test_detached_child_survives_launching_terminal_process
+FAILED artifacts/phase-8-linux-setup/v1/test_linux.py::test_new_linux_main_guard_and_fixed_deadline
+FAILED artifacts/phase-8-linux-setup/v1/test_linux.py::test_lock_released_by_process_crash
+FAILED artifacts/phase-8-linux-setup/v1/test_linux.py::test_service_attach_rejects_lost_pid_and_host_reboot
+FAILED artifacts/phase-8-linux-setup/v1/test_linux.py::test_application_environment_excludes_aws_and_analysis_overlay
+7 failed, 85 passed in 43.23s

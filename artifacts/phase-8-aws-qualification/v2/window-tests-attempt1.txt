@@ -1,0 +1,106 @@
+.F                                                                       [100%]
+================================== FAILURES ===================================
+_ test_query_straddling_cutoff_does_not_substitute_for_post_cutoff_read[v2-2] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000136DD575670>
+tmp_path = WindowsPath('C:/Users/syeda/AppData/Local/Temp/pytest-of-syeda/pytest-157/test_query_straddling_cutoff_d1')
+version = 'v2', expected_reads = 2
+
+    @pytest.mark.parametrize(("version", "expected_reads"), [("v1", 1), ("v2", 2)])
+    def test_query_straddling_cutoff_does_not_substitute_for_post_cutoff_read(
+        monkeypatch: pytest.MonkeyPatch, tmp_path: Path, version: str, expected_reads: int
+    ) -> None:
+        module = original if version == "v1" else revised()
+        snapshots: list[int] = []
+        times = iter(
+            [
+                "2020-01-01T00:09:59.900000+00:00",
+                "2020-01-01T00:10:00.040000+00:00",
+                "2020-01-01T00:10:00.100000+00:00",
+                "2020-01-01T00:10:00.240000+00:00",
+                "2020-01-01T00:10:00.300000+00:00",
+            ]
+        )
+        monkeypatch.setattr(module, "now", lambda: next(times))
+        monkeypatch.setattr(
+            module,
+            "host",
+            lambda *args: {
+                "available_memory_bytes": 8 * 1024**3,
+                "system_free_bytes": 30 * 1024**3,
+            },
+        )
+        monkeypatch.setattr(module, "check_source", lambda *args: None)
+        monkeypatch.setattr(module, "database", lambda *args: {})
+        monkeypatch.setattr(module, "docker_stats", lambda *args: [])
+        monkeypatch.setattr(
+            module,
+            "evidence_for",
+            lambda *args: (
+                None,
+                SimpleNamespace(acceptances=[]),
+            ),
+        )
+        monkeypatch.setattr(
+            module,
+            "revised_evaluate",
+            lambda *args, **kw: (
+                {},
+                SimpleNamespace(model_dump=lambda **kw: {}),
+            ),
+        )
+        ledger = SimpleNamespace(
+            root=tmp_path,
+            update=lambda *args, **kw: None,
+            event=lambda *args, **kw: None,
+            seal=digest,
+            verify=lambda: None,
+        )
+        module.immutable(tmp_path / "config.json", {"backup": str(tmp_path)})
+        stopped: list[bool] = []
+        runtime = SimpleNamespace(
+            database="unused",
+            sim_database="unused",
+            config={"containers": []},
+            events=[],
+            stop_all=lambda: stopped.append(True),
+        )
+    
+        def snapshot() -> dict[str, Any]:
+            snapshots.append(len(snapshots) + 1)
+            return {"read": snapshots[-1]}
+    
+        trial = SimpleNamespace(
+            id="unit-cutoff",
+            arm="B3",
+            ledger=ledger,
+            runtime=runtime,
+            execution_directory=tmp_path / "execution",
+            save=lambda: None,
+            snapshot=snapshot,
+            row={"original_deadline": "2020-01-01T00:10:00+00:00", "polls": []},
+        )
+>       assert module.collect(trial)
+               ^^^^^^^^^^^^^^^^^^^^^
+
+artifacts\phase-8-aws-qualification\v2\test_window.py:97: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+artifacts\phase-8-aws-qualification\v2\worker_v2.py:249: in collect
+    sample["cpu_load_fraction"] = cpu_fraction(prior, sample) if prior else None
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+before = {'available_memory_bytes': 8589934592, 'cpu_load_fraction': None, 'system_free_bytes': 32212254720}
+after = {'available_memory_bytes': 8589934592, 'system_free_bytes': 32212254720}
+
+    def cpu_fraction(before: dict[str, Any], after: dict[str, Any]) -> float | None:
+>       total = after["cpu_total_ticks"] - before["cpu_total_ticks"]
+                ^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'cpu_total_ticks'
+
+research\execution_setup\resources.py:65: KeyError
+---------------------------- Captured stdout call -----------------------------
+COLLECT unit-cutoff B3: 1 polls, 0s remaining
+=========================== short test summary info ===========================
+FAILED artifacts/phase-8-aws-qualification/v2/test_window.py::test_query_straddling_cutoff_does_not_substitute_for_post_cutoff_read[v2-2]
+1 failed, 1 passed in 0.78s

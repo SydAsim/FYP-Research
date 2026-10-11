@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/schemas/event-envelope-v1.json",
+  "title": "Workflow Event Envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "event_id", "event_name", "schema_version", "occurred_at",
+    "workflow_id", "workflow_sequence", "correlation_id", "trace_id",
+    "actor_assumption", "payload"
+  ],
+  "properties": {
+    "event_id": {"type": "string", "format": "uuid"},
+    "event_name": {"type": "string", "minLength": 1},
+    "schema_version": {"type": "integer", "minimum": 1},
+    "occurred_at": {"type": "string", "format": "date-time"},
+    "workflow_id": {"type": "string", "format": "uuid"},
+    "workflow_sequence": {"type": "integer", "minimum": 1},
+    "operation_id": {"type": ["string", "null"], "format": "uuid"},
+    "intent_revision": {"type": ["integer", "null"], "minimum": 1},
+    "correlation_id": {"type": "string", "format": "uuid"},
+    "causation_id": {"type": ["string", "null"], "format": "uuid"},
+    "trace_id": {"type": "string", "minLength": 1},
+    "actor_assumption": {"type": "string", "minLength": 1},
+    "experiment_run_id": {"type": ["string", "null"], "format": "uuid"},
+    "payload": {"type": "object"}
+  }
+}
+

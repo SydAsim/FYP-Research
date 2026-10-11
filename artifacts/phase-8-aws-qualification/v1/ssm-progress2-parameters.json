@@ -1,0 +1,5 @@
+{
+  "commands": [
+    "set -eu\nsystemctl show fyp-p82-qualification.service -p ActiveState -p Result -p ExecMainStatus\nfind /srv/fyp-p82/native-original/executions -name 'checkpoint.json' -exec python3.12 -c 'import json,sys; x=json.load(open(sys.argv[1])); print(json.dumps({k:x.get(k) for k in [\"execution_id\",\"status\",\"failure\",\"driver_finished_at\",\"original_deadline\",\"missing_final_anchor\"]})); print(\"polls\",len(x.get(\"polls\",[])))' {} \\;\ncat /srv/fyp-p82/safe-parent-stop.json\n"
+  ]
+}

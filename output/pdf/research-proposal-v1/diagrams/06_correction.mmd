@@ -1,0 +1,18 @@
+sequenceDiagram
+ participant C as Caller
+ participant A as Controller / PG
+ participant W as Durable work
+ participant P as Provider
+ C->>A: Request 4 PM
+ A->>A: Accept revision 2, invalidate old claims
+ A->>W: Reconcile linked old operation
+ W->>P: Find original 3 PM effect
+ P-->>W: Effect and resource version
+ alt Atomic move supported
+ W->>P: Reschedule with expected version
+ else Compensation policy
+ W->>P: Cancel old, linked CREATE 4 PM
+ end
+ W->>A: Verify current 4 PM and forbidden effects
+ A->>A: Current receipt and permit
+ A-->>C: Permitted current confirmation path

@@ -1,0 +1,60 @@
+{
+  "status": "success",
+  "stdout": "",
+  "return_value": {
+    "Command": {
+      "CommandId": "443022cd-43a3-442f-98d0-08f532ae46a3",
+      "DocumentName": "AWS-RunShellScript",
+      "DocumentVersion": "$DEFAULT",
+      "Comment": "Resolve dependency catalog only; frozen source and study unchanged",
+      "ExpiresAfter": "2026-10-07T17:03:43.188000+00:00",
+      "Parameters": {
+        "commands": [
+          "#!/bin/bash\nset -euo pipefail\numask 077\ncd /opt/fyp-phase8-linux-v1\ncat >/var/lib/p8-deployment/python-download-catalog.json <<'CATALOG'\n{\"cpython-3.12.13-linux-x86_64-gnu\": {\"name\": \"cpython\", \"arch\": {\"family\": \"x86_64\", \"variant\": null}, \"os\": \"linux\", \"libc\": \"gnu\", \"major\": 3, \"minor\": 12, \"patch\": 13, \"prerelease\": \"\", \"url\": \"https://github.com/astral-sh/python-build-standalone/releases/download/20260807/cpython-3.12.13%2B20260807-x86_64-unknown-linux-gnu-install_only_stripped.tar.gz\", \"sha256\": \"506191be3ee7bd190a8834dcdc1b3bc70aab50608deccc711935aa007239cabd\", \"variant\": null, \"build\": \"20260807\"}}\nCATALOG\nUV_PYTHON_DOWNLOADS_JSON_URL=/var/lib/p8-deployment/python-download-catalog.json uv python install 3.12.13\nuv sync --locked --no-install-project --python 3.12.13\nuv venv --python 3.12.13 .venv-analysis\nuv pip install --python .venv-analysis/bin/python -r research/study/requirements.txt\nuv venv --python 3.12.13 .venv-transport\nuv pip install --python .venv-transport/bin/python -r artifacts/phase-8-review-freeze/v2/requirements.txt\n.venv/bin/python -B -m research.execution_linux_v1.portable\ndocker pull postgres:16.9@sha256:ddfe3e8713e3ee5b8f286082cb12512488dfbf3f5a1ecb0b74a42e6055af0a5f\ndocker tag postgres@sha256:ddfe3e8713e3ee5b8f286082cb12512488dfbf3f5a1ecb0b74a42e6055af0a5f postgres:16.9\ndocker pull redis:7.4.5-alpine@sha256:bb186d083732f669da90be8b0f975a37812b15e913465bb14d845db72a4e3e08\ndocker tag redis@sha256:bb186d083732f669da90be8b0f975a37812b15e913465bb14d845db72a4e3e08 redis:7.4.5-alpine\ndocker image inspect postgres:16.9 redis:7.4.5-alpine >/var/lib/p8-deployment/image-identities.json\n.venv/bin/python -B - <<'PY'\nimport hashlib,json,sys\nfrom pathlib import Path\nr=Path.cwd(); inv=json.loads((r/'artifacts/phase-8-review-freeze/v2/review-inventory.json').read_text())\nfor name,digest in inv['files'].items():\n    with (r/name).open('rb') as f: got=hashlib.file_digest(f,'sha256').hexdigest()\n    if got!=digest: raise ValueError('SOURCE_DRIFT: '+name)\nif sys.version_info[:3]!=(3,12,13): raise ValueError('PYTHON_VERSION_DRIFT')\nwith Path('/var/lib/p8-deployment/dependencies-ready.json').open('x') as f:\n    json.dump({'status':'PASS','source_files':len(inv['files']),'python':sys.version,'main_initialized':False},f)\nPY\n# Main initialization and campaign start are separate readiness-gated SSM actions.\nprintf '%s\\n' DEPENDENCIES_READY_MAIN_NOT_INITIALIZED\n"
+        ],
+        "executionTimeout": [
+          "1800"
+        ]
+      },
+      "InstanceIds": [
+        "i-0a6196aff6f8098ac"
+      ],
+      "Targets": [],
+      "RequestedDateTime": "2026-10-07T15:33:43.188000+00:00",
+      "Status": "Pending",
+      "StatusDetails": "Pending",
+      "OutputS3Region": "ap-southeast-2",
+      "OutputS3BucketName": "fyp-p82-20261005-018da1d6-803656589923",
+      "OutputS3KeyPrefix": "exports/phase8/p85-01a116f7-3b82-7a79-8653-3aee62dc99e9/deployment/bootstrap-attempt2",
+      "MaxConcurrency": "50",
+      "MaxErrors": "0",
+      "TargetCount": 1,
+      "CompletedCount": 0,
+      "ErrorCount": 0,
+      "DeliveryTimedOutCount": 0,
+      "ServiceRole": "",
+      "NotificationConfig": {
+        "NotificationArn": "",
+        "NotificationEvents": [],
+        "NotificationType": ""
+      },
+      "CloudWatchOutputConfig": {
+        "CloudWatchLogGroupName": "",
+        "CloudWatchOutputEnabled": false
+      },
+      "TimeoutSeconds": 3600,
+      "AlarmConfiguration": {
+        "IgnorePollAlarmFailure": false,
+        "Alarms": []
+      },
+      "TriggeredAlarms": []
+    }
+  },
+  "api_calls": [
+    {
+      "service": "ssm",
+      "operation": "SendCommand",
+      "status": "success"
+    }
+  ]
+}

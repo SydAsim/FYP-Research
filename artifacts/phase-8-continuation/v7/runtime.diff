@@ -1,0 +1,518 @@
+--- qualified-v6/artifacts/phase-8-runner-amendment/v4-complete/closed_restart.py
++++ candidate-v7/artifacts/phase-8-runner-amendment/v4-complete/closed_restart.py
+@@ -83,11 +83,13 @@
+     shutil.copytree(master, destination / "restart-history")
+     config = read(master / "run.json")
+     config.update(
+-        source="/opt/fyp-phase8-continuation-v6",
+-        manifest="/opt/fyp-phase8-continuation-v6/artifacts/phase-8-review-freeze/v2/review-inventory.json",
++        source="/opt/fyp-phase8-continuation-v7",
++        manifest="/opt/fyp-phase8-continuation-v7/artifacts/phase-8-review-freeze/v2/review-inventory.json",
++        backup="/var/lib/p8-continuation-v7/backup",
++        operational_limits_sha256="60d8dbb2b7f3f6a83bd442ac491316e9a9e17d45a039e4b59d9400821d377791",
+         continuation={
+             "manifest": "artifacts/phase-8-runner-amendment/v4-complete/candidate-inventory.json",
+-            "receipts": "/var/lib/fyp-owner/continuation-v6-receipts",
++            "receipts": "/var/lib/fyp-owner/continuation-v7-receipts",
+         },
+     )
+     # Original backup paths remain valid on the retained root; never restore SQL.
+@@ -100,7 +102,7 @@
+         },
+     )
+     record = {
+-        "version": "phase85-continuation-v6",
++        "version": "phase85-continuation-v7",
+         "backed_up": COUNT,
+         "planned": 1418,
+         "next_execution_id": NEXT,
+--- qualified-v6/artifacts/phase-8-runner-amendment/v4-complete/controls.py
++++ candidate-v7/artifacts/phase-8-runner-amendment/v4-complete/controls.py
+@@ -71,14 +71,14 @@
+     admission_cutoff_seconds: Literal[1800] = 1800
+     observation_seconds: Literal[600] = 600
+     budget_usd: Literal[65] = 65
+-    admission_committed_usd: Literal[55] = 55
++    admission_committed_usd: Literal[55, 60] = 55
+     volume_gib: Literal[160] = 160
+     stopped_retention_hours: Literal[48] = 48
+     admission_ram_bytes: int = Field(default=2 * 1024**3, ge=2 * 1024**3)
+     active_ram_bytes: int = Field(default=1024**3, ge=1024**3)
+     admission_disk_bytes: int = Field(default=20 * 1024**3, ge=20 * 1024**3)
+     active_disk_bytes: int = Field(default=10 * 1024**3, ge=10 * 1024**3)
+-    cloud_limit_bytes: Literal[32212254720] = 32212254720
++    cloud_limit_bytes: Literal[32212254720, 64424509440] = 32212254720
+     slot_capacity_reserve_bytes: Literal[1073741824] = 1073741824
+     cloud_bucket: str = Field(
+         default="fyp-p82-20261005-018da1d6-803656589923",
+@@ -101,6 +101,10 @@
+     @property
+     def stop_at(self) -> datetime:
+         return self.host_started_at + timedelta(hours=self.host_hours)
++
++    @property
++    def backup_archive_limit_bytes(self) -> int:
++        return 50 * 1024**3
+ 
+     def committed_cost(self, at: datetime) -> float:
+         hours = max(0.0, (at - self.host_started_at).total_seconds() / 3600)
+@@ -254,7 +258,10 @@
+         raise ValueError("HOST_360H_LIMIT")
+     if not active and at >= policy.stop_at - timedelta(seconds=policy.admission_cutoff_seconds):
+         raise ValueError("ADMISSION_CUTOFF")
+-    if not active and policy.committed_cost(at + timedelta(minutes=30)) >= 55:
++    if (
++        not active
++        and policy.committed_cost(at + timedelta(minutes=30)) >= policy.admission_committed_usd
++    ):
+         raise ValueError("ESTIMATED_COMMITTED_COST_STOP")
+     if cloud_bytes + extra_bytes >= policy.cloud_limit_bytes:
+         raise ValueError("CLOUD_30GIB_LIMIT")
+@@ -274,7 +281,8 @@
+         raise ValueError("WORKING_RESERVATION_STOP")
+     if (
+         not active
+-        and sample.get("backup_bytes", 0) + policy.slot_capacity_reserve_bytes > 50 * 1024**3
++        and sample.get("backup_bytes", 0) + policy.slot_capacity_reserve_bytes
++        > policy.backup_archive_limit_bytes
+     ):
+         raise ValueError("BACKUP_RESERVATION_STOP")
+ 
+--- qualified-v6/artifacts/phase-8-runner-amendment/v4-complete/handover.py
++++ candidate-v7/artifacts/phase-8-runner-amendment/v4-complete/handover.py
+@@ -13,6 +13,7 @@
+ from typing import Any, Literal
+ 
+ from controls import Authority, Journal, Policy, Strict, canonical, hash_file, read, utc, write_new
++from operational_limits import LIMITS_SHA256, effective_policy, verified_limits
+ from pydantic import Field
+ 
+ HERE = Path(__file__).resolve().parent
+@@ -120,7 +121,7 @@
+     config = read(root / "run.json")
+     inventory = read(Path(config["source"]) / config["continuation"]["manifest"])
+     value = {
+-        "version": "phase85-continuation-v6",
++        "version": "phase85-continuation-v7",
+         "execution_id": execution_id,
+         "run_id": RUN,
+         "parent_freeze_sha256": PARENT_FREEZE,
+@@ -140,6 +141,7 @@
+         "handover_sha256": hash_file(root / "handover.json"),
+         "boot_anchor_sha256": hash_file(root / "host-clock.json"),
+         "readiness_sha256": hash_file(root / "continuation-readiness.json"),
++        "operational_limits_sha256": LIMITS_SHA256,
+         "export_sha256": hash_file(folder / "executions" / execution_id / "export.json"),
+         "outcomes_rewritten": False,
+     }
+@@ -155,6 +157,9 @@
+ class ContinuationReceipt(Strict):
+     kind: Literal["CONTINUATION_ACCEPTED", "CONTINUATION_FREEZE", "CONTINUATION_LAUNCH"]
+     package_hash: str = Field(pattern=r"^[a-f0-9]{64}$")
++    operational_limits_sha256: Literal[
++        "60d8dbb2b7f3f6a83bd442ac491316e9a9e17d45a039e4b59d9400821d377791"
++    ]
+     predecessor_hash: str = Field(pattern=r"^[a-f0-9]{64}$")
+     policy_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+     identities_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+@@ -230,7 +235,10 @@
+             Path(config["receipts"]),
+             Path(config["key"]),
+         )
+-        self.policy = ContinuationPolicy.model_validate(config["policy"])
++        if config.get("operational_limits_sha256") != LIMITS_SHA256:
++            raise ValueError("CONTINUATION_LIMIT_BINDING_REQUIRED")
++        verified_limits()
++        self.policy = effective_policy(config["policy"])
+ 
+     def verify(self, at: datetime | None = None, *, prelaunch: bool = False) -> str:
+         at = at or utc()
+@@ -251,13 +259,22 @@
+         }
+         if scripts != {n for n in files if n.startswith(prefix) and n.endswith(".py")}:
+             raise ValueError("CONTINUATION_EXECUTABLE_CLOSURE_DRIFT")
+-        super().verify(at)
++        # Authenticate historical receipts against their exact original 55/30
++        # policy. Never re-sign or reinterpret their commitments as 60/60.
++        Authority(
++            self.source,
++            self.manifest,
++            original_policy(self.config["policy"]),
++            self.schedule_hash,
++            self.receipts,
++            self.key,
++        ).verify(at)
+         predecessor = hashlib.sha256(canonical(read(self.receipts / "LAUNCH.json"))).hexdigest()
+         launch = verify_chain(
+             Path(self.config["continuation"]["receipts"]),
+             self.key.read_bytes(),
+             package,
+-            self.policy,
++            original_policy(self.config["policy"]),
+             hash_file(self.root / "saved-identities.json"),
+             predecessor,
+             at,
+@@ -276,6 +293,7 @@
+             in ("i-0a6196aff6f8098ac", "i-034252c3e9b083abf", "i-002b63326e1566005")
+             or ready["run_id"] != RUN
+             or ready["policy_sha256"] != launch.policy_sha256
++            or ready.get("operational_limits_sha256") != LIMITS_SHA256
+             or (ready["handover_sha256"] != hash_file(self.root / "handover.json"))
+             or any(ready["checks"].get(k) is not True for k in CHECKS)
+         ):
+--- qualified-v6/artifacts/phase-8-runner-amendment/v4-complete/operational-limit-proposal.json
++++ candidate-v7/artifacts/phase-8-runner-amendment/v4-complete/operational-limit-proposal.json
+@@ -0,0 +1,17 @@
++{
++  "kind": "PROPOSED_OPERATIONAL_LIMIT_AMENDMENT_NOT_AUTHORIZATION",
++  "version": "phase85-continuation-v7",
++  "qualified_v6_package_hash": "3807d690ad46abdd07da12710ea933e03e3d86fb4440f5933b186db74de76a34",
++  "run_id": "p85-01a116f7-3b82-7a79-8653-3aee62dc99e9",
++  "original_deadline": "2026-10-22T15:24:23.810674Z",
++  "admission_committed_usd": 60,
++  "budget_usd": 65,
++  "cloud_limit_bytes": 64424509440,
++  "backup_archive_limit_bytes": 64424509440,
++  "working_limit_bytes": 53687091200,
++  "slot_reservation_bytes": 1073741824,
++  "volume_gib": 160,
++  "retention": "Only future v7 redundant attempt staging may be removed after local immutable archive/member and pinned S3 verification, BACKED_UP commit and owned-path verification. All 82 originals, raw execution traces, grades, archives, receipts and S3 versions are retained.",
++  "no_automatic_increases": true,
++  "original_policy_and_receipts_unchanged": true
++}
+--- qualified-v6/artifacts/phase-8-runner-amendment/v4-complete/operational_limits.py
++++ candidate-v7/artifacts/phase-8-runner-amendment/v4-complete/operational_limits.py
+@@ -0,0 +1,62 @@
++"""Explicit, signed continuation-only operational policy; original study policy stays intact."""
++
++from __future__ import annotations
++
++from datetime import datetime
++from pathlib import Path
++from typing import Any, Literal
++
++from controls import Policy, Strict, hash_file, read
++
++HERE = Path(__file__).resolve().parent
++LIMITS_SHA256 = "60d8dbb2b7f3f6a83bd442ac491316e9a9e17d45a039e4b59d9400821d377791"
++BASE_V6_PACKAGE = "3807d690ad46abdd07da12710ea933e03e3d86fb4440f5933b186db74de76a34"
++
++
++class OperationalLimits(Strict):
++    kind: Literal["PROPOSED_OPERATIONAL_LIMIT_AMENDMENT_NOT_AUTHORIZATION"]
++    version: Literal["phase85-continuation-v7"]
++    qualified_v6_package_hash: Literal[
++        "3807d690ad46abdd07da12710ea933e03e3d86fb4440f5933b186db74de76a34"
++    ]
++    run_id: Literal["p85-01a116f7-3b82-7a79-8653-3aee62dc99e9"]
++    original_deadline: Literal["2026-10-22T15:24:23.810674Z"]
++    admission_committed_usd: Literal[60]
++    budget_usd: Literal[65]
++    cloud_limit_bytes: Literal[64424509440]
++    backup_archive_limit_bytes: Literal[64424509440]
++    working_limit_bytes: Literal[53687091200]
++    slot_reservation_bytes: Literal[1073741824]
++    volume_gib: Literal[160]
++    retention: str
++    no_automatic_increases: Literal[True]
++    original_policy_and_receipts_unchanged: Literal[True]
++
++
++def verified_limits() -> OperationalLimits:
++    path = HERE / "operational-limit-proposal.json"
++    if hash_file(path) != LIMITS_SHA256:
++        raise ValueError("OPERATIONAL_LIMIT_AMENDMENT_DRIFT")
++    return OperationalLimits.model_validate(read(path))
++
++
++class EffectiveContinuationPolicy(Policy):
++    @property
++    def backup_archive_limit_bytes(self) -> int:
++        return verified_limits().backup_archive_limit_bytes
++
++    def committed_cost(self, at: datetime) -> float:
++        # Original elapsed clock, compute/disk/request reservations unchanged.
++        # Base historic policy reserves 30GiB; explicitly reserve the full 60GiB.
++        return super().committed_cost(at) + 30 * self.s3_usd_gib_month + 1.25
++
++
++def effective_policy(original: dict[str, Any]) -> EffectiveContinuationPolicy:
++    limits = verified_limits()
++    return EffectiveContinuationPolicy.model_validate(
++        {
++            **original,
++            "admission_committed_usd": limits.admission_committed_usd,
++            "cloud_limit_bytes": limits.cloud_limit_bytes,
++        }
++    )
+--- qualified-v6/artifacts/phase-8-runner-amendment/v4-complete/runner.py
++++ candidate-v7/artifacts/phase-8-runner-amendment/v4-complete/runner.py
+@@ -495,6 +495,8 @@
+ 
+ 
+ def run(root: Path, *, pause_after: int | None = None, checkpoint_once: bool = False) -> None:
++    from staging_retention import retain_archives_only
++
+     from research.execution_linux_v1.platform import runner_lock
+ 
+     authority = verify_run(root)
+@@ -517,6 +519,13 @@
+                     and not (root / "slots" / f"{closed['sequence']:04d}" / "retired.json").exists()
+                 ):
+                     retire(root, closed)
++                if (
++                    closed["state"] == "BACKED_UP"
++                    and not (
++                        root / "slots" / f"{closed['sequence']:04d}" / "staging-retained.json"
++                    ).exists()
++                ):
++                    retain_archives_only(journal, cloud, closed)
+             slot = journal.admit(authority, meter(root), utc(), cloud.inventory())
+             if slot is None:
+                 pending = root / "pending-final-backup.json"
+@@ -562,6 +571,7 @@
+                 write_new(pending, {"archive": str(archive), "sha256": hash_file(archive)})
+             complete_backup(journal, cloud, authority.policy, slot, archive)
+             retire(root, slot)
++            retain_archives_only(journal, cloud, slot)
+             completed += 1
+             print(f"VERIFIED BACKUP {slot['sequence']} / {len(journal.rows())}", flush=True)
+             if pause_after and completed >= pause_after:
+--- qualified-v6/artifacts/phase-8-runner-amendment/v4-complete/staging_retention.py
++++ candidate-v7/artifacts/phase-8-runner-amendment/v4-complete/staging_retention.py
+@@ -0,0 +1,105 @@
++"""Remove only redundant future backup staging after two verified evidence copies."""
++
++from __future__ import annotations
++
++import hashlib
++import json
++import shutil
++import tarfile
++from pathlib import Path
++from typing import Any
++
++from controls import Journal, hash_file, read, write_new
++from storage import Cloud, ObjectProof, verify_local
++
++
++def remove_redundant_staging(archive: Path, digest: str, backup_root: Path, sequence: int) -> bool:
++    """Caller must first verify BACKED_UP, local proof and pinned cloud version."""
++    if sequence <= 82:
++        raise ValueError("HISTORICAL_STAGING_PROTECTED")
++    base = backup_root.resolve()
++    if archive.is_symlink() or archive.parent.is_symlink() or backup_root.is_symlink():
++        raise ValueError("STAGING_SYMLINK_REJECTED")
++    if archive.resolve().parent != base / f"{sequence:04d}":
++        raise ValueError("STAGING_OUTSIDE_OWNED_SEQUENCE")
++    if not archive.name.startswith("attempt-") or not archive.name.endswith(".tar.gz"):
++        raise ValueError("STAGING_ARCHIVE_NAME_REJECTED")
++    verify_local(archive, digest)
++    staging = archive.parent / archive.name.removesuffix(".tar.gz")
++    if not staging.exists():
++        return False  # Recovery after removal; verified archive remains.
++    if (
++        staging.is_symlink()
++        or not staging.is_dir()
++        or staging.resolve().parent != archive.resolve().parent
++    ):
++        raise ValueError("STAGING_PATH_REJECTED")
++    with tarfile.open(archive, "r:gz") as incoming:
++        stream = incoming.extractfile("slot/manifest.json")
++        if stream is None:
++            raise ValueError("STAGING_MANIFEST_MISSING")
++        archived_manifest = stream.read()
++    manifest = json.loads(archived_manifest)
++    expected = dict(manifest["files"])
++    expected["manifest.json"] = hashlib.sha256(archived_manifest).hexdigest()
++    observed: dict[str, str] = {}
++    for path in staging.rglob("*"):
++        if path.is_symlink():
++            raise ValueError("STAGING_SYMLINK_REJECTED")
++        if path.is_file():
++            observed[path.relative_to(staging).as_posix()] = hash_file(path)
++    if observed != expected:
++        raise ValueError("STAGING_CONTENT_NOT_REDUNDANT")
++    # Both the resolved target and its parent have been checked above. Only the
++    # redundant folder is removed; archive, receipt and original slot stay.
++    shutil.rmtree(staging)
++    return True
++
++
++def retain_archives_only(journal: Journal, cloud: Cloud, slot: dict[str, Any]) -> None:
++    config = read(journal.root / "run.json")
++    if "operational_limits_sha256" not in config:
++        return  # Historical/calibration policy is unchanged.
++    from operational_limits import LIMITS_SHA256, verified_limits
++
++    if config["operational_limits_sha256"] != LIMITS_SHA256:
++        raise ValueError("STAGING_POLICY_AUTHORITY_DRIFT")
++    verified_limits()
++    rows = [row for row in journal.rows() if row["execution_id"] == slot["execution_id"]]
++    if len(rows) != 1 or rows[0]["state"] != "BACKED_UP" or rows[0]["sequence"] <= 82:
++        raise ValueError("STAGING_CLOSED_FUTURE_SLOT_REQUIRED")
++    row = rows[0]
++    proof_path = journal.root / "backups" / f"{row['execution_id']}.json"
++    if hash_file(proof_path) != row["backup_hash"]:
++        raise ValueError("STAGING_BACKUP_PROOF_DRIFT")
++    proof = read(proof_path)
++    if proof["execution_id"] != row["execution_id"]:
++        raise ValueError("STAGING_BACKUP_IDENTITY_DRIFT")
++    archive = Path(proof["local"])
++    cloud_proof = ObjectProof.model_validate(proof["cloud"])
++    if cloud_proof.sha256 != proof["sha256"] or cloud_proof.bytes != archive.stat().st_size:
++        raise ValueError("STAGING_COPY_PROOF_DRIFT")
++    cloud.verify(cloud_proof)  # Pinned version and full SHA checksum; unavailable => stop.
++    marker = journal.root / "slots" / f"{row['sequence']:04d}" / "staging-retained.json"
++    record = {
++        "execution_id": row["execution_id"],
++        "archive": str(archive),
++        "sha256": proof["sha256"],
++        "cloud": cloud_proof.model_dump(),
++        "operational_limits_sha256": LIMITS_SHA256,
++    }
++    if marker.exists():
++        if read(marker) != record:
++            raise ValueError("STAGING_RETENTION_RECORD_DRIFT")
++        return
++    journal.event("VERIFIED_REDUNDANT_STAGING_REMOVAL_INTENT", **record)
++    removed = remove_redundant_staging(
++        archive, proof["sha256"], Path(config["backup"]), row["sequence"]
++    )
++    write_new(marker, record)
++    journal.event(
++        "VERIFIED_ARCHIVE_RETENTION_COMPLETE",
++        execution_id=row["execution_id"],
++        redundant_staging_removed=removed,
++        archive=str(archive),
++    )
+--- qualified-v6/artifacts/phase-8-runner-amendment/v4-complete/test_operational_limits.py
++++ candidate-v7/artifacts/phase-8-runner-amendment/v4-complete/test_operational_limits.py
+@@ -0,0 +1,127 @@
++"""Eight new-only offline controls; no research driver or application stack."""
++
++from __future__ import annotations
++
++import json
++import tarfile
++import tempfile
++import unittest
++from datetime import timedelta
++from pathlib import Path
++
++from controls import Policy, guard, hash_file, read
++from operational_limits import effective_policy, verified_limits
++from staging_retention import remove_redundant_staging
++
++HERE = Path(__file__).parent
++GIB = 1024**3
++
++
++class LimitControls(unittest.TestCase):
++    def original(self) -> Policy:
++        return Policy.model_validate(read(HERE / "original-launch-policy.json"))
++
++    def bundle(self, root: Path) -> tuple[Path, str]:
++        folder = root / "0083" / "attempt-cal-only"
++        folder.mkdir(parents=True)
++        (folder / "trace.json").write_text('{"calibration_only":true}')
++        (folder / "manifest.json").write_text(
++            json.dumps({"files": {"trace.json": hash_file(folder / "trace.json")}})
++        )
++        archive = folder.parent / (folder.name + ".tar.gz")
++        with tarfile.open(archive, "x:gz") as output:
++            output.add(folder, arcname="slot")
++        return archive, hash_file(archive)
++
++    def test_01_historical_policy(self) -> None:
++        p = self.original()
++        self.assertEqual(p.admission_committed_usd, 55)
++        self.assertEqual(p.cloud_limit_bytes, 30 * GIB)
++        self.assertEqual(p.backup_archive_limit_bytes, 50 * GIB)
++        self.assertEqual(p.model_dump(mode="json"), read(HERE / "original-launch-policy.json"))
++
++    def test_02_effective_policy(self) -> None:
++        limits = verified_limits()
++        p = effective_policy(read(HERE / "original-launch-policy.json"))
++        self.assertEqual(
++            (p.admission_committed_usd, p.cloud_limit_bytes, p.backup_archive_limit_bytes),
++            (60, 60 * GIB, 60 * GIB),
++        )
++        self.assertEqual(p.budget_usd, 65)
++        self.assertEqual(p.stop_at, self.original().stop_at)
++        self.assertAlmostEqual(
++            p.committed_cost(p.host_started_at) - self.original().committed_cost(p.host_started_at),
++            2.0,
++        )
++        self.assertEqual(
++            limits.qualified_v6_package_hash,
++            "3807d690ad46abdd07da12710ea933e03e3d86fb4440f5933b186db74de76a34",
++        )
++
++    def test_03_thresholds(self) -> None:
++        p = effective_policy(read(HERE / "original-launch-policy.json"))
++        sample = {
++            "available_memory_bytes": 8 * GIB,
++            "system_free_bytes": 100 * GIB,
++            "output_free_bytes": 100 * GIB,
++            "backup_free_bytes": 100 * GIB,
++            "working_bytes": 0,
++            "backup_bytes": 59 * GIB,
++        }
++        at = p.host_started_at + timedelta(hours=300)
++        guard(p, sample, at, 59 * GIB)
++        with self.assertRaisesRegex(ValueError, "CLOUD_30GIB_LIMIT"):
++            guard(p, sample, at, 60 * GIB)
++        with self.assertRaisesRegex(ValueError, "BACKUP_RESERVATION_STOP"):
++            guard(p, {**sample, "backup_bytes": 59 * GIB + 1}, at, 59 * GIB)
++        with self.assertRaisesRegex(ValueError, "ESTIMATED_COMMITTED_COST_STOP"):
++            guard(p, sample, p.host_started_at + timedelta(hours=354), 0)
++
++    def test_04_verified_redundancy(self) -> None:
++        with tempfile.TemporaryDirectory(prefix="cal-v7-retention-") as temp:
++            base = Path(temp)
++            archive, digest = self.bundle(base)
++            self.assertTrue(remove_redundant_staging(archive, digest, base, 83))
++            self.assertEqual(hash_file(archive), digest)
++            self.assertFalse((archive.parent / "attempt-cal-only").exists())
++            self.assertFalse(remove_redundant_staging(archive, digest, base, 83))
++
++    def test_05_missing_archive(self) -> None:
++        with tempfile.TemporaryDirectory(prefix="cal-v7-missing-") as temp:
++            base = Path(temp)
++            archive, digest = self.bundle(base)
++            archive.rename(archive.with_suffix(".retained"))
++            with self.assertRaises(FileNotFoundError):
++                remove_redundant_staging(archive, digest, base, 83)
++            self.assertTrue((archive.parent / "attempt-cal-only" / "trace.json").exists())
++
++    def test_06_corruption(self) -> None:
++        with tempfile.TemporaryDirectory(prefix="cal-v7-corrupt-") as temp:
++            base = Path(temp)
++            archive, digest = self.bundle(base)
++            with self.assertRaisesRegex(ValueError, "LOCAL_ARCHIVE_DRIFT"):
++                remove_redundant_staging(archive, "0" * 64, base, 83)
++            (archive.parent / "attempt-cal-only" / "trace.json").write_text("unexpected")
++            with self.assertRaisesRegex(ValueError, "STAGING_CONTENT_NOT_REDUNDANT"):
++                remove_redundant_staging(archive, digest, base, 83)
++            self.assertTrue(archive.exists())
++
++    def test_07_outside_directory(self) -> None:
++        with tempfile.TemporaryDirectory(prefix="cal-v7-outside-") as temp:
++            base = Path(temp)
++            archive, digest = self.bundle(base)
++            with self.assertRaisesRegex(ValueError, "STAGING_OUTSIDE_OWNED_SEQUENCE"):
++                remove_redundant_staging(archive, digest, base / "another", 83)
++            self.assertTrue((archive.parent / "attempt-cal-only").exists())
++
++    def test_08_historical_exclusion(self) -> None:
++        with tempfile.TemporaryDirectory(prefix="cal-v7-history-") as temp:
++            base = Path(temp)
++            archive, digest = self.bundle(base)
++            with self.assertRaisesRegex(ValueError, "HISTORICAL_STAGING_PROTECTED"):
++                remove_redundant_staging(archive, digest, base, 82)
++            self.assertTrue((archive.parent / "attempt-cal-only").exists())
++
++
++if __name__ == "__main__":
++    unittest.main(verbosity=2)

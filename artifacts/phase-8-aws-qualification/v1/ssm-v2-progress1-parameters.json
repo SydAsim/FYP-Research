@@ -1,0 +1,5 @@
+{
+  "commands": [
+    "systemctl show fyp-p82-qualification-v2.service fyp-p82-finish-v2.service -p ActiveState -p Result\nfind /srv/fyp-p82-v2/native-original/executions -name 'checkpoint.json' -exec python3.12 -c 'import json,sys; x=json.load(open(sys.argv[1])); print(json.dumps({k:x.get(k) for k in [\"execution_id\",\"status\",\"failure\",\"driver_finished_at\",\"original_deadline\",\"missing_final_anchor\",\"attempt_label\",\"original_id\"]})); print(\"polls\",len(x.get(\"polls\",[])))' {} \\;\nfind /srv/fyp-p82-v2 -maxdepth 1 -name '*failure.json' -exec cat {} \\;\n"
+  ]
+}
