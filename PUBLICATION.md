@@ -21,3 +21,7 @@ README.md receives a publication-status preface; .gitignore receives public-repo
 ## Secrets check
 
 The publication preparation performed a filename and pattern scan for local environment files, private keys, AWS/GitHub credentials, signed S3 URLs and credential values. This is a precaution, not a mathematical guarantee. Do not commit future credentials, live databases or private backup archives.
+
+## Results shared on 12 October 2026
+
+`artifacts/phase-8-results-share/v1/` adds the 145-row XLSX/CSV and a small, verified ZIP of derived results and provenance. There are 39 locally verified saved grades; 106 outcomes remain explicitly unavailable locally. This ZIP is an intentional exception to the archive exclusion for large private experiment/deployment backups. No results were rerun or regraded.
