@@ -1,0 +1,13 @@
+--- accepted/runner.py
++++ v10/runner.py
+@@ -636,8 +636,8 @@
+         "[Service]\nType=oneshot\nExecStart=/sbin/shutdown -h now\n"
+     )
+     timer = (
+-        "[Unit]\nDescription=FYP 360-hour absolute host limit\n[Timer]\n"
+-        f"OnCalendar={deadline}\nOnBootSec=360h\nPersistent=true\nAccuracySec=1s\n"
++        f"[Unit]\nDescription=FYP {policy.host_hours}-hour absolute host limit\n[Timer]\n"
++        f"OnCalendar={deadline}\nOnBootSec={policy.host_hours}h\nPersistent=true\nAccuracySec=1s\n"
+         "Unit=fyp-phase8-hardstop.service\n[Install]\nWantedBy=timers.target\n"
+     )
+     return service, timer

@@ -1,0 +1,55 @@
+{
+  "exit": 0,
+  "stderr": "",
+  "result": {
+    "Command": {
+      "CommandId": "98336362-355d-4226-8eb8-4cd926f71be2",
+      "DocumentName": "AWS-RunShellScript",
+      "DocumentVersion": "$DEFAULT",
+      "Comment": "Read-only v12 progress; no campaign mutations",
+      "ExpiresAfter": "2026-10-24T17:05:36.369000+05:00",
+      "Parameters": {
+        "commands": [
+          "export PYTHONDONTWRITEBYTECODE=1\n/opt/fyp-phase8-continuation-v12/.venv/bin/python -B - <<'PROGRESS'\n\nimport json,subprocess,sys\nfrom datetime import UTC,datetime\nfrom pathlib import Path\nsys.path.insert(0,'/opt/fyp-phase8-continuation-v12/artifacts/phase-8-runner-amendment/v4-complete')\nfrom closed145 import snapshot\nroot=Path('/var/lib/p8-continuation-v9/run');rows,notices=snapshot(root/'campaign.sqlite3')\ncounts={s:sum(x['state']==s for x in rows) for s in sorted({x['state'] for x in rows})}\nactive=[x for x in rows if x['state'] not in ('PLANNED','BACKED_UP')]\npending=next((x for x in rows if x['state']=='PLANNED'),None)\nunits=subprocess.run(['systemctl','show','fyp-phase8-campaign.service','fyp-phase8-watchdog.service','--property=Id,MainPID,ActiveState,SubState,Result'],capture_output=True,text=True,check=True,timeout=10).stdout\ncheckpoints=[]\nfor row in active:\n    p=root/'slots'/f\"{row['sequence']:04d}\"/'executions'/row['execution_id']/'checkpoint.json'\n    if p.is_file():\n        data=json.loads(p.read_bytes())\n        small={k:data.get(k) for k in ('status','started_at','driver_finished_at','original_deadline','missing_final_anchor','checkpointed_at')}\n        failure=data.get('failure') or {}\n        small['failure']={'type':failure.get('type'),'detail':str(failure.get('detail',''))[:400]} if failure else None\n        checkpoints.append({'execution_id':row['execution_id'],'data':small})\nprint(json.dumps({'at':datetime.now(UTC).isoformat(),'run_id':'p85-01a116f7-3b82-7a79-8653-3aee62dc99e9','counts':counts,'active':active,'next_planned':pending,'pause':json.loads((root/'pause.json').read_bytes()) if (root/'pause.json').exists() else None,'units':units,'last_notices':notices[-4:],'checkpoints':checkpoints,'source':json.loads((root/'run.json').read_bytes())['source'],'stop_at':'2026-10-26T12:00:00Z','records_read_only':True}))\n\nPROGRESS\n"
+        ],
+        "executionTimeout": [
+          "45"
+        ]
+      },
+      "InstanceIds": [
+        "i-057344e5372faf62f"
+      ],
+      "Targets": [],
+      "RequestedDateTime": "2026-10-24T17:03:51.369000+05:00",
+      "Status": "Pending",
+      "StatusDetails": "Pending",
+      "OutputS3Region": "ap-southeast-2",
+      "OutputS3BucketName": "",
+      "OutputS3KeyPrefix": "",
+      "MaxConcurrency": "50",
+      "MaxErrors": "0",
+      "TargetCount": 1,
+      "CompletedCount": 0,
+      "ErrorCount": 0,
+      "DeliveryTimedOutCount": 0,
+      "ServiceRole": "",
+      "NotificationConfig": {
+        "NotificationArn": "",
+        "NotificationEvents": [],
+        "NotificationType": ""
+      },
+      "CloudWatchOutputConfig": {
+        "CloudWatchLogGroupName": "",
+        "CloudWatchOutputEnabled": false
+      },
+      "TimeoutSeconds": 60,
+      "AlarmConfiguration": {
+        "IgnorePollAlarmFailure": false,
+        "Alarms": []
+      },
+      "TriggeredAlarms": []
+    }
+  },
+  "seconds": 5.672000000020489,
+  "at": "2026-10-24T12:03:50.916546+00:00"
+}

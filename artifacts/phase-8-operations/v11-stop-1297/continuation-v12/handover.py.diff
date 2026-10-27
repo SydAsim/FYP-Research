@@ -1,0 +1,70 @@
+--- frozen-v11/artifacts/phase-8-runner-amendment/v4-complete/handover.py
++++ v12/artifacts/phase-8-runner-amendment/v4-complete/handover.py
+@@ -76,7 +76,7 @@
+ 
+ 
+ def closed_boundary(rows: list[dict[str, Any]], saved: list[dict[str, Any]]) -> None:
+-    from closed616 import REL, check_rows
++    from closed1297 import REL, check_rows
+ 
+     if any(
+         any(a[k] != b[k] for k in ("sequence", "case_id", "arm", "attempt", "fixture_hash"))
+@@ -112,6 +112,8 @@
+     from closed616 import verify as verify616
+ 
+     verify616(root)
++    from closed1297 import verify as verify1297
++    verify1297(root)
+     from closed_restart import verify as verify_closed82
+ 
+     verify_closed82(root)
+@@ -126,7 +128,7 @@
+     config = read(root / "run.json")
+     inventory = read(Path(config["source"]) / config["continuation"]["manifest"])
+     value = {
+-        "version": "phase85-continuation-v11",
++        "version": "phase85-continuation-v12",
+         "execution_id": execution_id,
+         "run_id": RUN,
+         "parent_freeze_sha256": PARENT_FREEZE,
+@@ -164,7 +166,7 @@
+     kind: Literal["CONTINUATION_ACCEPTED", "CONTINUATION_FREEZE", "CONTINUATION_LAUNCH"]
+     package_hash: str = Field(pattern=r"^[a-f0-9]{64}$")
+     operational_limits_sha256: Literal[
+-        "566556298a1135ed4f60cd78770415e74705a08a1dbff25398183ce863007869"
++        "68421df365be6cd8696c137e7b5f32c27634b87085315086ee3b1841c2841769"
+     ]
+     predecessor_hash: str = Field(pattern=r"^[a-f0-9]{64}$")
+     policy_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+@@ -177,7 +179,7 @@
+         "bd4d32f4968eaff243d65d9cfe8fad36c603cd709c09ee7fdebd29746e90da42"
+     ]
+     immediate_parent_freeze_sha256: Literal[
+-        "b886fff14d4e8384c406deb68a875bc21a9c53e2bac5a17787d800fc1d2d192f"
++        "1de01eb9ce2a8ebfa9b8a2591bbf84f62abf031d7dadf32bfaffa3254164095a"
+     ]
+     expires_at: datetime
+     signer: str
+@@ -327,7 +329,7 @@
+     if at < authority.policy.host_started_at or at >= authority.policy.stop_at:
+         raise ValueError("ORIGINAL_DEADLINE_EXPIRED_OR_CLOCK_ROLLBACK")
+     path = root / "host-clock.json"
+-    path.rename(root / "retained-host-clock-before-v11.json")
++    path.rename(root / "retained-host-clock-before-v12.json")
+     write_new(path, anchor_record(reading, boot))
+     journal = Journal(root)
+     journal.event("HOST_CLOCK_SEALED", hash=hash_file(path), measurement=read(path))
+@@ -362,11 +364,11 @@
+     closed_boundary(rows, saved)
+     if (
+         hash_file(root / "pause.json")
+-        != "b2cddd1475c8b1dd2e471b7bc2cde283dfb4ef23a928a12a56be06086d8840fc"
++        != "7cf255c9359c9c88951eac98eade347adad2831ad1fd522ea1eab33e1c616ab8"
+     ):
+         raise ValueError("ONLY_REVIEWED_IMPORT_PAUSE_CAN_BE_RELEASED")
+     pause = root / "pause.json"
+-    pause.rename(root / "retained-driver616-pause-v11.json")
++    pause.rename(root / "retained-protocol1297-pause-v12.json")
+     journal.event(
+         "CONTINUATION_REVIEW_RELEASED", proof=proof, first=FIRST, operational_clock_reset=False
+     )

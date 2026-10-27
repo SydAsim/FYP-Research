@@ -1,0 +1,23 @@
+--- accepted/closed145.py
++++ v10/closed145.py
+@@ -102,3 +102,20 @@
+         "exports": exports, "driver_calls": 0, "outcome_writes": 0,
+         "ledger_restore": False, "pause_clear": False,
+     }
++
++
++def verify_history(root: Path) -> None:
++    closed = HERE / "closed-145"
++    saved = read(closed / "read-only-ledger.json")["rows"]
++    rows, notices = snapshot(root / "campaign.sqlite3")
++    keys = ("sequence", "case_id", "arm", "attempt", "execution_id", "fixture_hash")
++    if len(rows) != 1500 or rows[:145] != saved[:145] or any(
++        any(a[k] != b[k] for k in keys) for a, b in zip(rows, saved, strict=True)
++    ):
++        raise ValueError("PRESERVED145_IDENTITY_OR_OUTCOME_DRIFT")
++    historical = read(closed / "historical-notices.json")["notices"]
++    if notices[:len(historical)] != historical:
++        raise ValueError("PRESERVED145_NOTICE_DRIFT")
++    for row in saved[:145]:
++        if digest(root / "backups" / (row["execution_id"] + ".json")) != row["backup_hash"]:
++            raise ValueError("PRESERVED145_BACKUP_DRIFT")

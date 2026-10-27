@@ -1,0 +1,1696 @@
+E501 Line too long (102 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\collector.py:151:101
+    |
+149 |                 self.row["original_deadline"] = deadline
+150 |             self.save()
+151 |         result = super().request(base, method, path, body, allow_failure=allow_failure, oracle=oracle)
+    |                                                                                                     ^^
+152 |         if allow_failure:
+153 |             from response_guard import evaluate, retain
+    |
+
+E501 Line too long (116 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\collector.py:157:101
+    |
+155 |             import research.study_v4.calibration as v4
+156 |             proof = evaluate(self.row, self.row['http'][-1], scenario=self.scenario,
+157 |                              item=self.item, services={'api': v4.API, 'voice': v4.VOICE, 'simulator': v4.SIMULATOR})
+    |                                                                                                     ^^^^^^^^^^^^^^^^
+158 |             retain(self, proof)
+159 |         return result
+    |
+
+E501 Line too long (161 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\handover.py:80:101
+   |
+78 | …
+79 | …xecution identity.
+80 | …uence", "case_id", "arm", "attempt", "fixture_hash")) for a, b in zip(rows, saved, strict=True)):
+   |                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+81 | …
+82 | …
+   |
+
+E501 Line too long (101 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\handover.py:151:101
+    |
+149 |     ]
+150 |     first_export_sha256: Literal["283001dc1a5904f3e8b4de893ef658d2e7fe8053b8e98ed7baad6f242d318d8b"]
+151 |     second_export_sha256: Literal["bd4d32f4968eaff243d65d9cfe8fad36c603cd709c09ee7fdebd29746e90da42"]
+    |                                                                                                     ^
+152 |     immediate_parent_freeze_sha256: Literal["4b921d416b9111594531ca33f26b1b307e04b22241ef995b6e571ce96a21f3e7"]
+153 |     expires_at: datetime
+    |
+
+E501 Line too long (111 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\handover.py:152:101
+    |
+150 |     first_export_sha256: Literal["283001dc1a5904f3e8b4de893ef658d2e7fe8053b8e98ed7baad6f242d318d8b"]
+151 |     second_export_sha256: Literal["bd4d32f4968eaff243d65d9cfe8fad36c603cd709c09ee7fdebd29746e90da42"]
+152 |     immediate_parent_freeze_sha256: Literal["4b921d416b9111594531ca33f26b1b307e04b22241ef995b6e571ce96a21f3e7"]
+    |                                                                                                     ^^^^^^^^^^^
+153 |     expires_at: datetime
+154 |     signer: str
+    |
+
+E501 Line too long (115 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\handover.py:333:101
+    |
+331 |     args = parser.parse_args()
+332 |     if args.action == "stage":
+333 |         if any(p is None for p in (args.master, args.first, args.second, args.first_archive, args.second_archive)):
+    |                                                                                                     ^^^^^^^^^^^^^^^
+334 |             parser.error("stage requires retained master and first-slot directories")
+335 |         stage(args.master.resolve(), args.first.resolve(), args.root.resolve(), second=args.second.resolve(), first_archive=args.firs…
+    |
+
+E501 Line too long (199 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\handover.py:335:101
+    |
+333 | …archive, args.second_archive)):
+334 | …)
+335 | …nd=args.second.resolve(), first_archive=args.first_archive.resolve(), second_archive=args.second_archive.resolve())
+    |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+336 | …
+337 | …
+    |
+
+E501 Line too long (107 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\imported_analysis.py:18:101
+   |
+16 | def imported_row(root: Path, execution_id: str) -> tuple[AnalysisRow, dict[str, Any]]:
+17 |     verify_imported_first(root)
+18 |     proof = next(p for p in read(root / 'handover.json')['originals'] if p['execution_id'] == execution_id)
+   |                                                                                                     ^^^^^^^
+19 |     from handover import FIRST
+20 |     label = 'first' if execution_id == FIRST else 'second'
+   |
+
+E501 Line too long (102 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\imported_analysis.py:24:101
+   |
+22 |     side_path = root / 'historical/timing-sidecars' / (label + '-original-proposed-sidecar.json')
+23 |     side, trace = read(side_path), read(export)
+24 |     if hash_file(export) != proof['export_sha256'] or hash_file(side_path) != proof['sidecar_sha256']:
+   |                                                                                                     ^^
+25 |         raise ValueError('ORIGINAL_ANALYSIS_HASH_DRIFT')
+26 |     if trace['analysis_row'] != side['original_stored_analysis'] or trace['revised_grade'] != side['original_stored_grades']['revised_…
+   |
+
+E501 Line too long (142 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\imported_analysis.py:26:101
+   |
+24 | …ash_file(side_path) != proof['sidecar_sha256']:
+25 | …)
+26 | …nalysis'] or trace['revised_grade'] != side['original_stored_grades']['revised_grade']:
+   |                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+27 | …
+28 | …# memory only; raw FAILED never rewritten
+   |
+
+E501 Line too long (103 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\imported_analysis.py:29:101
+   |
+27 |         raise ValueError('ORIGINAL_GRADES_DRIFT')
+28 |     trace['driver_classification'] = recognize(trace)  # memory only; raw FAILED never rewritten
+29 |     if trace['driver_classification'] != side['proposed_classification'] or not timing_eligible(trace):
+   |                                                                                                     ^^^
+30 |         raise ValueError('ORIGINAL_SIDECAR_PROOF_DRIFT')
+31 |     case, evidence = evidence_for(trace)
+   |
+
+E501 Line too long (104 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\imported_analysis.py:36:101
+   |
+34 |     if grade != side['proposed_grade'] or row.model_dump(mode='json') != side['proposed_analysis']:
+35 |         raise ValueError('ORIGINAL_SIDECAR_ORACLE_DRIFT')
+36 |     return row, {'execution_id': execution_id, 'raw_status': 'FAILED', 'export_hash': hash_file(export),
+   |                                                                                                     ^^^^
+37 |                  'sidecar_sha256': hash_file(side_path), 'original_analysis_row': side['original_stored_analysis'],
+38 |                  'replacement_or_driver_replay': False, 'status': 'ORIGINAL_PLUS_REVIEW_TIMING_SIDECAR'}
+   |
+
+E501 Line too long (115 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\imported_analysis.py:37:101
+   |
+35 |         raise ValueError('ORIGINAL_SIDECAR_ORACLE_DRIFT')
+36 |     return row, {'execution_id': execution_id, 'raw_status': 'FAILED', 'export_hash': hash_file(export),
+37 |                  'sidecar_sha256': hash_file(side_path), 'original_analysis_row': side['original_stored_analysis'],
+   |                                                                                                     ^^^^^^^^^^^^^^^
+38 |                  'replacement_or_driver_replay': False, 'status': 'ORIGINAL_PLUS_REVIEW_TIMING_SIDECAR'}
+   |
+
+E501 Line too long (104 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\imported_analysis.py:38:101
+   |
+36 |     return row, {'execution_id': execution_id, 'raw_status': 'FAILED', 'export_hash': hash_file(export),
+37 |                  'sidecar_sha256': hash_file(side_path), 'original_analysis_row': side['original_stored_analysis'],
+38 |                  'replacement_or_driver_replay': False, 'status': 'ORIGINAL_PLUS_REVIEW_TIMING_SIDECAR'}
+   |                                                                                                     ^^^^
+
+E501 Line too long (123 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\instrument.py:119:101
+    |
+117 |         )
+118 |     gaps = bool(trace.get("collection_errors"))
+119 |     expected_refusal = validate_classification(trace) if amended and not trace.get('permissive_response_errors') else False
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^
+120 |     # COMPLETED means observation of a research outcome is complete. It never
+121 |     # means business success or spoken completion; those endpoints remain oracle graded.
+    |
+
+E501 Line too long (141 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\integrate.py:19:101
+   |
+17 | …
+18 | …
+19 | …''def closed_boundary(rows: list[dict[str, Any]], saved: list[dict[str, Any]]) -> None:
+   |                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+20 | …
+21 | …s"]
+   |
+
+E501 Line too long (161 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\integrate.py:23:101
+   |
+21 | …
+22 | …xecution identity.
+23 | …uence", "case_id", "arm", "attempt", "fixture_hash")) for a, b in zip(rows, saved, strict=True)):
+   |                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+24 | …
+25 | …
+   |
+
+E501 Line too long (118 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\integrate.py:27:101
+   |
+25 |     boundary(rows, pinned)
+26 | ''')
+27 |     text = replace_function(text, 'stage', '''def stage(master: Path, first: Path, destination: Path, *, second: Path,
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^
+28 |           first_archive: Path, second_archive: Path) -> dict[str, Any]:
+29 |     from two_originals import stage as import_two
+   |
+
+E501 Line too long (108 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\integrate.py:32:101
+   |
+30 |     return import_two(master, first, second, first_archive, second_archive, destination)
+31 | ''')
+32 |     text = replace_function(text, 'verify_imported_first', '''def verify_imported_first(root: Path) -> None:
+   |                                                                                                     ^^^^^^^^
+33 |     """Compatibility entry point now verifies BOTH immutable originals."""
+34 |     from two_originals import verify
+   |
+
+E501 Line too long (157 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\integrate.py:37:101
+   |
+35 | …
+36 | …
+37 | …mbined-amendment-v3').replace('phase85-refusal-amendment-v1', 'phase85-preflight-amendment-v2')
+   |                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+38 | …ion/v1/"', 'prefix = "artifacts/phase-8-runner-amendment/v3/"')
+39 | …efusal.py"),', '"refusal_sha256": hash_file(HERE / "refusal.py"),\n        "response_guard_sha256": hash_file(HERE / "response_guard.…
+   |
+
+E501 Line too long (125 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\integrate.py:38:101
+   |
+36 | ''')
+37 |     text = text.replace('phase85-continuation-v1', 'phase85-combined-amendment-v3').replace('phase85-refusal-amendment-v1', 'phase85-p…
+38 |     text = text.replace('prefix = "artifacts/phase-8-continuation/v1/"', 'prefix = "artifacts/phase-8-runner-amendment/v3/"')
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+39 |     text = text.replace('"refusal_sha256": hash_file(HERE / "refusal.py"),', '"refusal_sha256": hash_file(HERE / "refusal.py"),\n     …
+40 |     text = text.replace('parser.add_argument("--first", type=Path)', '''parser.add_argument("--first", type=Path)
+   |
+
+E501 Line too long (273 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\integrate.py:39:101
+   |
+37 | …ase85-refusal-amendment-v1', 'phase85-preflight-amendment-v2')
+38 | …hase-8-runner-amendment/v3/"')
+39 | … hash_file(HERE / "refusal.py"),\n        "response_guard_sha256": hash_file(HERE / "response_guard.py"),\n        "two_originals_sha256": hash_file(HERE / "two_originals.py"),')
+   |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+40 | …first", type=Path)
+41 | …
+   |
+
+E501 Line too long (113 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\integrate.py:40:101
+   |
+38 |     text = text.replace('prefix = "artifacts/phase-8-continuation/v1/"', 'prefix = "artifacts/phase-8-runner-amendment/v3/"')
+39 |     text = text.replace('"refusal_sha256": hash_file(HERE / "refusal.py"),', '"refusal_sha256": hash_file(HERE / "refusal.py"),\n     …
+40 |     text = text.replace('parser.add_argument("--first", type=Path)', '''parser.add_argument("--first", type=Path)
+   |                                                                                                     ^^^^^^^^^^^^^
+41 |     parser.add_argument("--second", type=Path)
+42 |     parser.add_argument("--first-archive", type=Path)
+   |
+
+E501 Line too long (183 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\integrate.py:44:101
+   |
+42 | …
+43 | …
+44 | …f any(p is None for p in (args.master, args.first, args.second, args.first_archive, args.second_archive)):')
+   |                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+45 | … args.root.resolve())', 'stage(args.master.resolve(), args.first.resolve(), args.root.resolve(), second=args.second.resolve(), first_…
+46 | …
+   |
+
+E501 Line too long (293 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\integrate.py:45:101
+   |
+43 | …
+44 | …p in (args.master, args.first, args.second, args.first_archive, args.second_archive)):')
+45 | …)', 'stage(args.master.resolve(), args.first.resolve(), args.root.resolve(), second=args.second.resolve(), first_archive=args.first_archive.resolve(), second_archive=args.second_archive.resolve())')
+   |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+46 | …
+47 | …
+   |
+
+E501 Line too long (144 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\integrate.py:49:101
+   |
+47 | …andidate. Stage is metadata only.
+48 | …
+49 | … == FIRST', 'closed["execution_id"] in (FIRST, "01a11705-11f0-7826-bd9d-9066d82c4452")')
+   |                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+50 | …
+51 | …
+   |
+
+E501 Line too long (266 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\integrate.py:52:101
+   |
+50 | …
+51 | …
+52 | … if (source / "historical").exists():\n        shutil.copytree(source / "historical", destination / "historical")\n    config = read(source / "run.json")\n    for label,')
+   |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+53 | …
+54 | …
+   |
+
+E501 Line too long (177 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\integrate.py:55:101
+   |
+53 | …
+54 | …
+55 | …ows(Path('C:/p8c1/m/x/slot')), 'kind': 'EXISTING_IDENTITIES_NO_GENERATION'}, indent=2), encoding='utf-8')
+   |                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+56 | …calibration-inputs.json')
+57 | …
+   |
+
+E501 Line too long (105 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\integrate.py:63:101
+   |
+61 |             if p.is_file():
+62 |                 protected[str(p)] = digest(p)
+63 |         (HERE / 'preservation-before.json').write_text(json.dumps(protected, indent=2), encoding='utf-8')
+   |                                                                                                     ^^^^^
+64 |
+65 | if __name__ == '__main__':
+   |
+
+E501 Line too long (115 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\prepare.py:22:101
+   |
+20 |         if p.is_file() and '__pycache__' not in p.parts:
+21 |             protected[str(p)] = digest(p)
+22 |     protected[str(HERE.parent / 'v2-review-candidate.tar.gz')] = digest(HERE.parent / 'v2-review-candidate.tar.gz')
+   |                                                                                                     ^^^^^^^^^^^^^^^
+23 |     for p, expected in protected.items():
+24 |         if digest(Path(p)) != expected:
+   |
+
+E501 Line too long (242 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\prepare.py:27:101
+   |
+25 | …
+26 | …
+27 | …ow', 'instrument', 'handover', 'refusal', 'legacy_refusal', 'test_controls', 'test_storage', 'test_transport', 'test_collector', 'test_preflight'):
+   |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+28 | …
+29 | …al-proposed-sidecar.json', 'second-original-proposed-sidecar.json', 'mypy-sdk-boundary.ini'):
+   |
+
+E501 Line too long (188 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\prepare.py:29:101
+   |
+27 | …ostflight', 'window', 'instrument', 'handover', 'refusal', 'legacy_refusal', 'test_controls', 'test_storage', 'test_transport', 'test…
+28 | …
+29 | …n', 'first-original-proposed-sidecar.json', 'second-original-proposed-sidecar.json', 'mypy-sdk-boundary.ini'):
+   |                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+30 | …
+31 | …
+   |
+
+E501 Line too long (120 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\prepare.py:38:101
+   |
+36 |                    'Six B3/P1/P2 unexpected 409/500 controls',
+37 |                    'Recorded expected stale refusals and declared barrier polling',
+38 |                    'Unexpected response persists despite later success; observation/recovery/backup/admission controls',
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^
+39 |                    'Exactly two BACKED_UP plus 1498 PLANNED real metadata import',
+40 |                    'Reject altered order, identities, attempts, active slots, incomplete backups and sidecars',
+   |
+
+E501 Line too long (111 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\prepare.py:40:101
+   |
+38 |                    'Unexpected response persists despite later success; observation/recovery/backup/admission controls',
+39 |                    'Exactly two BACKED_UP plus 1498 PLANNED real metadata import',
+40 |                    'Reject altered order, identities, attempts, active slots, incomplete backups and sidecars',
+   |                                                                                                     ^^^^^^^^^^^
+41 |                    'Existing 68 offline controls and 61 instrument/application regressions reused/run unchanged'],
+42 |         'stopping_rule': 'Stop on failed verification or 1800 seconds; retain attempts; never admit main or provision AWS',
+   |
+
+E501 Line too long (114 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\prepare.py:41:101
+   |
+39 |                    'Exactly two BACKED_UP plus 1498 PLANNED real metadata import',
+40 |                    'Reject altered order, identities, attempts, active slots, incomplete backups and sidecars',
+41 |                    'Existing 68 offline controls and 61 instrument/application regressions reused/run unchanged'],
+   |                                                                                                     ^^^^^^^^^^^^^^
+42 |         'stopping_rule': 'Stop on failed verification or 1800 seconds; retain attempts; never admit main or provision AWS',
+43 |         'application_changes': False, 'window_seconds': 600})
+   |
+
+E501 Line too long (123 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\prepare.py:42:101
+   |
+40 |                    'Reject altered order, identities, attempts, active slots, incomplete backups and sidecars',
+41 |                    'Existing 68 offline controls and 61 instrument/application regressions reused/run unchanged'],
+42 |         'stopping_rule': 'Stop on failed verification or 1800 seconds; retain attempts; never admit main or provision AWS',
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^
+43 |         'application_changes': False, 'window_seconds': 600})
+44 |     records = []
+   |
+
+E501 Line too long (202 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\prepare.py:57:101
+   |
+55 | …
+56 | …
+57 | …) or path.endswith('/release') or path.endswith('/claims') or path.endswith('/b3/schedule') or '/barriers/' in path):
+   |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+58 | …ndex': n, 'call': c, 'arm': row.get('arm'), 'family': row.get('input', {}).get('generator_family'), 'row': row})
+59 | …
+   |
+
+E501 Line too long (197 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\prepare.py:58:101
+   |
+56 | …
+57 | …ts') or path.endswith('/release') or path.endswith('/claims') or path.endswith('/b3/schedule') or '/barriers/' in path):
+58 | …l_index': n, 'call': c, 'arm': row.get('arm'), 'family': row.get('input', {}).get('generator_family'), 'row': row})
+   |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+59 | …
+60 | …ed rejected calls:', len(records))
+   |
+
+E501 Line too long (116 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\prepare.py:60:101
+   |
+58 |                 records.append({'source': str(p), 'source_sha256': digest(p), 'call_index': n, 'call': c, 'arm': row.get('arm'), 'fami…
+59 |     write('recorded-response-inventory.json', records)
+60 |     print('Prepared separate candidate, protected files:', len(protected), 'recorded rejected calls:', len(records))
+   |                                                                                                     ^^^^^^^^^^^^^^^^
+61 |     unique = {}
+62 |     for r in records:
+   |
+
+E702 Multiple statements on one line (semicolon)
+  --> artifacts\phase-8-runner-amendment\v3\prepare.py:63:22
+   |
+61 |     unique = {}
+62 |     for r in records:
+63 |         c = r['call']; key = (r['arm'], r['family'], c['path'].split('/')[-1], c['status'], str(c.get('response')))
+   |                      ^
+64 |         # Collapse variable trace IDs to useful response examples below.
+65 |         b = c.get('response', {}); k = (r['arm'], r['family'], c['path'].split('/')[-1], c['status'], b.get('type'), b.get('detail'))
+   |
+
+F841 Local variable `key` is assigned to but never used
+  --> artifacts\phase-8-runner-amendment\v3\prepare.py:63:24
+   |
+61 |     unique = {}
+62 |     for r in records:
+63 |         c = r['call']; key = (r['arm'], r['family'], c['path'].split('/')[-1], c['status'], str(c.get('response')))
+   |                        ^^^
+64 |         # Collapse variable trace IDs to useful response examples below.
+65 |         b = c.get('response', {}); k = (r['arm'], r['family'], c['path'].split('/')[-1], c['status'], b.get('type'), b.get('detail'))
+   |
+help: Remove assignment to unused variable `key`
+
+E501 Line too long (115 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\prepare.py:63:101
+   |
+61 |     unique = {}
+62 |     for r in records:
+63 |         c = r['call']; key = (r['arm'], r['family'], c['path'].split('/')[-1], c['status'], str(c.get('response')))
+   |                                                                                                     ^^^^^^^^^^^^^^^
+64 |         # Collapse variable trace IDs to useful response examples below.
+65 |         b = c.get('response', {}); k = (r['arm'], r['family'], c['path'].split('/')[-1], c['status'], b.get('type'), b.get('detail'))
+   |
+
+E702 Multiple statements on one line (semicolon)
+  --> artifacts\phase-8-runner-amendment\v3\prepare.py:65:34
+   |
+63 |         c = r['call']; key = (r['arm'], r['family'], c['path'].split('/')[-1], c['status'], str(c.get('response')))
+64 |         # Collapse variable trace IDs to useful response examples below.
+65 |         b = c.get('response', {}); k = (r['arm'], r['family'], c['path'].split('/')[-1], c['status'], b.get('type'), b.get('detail'))
+   |                                  ^
+66 |         unique[k] = {'request': c.get('request'), 'response': b}
+67 |     write('response-examples.json', [{'context': k, **v} for k, v in unique.items()])
+   |
+
+E501 Line too long (133 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\prepare.py:65:101
+   |
+63 |         c = r['call']; key = (r['arm'], r['family'], c['path'].split('/')[-1], c['status'], str(c.get('response')))
+64 |         # Collapse variable trace IDs to useful response examples below.
+65 |         b = c.get('response', {}); k = (r['arm'], r['family'], c['path'].split('/')[-1], c['status'], b.get('type'), b.get('detail'))
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+66 |         unique[k] = {'request': c.get('request'), 'response': b}
+67 |     write('response-examples.json', [{'context': k, **v} for k, v in unique.items()])
+   |
+
+E501 Line too long (101 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\response_guard.py:35:101
+   |
+33 |     request, response = call.get('request') or {}, call.get('response') or {}
+34 |     status = call.get('status')
+35 |     prior = [c for c in row['http'] if c is not call and c.get('received_at', '') <= call['sent_at']]
+   |                                                                                                     ^
+36 |     accepted = [c for c in prior if c.get('method') == 'POST'
+37 |                 and c.get('path') == f"/v1/workflows/{item.get('workflow_id')}/revisions"
+   |
+
+E501 Line too long (101 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\response_guard.py:42:101
+   |
+40 |     names = {b['name'] for b in row.get('barriers', []) if b.get('at', '') <= call['sent_at']}
+41 |     segments = [c['response'] for c in prior if c.get('status') == 200
+42 |                 and c.get('method') == 'GET' and c.get('path', '').startswith('/v1/audio-segments/')]
+   |                                                                                                     ^
+43 |     segment_id = request.get('segment_id') or (path.split('/')[-2] if path.endswith('/release') else None)
+44 |     segment = next((s for s in reversed(segments) if s.get('id') == segment_id
+   |
+
+E501 Line too long (106 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\response_guard.py:43:101
+   |
+41 |     segments = [c['response'] for c in prior if c.get('status') == 200
+42 |                 and c.get('method') == 'GET' and c.get('path', '').startswith('/v1/audio-segments/')]
+43 |     segment_id = request.get('segment_id') or (path.split('/')[-2] if path.endswith('/release') else None)
+   |                                                                                                     ^^^^^^
+44 |     segment = next((s for s in reversed(segments) if s.get('id') == segment_id
+45 |                     and s.get('call_id') == item.get('call_id')
+   |
+
+E501 Line too long (101 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\response_guard.py:47:101
+   |
+45 |                     and s.get('call_id') == item.get('call_id')
+46 |                     and s.get('workflow_id') == item.get('workflow_id')), None)
+47 |     outcome, reason = 'UNEXPECTED_RESPONSE', 'No declared endpoint/request/scenario response matches'
+   |                                                                                                     ^
+48 |     held = row['input']['provider']['held_barriers']
+49 |     for barrier in held:
+   |
+
+E501 Line too long (103 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\response_guard.py:53:101
+   |
+51 |                 and path == f'/internal/scenarios/{scenario}/barriers/{barrier}' and not request):
+52 |             if status == 404 and response == {'detail': 'Unknown barrier'}:
+53 |                 outcome, reason = 'EXPECTED_BARRIER_POLL', 'Declared held barrier has not been reached'
+   |                                                                                                     ^^^
+54 |             elif status == 200 and response.get('barrier_name') == barrier and 'reached_at' in response:
+55 |                 outcome, reason = 'EXPECTED_BARRIER_POLL', 'Declared barrier state observed'
+   |
+
+E501 Line too long (104 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\response_guard.py:54:101
+   |
+52 |             if status == 404 and response == {'detail': 'Unknown barrier'}:
+53 |                 outcome, reason = 'EXPECTED_BARRIER_POLL', 'Declared held barrier has not been reached'
+54 |             elif status == 200 and response.get('barrier_name') == barrier and 'reached_at' in response:
+   |                                                                                                     ^^^^
+55 |                 outcome, reason = 'EXPECTED_BARRIER_POLL', 'Declared barrier state observed'
+56 |     stale = family in STALE and revision > 1 and request.get('expected_intent_revision') == 1
+   |
+
+E501 Line too long (114 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\response_guard.py:59:101
+   |
+57 |     if (family in {'verified-stale-attempt', 'queued-stale'} and stale and arm == 'B3'
+58 |             and base == services['voice'] and method == 'POST'
+59 |             and path == '/internal/phase6/b3/schedule' and request.get('workflow_id') == item.get('workflow_id')):
+   |                                                                                                     ^^^^^^^^^^^^^^
+60 |         prefix = f"Controller rejected GET /internal/phase6/b3/workflows/{item['workflow_id']}/synthesis-input?revision=1: 409 "
+61 |         if status == 409 and response.get('type') == 'https://example.invalid/problems/voice-command-rejected' and response.get('title…
+   |
+
+E501 Line too long (128 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\response_guard.py:60:101
+   |
+58 | …         and base == services['voice'] and method == 'POST'
+59 | …         and path == '/internal/phase6/b3/schedule' and request.get('workflow_id') == item.get('workflow_id')):
+60 | …     prefix = f"Controller rejected GET /internal/phase6/b3/workflows/{item['workflow_id']}/synthesis-input?revision=1: 409 "
+   |                                                                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+61 | …     if status == 409 and response.get('type') == 'https://example.invalid/problems/voice-command-rejected' and response.get('title')…
+62 | …         try:
+   |
+
+E501 Line too long (236 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\response_guard.py:61:101
+   |
+59 | …et('workflow_id')):
+60 | …synthesis-input?revision=1: 409 "
+61 | …mmand-rejected' and response.get('title') == 'Voice Command Rejected' and response.get('instance') == path and response.get('status') == 409:
+   |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+62 | …
+63 | …
+   |
+
+E501 Line too long (175 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\response_guard.py:66:101
+   |
+64 | …
+65 | …rtswith(prefix) else {}
+66 | …m['workflow_id']}/synthesis-input", 'b3-scope', 'B3 scope mismatch', 'No current B3 research revision'):
+   |                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+67 | …ed correction precedes old B3 scheduling'
+68 | …
+   |
+
+E501 Line too long (112 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\response_guard.py:67:101
+   |
+65 | …         nested = json.loads(detail[len(prefix):]) if detail.startswith(prefix) else {}
+66 | …         if problem(nested, f"/internal/phase6/b3/workflows/{item['workflow_id']}/synthesis-input", 'b3-scope', 'B3 scope mismatch', …
+67 | …             outcome, reason = 'EXPECTED_STALE_REFUSAL', 'Accepted correction precedes old B3 scheduling'
+   |                                                                                               ^^^^^^^^^^^^
+68 | …     except (ValueError, TypeError, KeyError):
+69 | …         pass
+   |
+
+E501 Line too long (109 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\response_guard.py:71:101
+   |
+69 |                 pass
+70 |         elif status == 200 and isinstance(response.get('segment_id'), str):
+71 |             outcome, reason = 'OBSERVABLE_ACCEPTANCE', 'Record actual stale scheduling; oracle judges safety'
+   |                                                                                                     ^^^^^^^^^
+72 |     if (family == 'verified-stale-attempt' and stale and arm in {'P1', 'P2'}
+73 |             and method == 'POST' and base == services['api'] and path == '/internal/phase3/claims'):
+   |
+
+E501 Line too long (115 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\response_guard.py:74:101
+   |
+72 |     if (family == 'verified-stale-attempt' and stale and arm in {'P1', 'P2'}
+73 |             and method == 'POST' and base == services['api'] and path == '/internal/phase3/claims'):
+74 |         receipt = next((c['response'] for c in reversed(prior) if c.get('path') == '/internal/phase3/verifications'
+   |                                                                                                     ^^^^^^^^^^^^^^^
+75 |                         and c.get('status') == 201 and c['response'].get('receipt_id') == request.get('receipt_id')), None)
+76 |         if receipt and receipt.get('intent_revision') == 1:
+   |
+
+E501 Line too long (123 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\response_guard.py:75:101
+   |
+73 | …         and method == 'POST' and base == services['api'] and path == '/internal/phase3/claims'):
+74 | …     receipt = next((c['response'] for c in reversed(prior) if c.get('path') == '/internal/phase3/verifications'
+75 | …                     and c.get('status') == 201 and c['response'].get('receipt_id') == request.get('receipt_id')), None)
+   |                                                                                                   ^^^^^^^^^^^^^^^^^^^^^^^
+76 | …     if receipt and receipt.get('intent_revision') == 1:
+77 | …         if status == 409 and problem(response, path, 'stale-intent-revision', 'Stale intent revision', 'Claim revision is no longer …
+   |
+
+E501 Line too long (146 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\response_guard.py:77:101
+   |
+75 | …'response'].get('receipt_id') == request.get('receipt_id')), None)
+76 | …1:
+77 | …'stale-intent-revision', 'Stale intent revision', 'Claim revision is no longer current'):
+   |                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+78 | …', 'Bound old receipt after accepted revision'
+79 | …t('permit_id'), str):
+   |
+
+E501 Line too long (103 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\response_guard.py:78:101
+   |
+76 | …     if receipt and receipt.get('intent_revision') == 1:
+77 | …         if status == 409 and problem(response, path, 'stale-intent-revision', 'Stale intent revision', 'Claim revision is no longer …
+78 | …             outcome, reason = 'EXPECTED_STALE_REFUSAL', 'Bound old receipt after accepted revision'
+   |                                                                                                   ^^^
+79 | …         elif status == 201 and isinstance(response.get('permit_id'), str):
+80 | …             outcome, reason = 'OBSERVABLE_ACCEPTANCE', 'Record actual stale authorization'
+   |
+
+E501 Line too long (108 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\response_guard.py:86:101
+   |
+84 |         if status == 409 and any(problem(response, path, *p) for p in (
+85 |                 ('segment-state', 'Audio state conflict', 'Segment is not queued'),
+86 |                 ('stale-intent-revision', 'Stale intent revision', 'Permit belongs to an earlier revision'),
+   |                                                                                                     ^^^^^^^^
+87 |                 ('stale-audio', 'Stale audio', 'Audio release lost its current claim'))):
+88 |             outcome, reason = 'EXPECTED_STALE_REFUSAL', 'Bound queued old segment after accepted correction'
+   |
+
+E501 Line too long (108 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\response_guard.py:88:101
+   |
+86 |                 ('stale-intent-revision', 'Stale intent revision', 'Permit belongs to an earlier revision'),
+87 |                 ('stale-audio', 'Stale audio', 'Audio release lost its current claim'))):
+88 |             outcome, reason = 'EXPECTED_STALE_REFUSAL', 'Bound queued old segment after accepted correction'
+   |                                                                                                     ^^^^^^^^
+89 |         elif status == 200 and response.get('segment_id') == segment['id'] and response.get('state') == 'PUBLISHED':
+90 |             outcome, reason = 'OBSERVABLE_ACCEPTANCE', 'Record actual stale publication'
+   |
+
+E501 Line too long (116 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\response_guard.py:89:101
+   |
+87 |                 ('stale-audio', 'Stale audio', 'Audio release lost its current claim'))):
+88 |             outcome, reason = 'EXPECTED_STALE_REFUSAL', 'Bound queued old segment after accepted correction'
+89 |         elif status == 200 and response.get('segment_id') == segment['id'] and response.get('state') == 'PUBLISHED':
+   |                                                                                                     ^^^^^^^^^^^^^^^^
+90 |             outcome, reason = 'OBSERVABLE_ACCEPTANCE', 'Record actual stale publication'
+91 |     playback = (method == 'POST' and base == services['api'] and segment
+   |
+
+E501 Line too long (106 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\response_guard.py:94:101
+   |
+92 |                 and path == f"/v1/calls/{item.get('call_id')}/playback-events"
+93 |                 and request.get('event_type') == 'STARTED' and segment.get('intent_revision') == 1)
+94 |     changed = family == 'version-change-before-start' and 'VERSION_ONLY_CHANGE' in names and revision == 1
+   |                                                                                                     ^^^^^^
+95 |     buffered = family == 'buffered-stale' and revision > 1
+96 |     if playback and (changed or buffered):
+   |
+
+E501 Line too long (165 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\response_guard.py:97:101
+   |
+95 | …
+96 | …
+97 | …et('event_id') and response.get('segment_id') == segment_id and response.get('state') == 'STARTED':
+   |                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+98 | …RTED proxy retained; no inference of human understanding'
+99 | …, 'stale-audio', 'Stale audio', 'Segment cannot start'):
+   |
+
+E501 Line too long (123 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\response_guard.py:98:101
+    |
+ 96 |     if playback and (changed or buffered):
+ 97 |         if status == 202 and response.get('event_id') == request.get('event_id') and response.get('segment_id') == segment_id and res…
+ 98 |             outcome, reason = 'OBSERVABLE_ACCEPTANCE', 'Actual STARTED proxy retained; no inference of human understanding'
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^
+ 99 |         elif status == 409 and buffered and problem(response, path, 'stale-audio', 'Stale audio', 'Segment cannot start'):
+100 |             outcome, reason = 'EXPECTED_STALE_REFUSAL', 'Bound old segment after durable correction'
+    |
+
+E501 Line too long (122 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\response_guard.py:99:101
+    |
+ 97 | …     if status == 202 and response.get('event_id') == request.get('event_id') and response.get('segment_id') == segment_id and respo…
+ 98 | …         outcome, reason = 'OBSERVABLE_ACCEPTANCE', 'Actual STARTED proxy retained; no inference of human understanding'
+ 99 | …     elif status == 409 and buffered and problem(response, path, 'stale-audio', 'Stale audio', 'Segment cannot start'):
+    |                                                                                                   ^^^^^^^^^^^^^^^^^^^^^^
+100 | …         outcome, reason = 'EXPECTED_STALE_REFUSAL', 'Bound old segment after durable correction'
+101 | …     elif status == 409 and changed and arm in {'P1', 'P2'} and problem(response, path, 'fresh-evidence-required', 'Fresh evidence r…
+    |
+
+E501 Line too long (199 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\response_guard.py:101:101
+    |
+ 99 | …Stale audio', 'Segment cannot start'):
+100 | …able correction'
+101 | … path, 'fresh-evidence-required', 'Fresh evidence required', 'Current source facts do not support audio playback'):
+    |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+102 | …t precedes bound STARTED attempt'
+103 | …
+    |
+
+E501 Line too long (117 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\response_guard.py:102:101
+    |
+100 |             outcome, reason = 'EXPECTED_STALE_REFUSAL', 'Bound old segment after durable correction'
+101 |         elif status == 409 and changed and arm in {'P1', 'P2'} and problem(response, path, 'fresh-evidence-required', 'Fresh evidence…
+102 |             outcome, reason = 'EXPECTED_VERSION_REFUSAL', 'Named version-change fault precedes bound STARTED attempt'
+    |                                                                                                     ^^^^^^^^^^^^^^^^^
+103 |     # No timeout/provider send is converted to an application failure here.
+104 |     return {'version': VERSION, 'classification': outcome, 'reason': reason,
+    |
+
+E501 Line too long (137 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\response_guard.py:109:101
+    |
+107 | …all.get('trace_id'),
+108 | …
+109 | …': prior, 'barriers': row.get('barriers', []), 'scenario': scenario, 'item': item})}
+    |                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+110 | …
+111 | …:
+    |
+
+E501 Line too long (130 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\response_guard.py:118:101
+    |
+116 |         trial.save()  # transactional checkpoint before returning to caller
+117 |         trial.ledger.event('UNEXPECTED_PERMISSIVE_RESPONSE', execution_id=trial.id, proof=proof)
+118 |         pause = {'reason': 'UNEXPECTED_PERMISSIVE_RESPONSE', 'execution_id': trial.id, 'trace_id': proof['trace_id'], 'at': now()}
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+119 |         atomic(trial.ledger.root / 'pause.json', pause)
+120 |         # Pause the admission authority immediately; collector still finishes its window.
+    |
+
+E501 Line too long (206 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\response_guard.py:128:101
+    |
+126 | …
+127 | …
+128 | …rlier unexpected response retained despite later driver completion', 'proofs': trial.row['permissive_response_errors']}
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+129 | …
+130 | …
+    |
+
+E501 Line too long (131 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\runner.py:512:101
+    |
+510 |             # Recover crash after backup commit but before releasing the prior ports.
+511 |             for closed in journal.rows():
+512 |                 if closed["execution_id"] in (FIRST, "01a11705-11f0-7826-bd9d-9066d82c4452") and (root / "handover.json").exists():
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+513 |                     # Closed evidence imported; old host resources were not restored here.
+514 |                     # This does not assert that old volumes were deleted or retired.
+    |
+
+E501 Line too long (135 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\test_collector.py:58:101
+   |
+56 |         if refused == 'permissive':
+57 |             from response_guard import retain
+58 |             retain(trial, {'classification': 'UNEXPECTED_RESPONSE', 'trace_id': 'cal-control-trace', 'response': {'unexpected': True}})
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+59 |         elif refused:
+60 |             raise ValueError("CONTROL_ONLY_REFUSAL")
+   |
+
+E501 Line too long (180 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\test_combined.py:31:101
+   |
+29 | …/p8c1/s/t/e.tar.gz'))
+30 | …er.SIMULATOR}
+31 | …['family'] in {'verified-stale-attempt', 'queued-stale', 'buffered-stale', 'version-change-before-start'}]
+   |                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+32 | …
+33 | …
+   |
+
+E501 Line too long (110 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\test_combined.py:37:101
+   |
+35 |     record = RECORDS[index]
+36 |     row, call = record['row'], record['call']
+37 |     result = evaluate(row, call, scenario=row['scenario_id'], item=row['fixture_identity'], services=SERVICES)
+   |                                                                                                     ^^^^^^^^^^
+38 |     assert result['classification'].startswith('EXPECTED_'), result
+   |
+
+E501 Line too long (107 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\test_combined.py:49:101
+   |
+47 |     folder = prepare_slot(root, slot)
+48 |     ledger = Ledger(folder)
+49 |     record = copy.deepcopy(next(r for r in RECORDS if r['family'] == 'buffered-stale' and r['arm'] == arm))
+   |                                                                                                     ^^^^^^^
+50 |     trial = collector.Trial.__new__(collector.Trial)
+51 |     trial.row, trial.item, trial.scenario = record['row'], record['row']['fixture_identity'], record['row']['scenario_id']
+   |
+
+E501 Line too long (122 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\test_combined.py:51:101
+   |
+49 |     record = copy.deepcopy(next(r for r in RECORDS if r['family'] == 'buffered-stale' and r['arm'] == arm))
+50 |     trial = collector.Trial.__new__(collector.Trial)
+51 |     trial.row, trial.item, trial.scenario = record['row'], record['row']['fixture_identity'], record['row']['scenario_id']
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^
+52 |     trial.ledger, trial.slot, trial.id = ledger, slot, slot['execution_id']
+53 |     trial.execution_directory = folder / 'executions' / trial.id
+   |
+
+E702 Multiple statements on one line (semicolon)
+  --> artifacts\phase-8-runner-amendment\v3\test_combined.py:56:26
+   |
+54 |     trial.path = trial.execution_directory / 'checkpoint.json'
+55 |     # Preserve recorded pre-call context but no later successful steps.
+56 |     call = record['call']; trial.row['http'] = [c for c in trial.row['http'] if c['received_at'] <= call['sent_at']]
+   |                          ^
+57 |     path = call['path']
+58 |     body = {'type': 'https://example.invalid/problems/calibration-unrecognized-defect', 'title': 'Unrecognized injected defect',
+   |
+
+E501 Line too long (116 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\test_combined.py:56:101
+   |
+54 |     trial.path = trial.execution_directory / 'checkpoint.json'
+55 |     # Preserve recorded pre-call context but no later successful steps.
+56 |     call = record['call']; trial.row['http'] = [c for c in trial.row['http'] if c['received_at'] <= call['sent_at']]
+   |                                                                                                     ^^^^^^^^^^^^^^^^
+57 |     path = call['path']
+58 |     body = {'type': 'https://example.invalid/problems/calibration-unrecognized-defect', 'title': 'Unrecognized injected defect',
+   |
+
+E501 Line too long (128 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\test_combined.py:58:101
+   |
+56 |     call = record['call']; trial.row['http'] = [c for c in trial.row['http'] if c['received_at'] <= call['sent_at']]
+57 |     path = call['path']
+58 |     body = {'type': 'https://example.invalid/problems/calibration-unrecognized-defect', 'title': 'Unrecognized injected defect',
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+59 |             'status': status, 'detail': 'No declared scenario authorizes this problem', 'instance': path,
+60 |             'trace_id': str(uuid4()), 'retryable': False}
+   |
+
+E501 Line too long (105 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\test_combined.py:59:101
+   |
+57 |     path = call['path']
+58 |     body = {'type': 'https://example.invalid/problems/calibration-unrecognized-defect', 'title': 'Unrecognized injected defect',
+59 |             'status': status, 'detail': 'No declared scenario authorizes this problem', 'instance': path,
+   |                                                                                                     ^^^^^
+60 |             'trace_id': str(uuid4()), 'retryable': False}
+61 |     def fail(request: Any, **kwargs: Any) -> Any:
+   |
+
+E501 Line too long (103 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\test_combined.py:62:101
+   |
+60 |             'trace_id': str(uuid4()), 'retryable': False}
+61 |     def fail(request: Any, **kwargs: Any) -> Any:
+62 |         raise HTTPError(request.full_url, status, 'control', {}, io.BytesIO(json.dumps(body).encode()))
+   |                                                                                                     ^^^
+63 |     monkeypatch.setattr(adapter, 'urlopen', fail)
+64 |     returned = trial.request(adapter.API, 'POST', path, call['request'], allow_failure=True)
+   |
+
+E702 Multiple statements on one line (semicolon)
+  --> artifacts\phase-8-runner-amendment\v3\test_combined.py:70:56
+   |
+68 |     trial.row['status'] = 'COMPLETED'  # Later ordinary update cannot hide it.
+69 |     finish_driver(trial)
+70 |     trial.row['driver_finished_at'] = utc().isoformat(); trial.save()
+   |                                                        ^
+71 |     assert trial.row['status'] == 'FAILED' and 'driver_classification' not in trial.row
+72 |     recovered = ledger.recover_checkpoint(trial.id)
+   |
+
+E702 Multiple statements on one line (semicolon)
+  --> artifacts\phase-8-runner-amendment\v3\test_combined.py:81:35
+   |
+79 |             write_new(folder / name, {'scope': 'CALIBRATION_CONTROL_NO_PG_DUMPS'})
+80 |     exported = trial.execution_directory / 'export.json'
+81 |     write_new(exported, trial.row); ledger.seal(exported)
+   |                                   ^
+82 |     Journal(root).update(trial.id, state='EXPORTED')
+83 |     archive = make_backup(folder, tmp_path / 'backup', dumps=False)
+   |
+
+E501 Line too long (129 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\test_combined.py:84:101
+   |
+82 |     Journal(root).update(trial.id, state='EXPORTED')
+83 |     archive = make_backup(folder, tmp_path / 'backup', dumps=False)
+84 |     complete_backup(Journal(root), __import__('storage').OfflineCloud(tmp_path / 'remote-copy'), authority.policy, slot, archive)
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+85 |     assert Journal(root).rows()[0]['state'] == 'BACKED_UP'
+86 |     with pytest.raises(ValueError, match='PAUSED'):
+   |
+
+E702 Multiple statements on one line (semicolon)
+  --> artifacts\phase-8-runner-amendment\v3\test_combined.py:90:20
+   |
+88 |     with pytest.raises(ValueError, match='NO_AUTO_UNPAUSE'):
+89 |         Journal(root).resume()
+90 |     ledger.verify(); Journal(root).verify()
+   |                    ^
+91 |
+92 | @pytest.mark.parametrize('response', [{'detail': 'Unknown barrier'}, {'detail': 'Unknown scenario'}, {'detail': 'Internal Server Error…
+   |
+
+E501 Line too long (138 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\test_combined.py:92:101
+   |
+90 | …
+91 | …
+92 | …nown barrier'}, {'detail': 'Unknown scenario'}, {'detail': 'Internal Server Error'}])
+   |                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+93 | …xact_body(response: dict[str, str]) -> None:
+94 | …
+   |
+
+E501 Line too long (136 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\test_combined.py:97:101
+   |
+95 | …TER_COMMIT_BEFORE_RESPONSE']
+96 | …
+97 | …T', 'path': f'/internal/scenarios/{scenario}/barriers/AFTER_COMMIT_BEFORE_RESPONSE',
+   |                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+98 | …status': 404, 'sent_at': utc().isoformat(), 'received_at': utc().isoformat()}
+99 | …item=row['fixture_identity'], services=SERVICES)
+   |
+
+E501 Line too long (129 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:98:101
+    |
+ 96 | …
+ 97 | …'GET', 'path': f'/internal/scenarios/{scenario}/barriers/AFTER_COMMIT_BEFORE_RESPONSE',
+ 98 | …, 'status': 404, 'sent_at': utc().isoformat(), 'received_at': utc().isoformat()}
+    |                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 99 | …o, item=row['fixture_identity'], services=SERVICES)
+100 | …_BARRIER_POLL') == (response == {'detail': 'Unknown barrier'})
+    |
+
+E501 Line too long (111 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:100:101
+    |
+ 98 |             'request': None, 'response': response, 'status': 404, 'sent_at': utc().isoformat(), 'received_at': utc().isoformat()}
+ 99 |     result = evaluate(row, call, scenario=scenario, item=row['fixture_identity'], services=SERVICES)
+100 |     assert (result['classification'] == 'EXPECTED_BARRIER_POLL') == (response == {'detail': 'Unknown barrier'})
+    |                                                                                                     ^^^^^^^^^^^
+101 |     call['path'] = call['path'].replace(scenario, str(uuid4()))
+102 |     assert evaluate(row, call, scenario=scenario, item=row['fixture_identity'], services=SERVICES)['classification'] == 'UNEXPECTED_R…
+    |
+
+E501 Line too long (141 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:102:101
+    |
+100 | …ER_POLL') == (response == {'detail': 'Unknown barrier'})
+101 | …uid4()))
+102 | …row['fixture_identity'], services=SERVICES)['classification'] == 'UNEXPECTED_RESPONSE'
+    |                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+103 | …
+104 | …t', 'type', 'detail', 'retryable', 'instance', 'trace', 'no-correction', 'status'])
+    |
+
+E501 Line too long (138 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:104:101
+    |
+102 | …m=row['fixture_identity'], services=SERVICES)['classification'] == 'UNEXPECTED_RESPONSE'
+103 | …
+104 | …est', 'type', 'detail', 'retryable', 'instance', 'trace', 'no-correction', 'status'])
+    |                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+105 | …-> None:
+106 | …amily'] == 'buffered-stale' and r['arm'] == 'P1'))
+    |
+
+E501 Line too long (103 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:106:101
+    |
+104 | @pytest.mark.parametrize('mutation', ['family', 'request', 'type', 'detail', 'retryable', 'instance', 'trace', 'no-correction', 'stat…
+105 | def test_known_409_is_not_a_whitelist(mutation: str) -> None:
+106 |     r = copy.deepcopy(next(r for r in RECORDS if r['family'] == 'buffered-stale' and r['arm'] == 'P1'))
+    |                                                                                                     ^^^
+107 |     row, call = r['row'], r['call']
+108 |     if mutation == 'family': row['input']['generator_family'] = 'clean-Asia/Karachi-30'
+    |
+
+E701 Multiple statements on one line (colon)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:108:28
+    |
+106 |     r = copy.deepcopy(next(r for r in RECORDS if r['family'] == 'buffered-stale' and r['arm'] == 'P1'))
+107 |     row, call = r['row'], r['call']
+108 |     if mutation == 'family': row['input']['generator_family'] = 'clean-Asia/Karachi-30'
+    |                            ^
+109 |     elif mutation == 'request': call['request']['segment_id'] = str(uuid4())
+110 |     elif mutation == 'no-correction': row['http'] = [c for c in row['http'] if not c['path'].endswith('/revisions')]
+    |
+
+E701 Multiple statements on one line (colon)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:109:31
+    |
+107 |     row, call = r['row'], r['call']
+108 |     if mutation == 'family': row['input']['generator_family'] = 'clean-Asia/Karachi-30'
+109 |     elif mutation == 'request': call['request']['segment_id'] = str(uuid4())
+    |                               ^
+110 |     elif mutation == 'no-correction': row['http'] = [c for c in row['http'] if not c['path'].endswith('/revisions')]
+111 |     elif mutation == 'status': call['status'] = 500
+    |
+
+E701 Multiple statements on one line (colon)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:110:37
+    |
+108 |     if mutation == 'family': row['input']['generator_family'] = 'clean-Asia/Karachi-30'
+109 |     elif mutation == 'request': call['request']['segment_id'] = str(uuid4())
+110 |     elif mutation == 'no-correction': row['http'] = [c for c in row['http'] if not c['path'].endswith('/revisions')]
+    |                                     ^
+111 |     elif mutation == 'status': call['status'] = 500
+112 |     else: call['response'][{'trace': 'trace_id'}.get(mutation, mutation)] = True if mutation == 'retryable' else 'changed'
+    |
+
+E501 Line too long (116 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:110:101
+    |
+108 |     if mutation == 'family': row['input']['generator_family'] = 'clean-Asia/Karachi-30'
+109 |     elif mutation == 'request': call['request']['segment_id'] = str(uuid4())
+110 |     elif mutation == 'no-correction': row['http'] = [c for c in row['http'] if not c['path'].endswith('/revisions')]
+    |                                                                                                     ^^^^^^^^^^^^^^^^
+111 |     elif mutation == 'status': call['status'] = 500
+112 |     else: call['response'][{'trace': 'trace_id'}.get(mutation, mutation)] = True if mutation == 'retryable' else 'changed'
+    |
+
+E701 Multiple statements on one line (colon)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:111:30
+    |
+109 |     elif mutation == 'request': call['request']['segment_id'] = str(uuid4())
+110 |     elif mutation == 'no-correction': row['http'] = [c for c in row['http'] if not c['path'].endswith('/revisions')]
+111 |     elif mutation == 'status': call['status'] = 500
+    |                              ^
+112 |     else: call['response'][{'trace': 'trace_id'}.get(mutation, mutation)] = True if mutation == 'retryable' else 'changed'
+113 |     assert evaluate(row, call, scenario=row['scenario_id'], item=row['fixture_identity'], services=SERVICES)['classification'] == 'UN…
+    |
+
+E701 Multiple statements on one line (colon)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:112:9
+    |
+110 |     elif mutation == 'no-correction': row['http'] = [c for c in row['http'] if not c['path'].endswith('/revisions')]
+111 |     elif mutation == 'status': call['status'] = 500
+112 |     else: call['response'][{'trace': 'trace_id'}.get(mutation, mutation)] = True if mutation == 'retryable' else 'changed'
+    |         ^
+113 |     assert evaluate(row, call, scenario=row['scenario_id'], item=row['fixture_identity'], services=SERVICES)['classification'] == 'UN…
+    |
+
+E501 Line too long (122 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:112:101
+    |
+110 |     elif mutation == 'no-correction': row['http'] = [c for c in row['http'] if not c['path'].endswith('/revisions')]
+111 |     elif mutation == 'status': call['status'] = 500
+112 |     else: call['response'][{'trace': 'trace_id'}.get(mutation, mutation)] = True if mutation == 'retryable' else 'changed'
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^
+113 |     assert evaluate(row, call, scenario=row['scenario_id'], item=row['fixture_identity'], services=SERVICES)['classification'] == 'UN…
+    |
+
+E501 Line too long (151 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:113:101
+    |
+111 | …
+112 | …n, mutation)] = True if mutation == 'retryable' else 'changed'
+113 | …item=row['fixture_identity'], services=SERVICES)['classification'] == 'UNEXPECTED_RESPONSE'
+    |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+114 | …
+115 | …vable_result() -> None:
+    |
+
+E702 Multiple statements on one line (semicolon)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:117:36
+    |
+115 | def test_baseline_version_changed_positive_start_is_an_observable_result() -> None:
+116 |     r = copy.deepcopy(next(r for r in RECORDS if r['family'] == 'version-change-before-start'))
+117 |     row, call = r['row'], r['call']; row['arm'] = 'B3'
+    |                                    ^
+118 |     call.update(status=202, response={'event_id': call['request']['event_id'], 'segment_id': call['request']['segment_id'], 'state': …
+119 |     assert evaluate(row, call, scenario=row['scenario_id'], item=row['fixture_identity'], services=SERVICES)['classification'] == 'OB…
+    |
+
+E501 Line too long (174 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:118:101
+    |
+116 | …n-change-before-start'))
+117 | …
+118 | …t_id'], 'segment_id': call['request']['segment_id'], 'state': 'STARTED', 'repair_obligation_id': None})
+    |                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+119 | …ixture_identity'], services=SERVICES)['classification'] == 'OBSERVABLE_ACCEPTANCE'
+    |
+
+E501 Line too long (153 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:119:101
+    |
+117 | …
+118 | …st']['event_id'], 'segment_id': call['request']['segment_id'], 'state': 'STARTED', 'repair_obligation_id': None})
+119 | …tem=row['fixture_identity'], services=SERVICES)['classification'] == 'OBSERVABLE_ACCEPTANCE'
+    |                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+120 | …
+121 | … 'attempt', 'identity', 'order', 'active', 'deadline', 'backup', 'first-open', 'second-open'])
+    |
+
+E501 Line too long (155 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:121:101
+    |
+119 | …em=row['fixture_identity'], services=SERVICES)['classification'] == 'OBSERVABLE_ACCEPTANCE'
+120 | …
+121 | …'attempt', 'identity', 'order', 'active', 'deadline', 'backup', 'first-open', 'second-open'])
+    |                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+122 | …: str) -> None:
+123 | … = copy.deepcopy(saved)
+    |
+
+E702 Multiple statements on one line (semicolon)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:123:57
+    |
+121 | @pytest.mark.parametrize('mutation', ['missing', 'duplicate', 'attempt', 'identity', 'order', 'active', 'deadline', 'backup', 'first-…
+122 | def test_closed_two_original_boundary_rejects_changes(mutation: str) -> None:
+123 |     saved = read(HERE / 'saved-identities.json')['rows']; rows = copy.deepcopy(saved)
+    |                                                         ^
+124 |     if mutation == 'missing': rows.pop()
+125 |     elif mutation == 'duplicate': rows[2]['execution_id'] = rows[0]['execution_id']
+    |
+
+E701 Multiple statements on one line (colon)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:124:29
+    |
+122 | def test_closed_two_original_boundary_rejects_changes(mutation: str) -> None:
+123 |     saved = read(HERE / 'saved-identities.json')['rows']; rows = copy.deepcopy(saved)
+124 |     if mutation == 'missing': rows.pop()
+    |                             ^
+125 |     elif mutation == 'duplicate': rows[2]['execution_id'] = rows[0]['execution_id']
+126 |     elif mutation == 'attempt': rows[2]['attempt'] = 2
+    |
+
+E701 Multiple statements on one line (colon)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:125:33
+    |
+123 |     saved = read(HERE / 'saved-identities.json')['rows']; rows = copy.deepcopy(saved)
+124 |     if mutation == 'missing': rows.pop()
+125 |     elif mutation == 'duplicate': rows[2]['execution_id'] = rows[0]['execution_id']
+    |                                 ^
+126 |     elif mutation == 'attempt': rows[2]['attempt'] = 2
+127 |     elif mutation == 'identity': rows[2]['execution_id'] = str(uuid4())
+    |
+
+E701 Multiple statements on one line (colon)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:126:31
+    |
+124 |     if mutation == 'missing': rows.pop()
+125 |     elif mutation == 'duplicate': rows[2]['execution_id'] = rows[0]['execution_id']
+126 |     elif mutation == 'attempt': rows[2]['attempt'] = 2
+    |                               ^
+127 |     elif mutation == 'identity': rows[2]['execution_id'] = str(uuid4())
+128 |     elif mutation == 'order': rows[2], rows[3] = rows[3], rows[2]
+    |
+
+E701 Multiple statements on one line (colon)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:127:32
+    |
+125 |     elif mutation == 'duplicate': rows[2]['execution_id'] = rows[0]['execution_id']
+126 |     elif mutation == 'attempt': rows[2]['attempt'] = 2
+127 |     elif mutation == 'identity': rows[2]['execution_id'] = str(uuid4())
+    |                                ^
+128 |     elif mutation == 'order': rows[2], rows[3] = rows[3], rows[2]
+129 |     elif mutation == 'active': rows[2]['state'] = 'RUNNING'
+    |
+
+E701 Multiple statements on one line (colon)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:128:29
+    |
+126 |     elif mutation == 'attempt': rows[2]['attempt'] = 2
+127 |     elif mutation == 'identity': rows[2]['execution_id'] = str(uuid4())
+128 |     elif mutation == 'order': rows[2], rows[3] = rows[3], rows[2]
+    |                             ^
+129 |     elif mutation == 'active': rows[2]['state'] = 'RUNNING'
+130 |     elif mutation == 'deadline': rows[2]['deadline'] = utc().isoformat()
+    |
+
+E701 Multiple statements on one line (colon)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:129:30
+    |
+127 |     elif mutation == 'identity': rows[2]['execution_id'] = str(uuid4())
+128 |     elif mutation == 'order': rows[2], rows[3] = rows[3], rows[2]
+129 |     elif mutation == 'active': rows[2]['state'] = 'RUNNING'
+    |                              ^
+130 |     elif mutation == 'deadline': rows[2]['deadline'] = utc().isoformat()
+131 |     elif mutation == 'backup': rows[1]['backup_hash'] = None
+    |
+
+E701 Multiple statements on one line (colon)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:130:32
+    |
+128 |     elif mutation == 'order': rows[2], rows[3] = rows[3], rows[2]
+129 |     elif mutation == 'active': rows[2]['state'] = 'RUNNING'
+130 |     elif mutation == 'deadline': rows[2]['deadline'] = utc().isoformat()
+    |                                ^
+131 |     elif mutation == 'backup': rows[1]['backup_hash'] = None
+132 |     elif mutation == 'first-open': rows[0]['state'] = 'EXPORTED'
+    |
+
+E701 Multiple statements on one line (colon)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:131:30
+    |
+129 |     elif mutation == 'active': rows[2]['state'] = 'RUNNING'
+130 |     elif mutation == 'deadline': rows[2]['deadline'] = utc().isoformat()
+131 |     elif mutation == 'backup': rows[1]['backup_hash'] = None
+    |                              ^
+132 |     elif mutation == 'first-open': rows[0]['state'] = 'EXPORTED'
+133 |     else: rows[1]['state'] = 'RUNNING'
+    |
+
+E701 Multiple statements on one line (colon)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:132:34
+    |
+130 |     elif mutation == 'deadline': rows[2]['deadline'] = utc().isoformat()
+131 |     elif mutation == 'backup': rows[1]['backup_hash'] = None
+132 |     elif mutation == 'first-open': rows[0]['state'] = 'EXPORTED'
+    |                                  ^
+133 |     else: rows[1]['state'] = 'RUNNING'
+134 |     with pytest.raises(ValueError): boundary(rows, saved)
+    |
+
+E701 Multiple statements on one line (colon)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:133:9
+    |
+131 |     elif mutation == 'backup': rows[1]['backup_hash'] = None
+132 |     elif mutation == 'first-open': rows[0]['state'] = 'EXPORTED'
+133 |     else: rows[1]['state'] = 'RUNNING'
+    |         ^
+134 |     with pytest.raises(ValueError): boundary(rows, saved)
+    |
+
+E701 Multiple statements on one line (colon)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:134:35
+    |
+132 |     elif mutation == 'first-open': rows[0]['state'] = 'EXPORTED'
+133 |     else: rows[1]['state'] = 'RUNNING'
+134 |     with pytest.raises(ValueError): boundary(rows, saved)
+    |                                   ^
+135 |
+136 | def test_real_two_original_import(tmp_path: Path) -> None:
+    |
+
+E501 Line too long (109 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:138:101
+    |
+136 | def test_real_two_original_import(tmp_path: Path) -> None:
+137 |     root = tmp_path / 'import'
+138 |     result = stage(MASTER, FIRST, root, second=SECOND, first_archive=ARCHIVES[0], second_archive=ARCHIVES[1])
+    |                                                                                                     ^^^^^^^^^
+139 |     verify_imported_first(root)
+140 |     rows = ro_rows(root)
+    |
+
+E501 Line too long (109 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:147:101
+    |
+145 |     for label, original in [('first-slot', FIRST), ('second-slot', SECOND)]:
+146 |         files = read(original / 'manifest.json')['files']
+147 |         assert all(hash_file(root / 'historical' / label / name) == digest for name, digest in files.items())
+    |                                                                                                     ^^^^^^^^^
+148 |     assert read(root / 'pause.json')['reason'] == 'CONTINUATION_REVIEW_REQUIRED'
+149 |     from imported_analysis import imported_row
+    |
+
+E501 Line too long (102 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:156:101
+    |
+154 |         assert analysis.duration_seconds == 600 and analysis.event_observed is False
+155 |         assert analysis.censor_reason == 'NO_SUPPORTED_COMPLETION'
+156 |         assert provenance['raw_status'] == 'FAILED' and not provenance['replacement_or_driver_replay']
+    |                                                                                                     ^^
+157 |     with pytest.raises(ValueError, match='RETAIN_ATTEMPTS'):
+158 |         stage(MASTER, FIRST, root, second=SECOND, first_archive=ARCHIVES[0], second_archive=ARCHIVES[1])
+    |
+
+E501 Line too long (104 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:158:101
+    |
+156 |         assert provenance['raw_status'] == 'FAILED' and not provenance['replacement_or_driver_replay']
+157 |     with pytest.raises(ValueError, match='RETAIN_ATTEMPTS'):
+158 |         stage(MASTER, FIRST, root, second=SECOND, first_archive=ARCHIVES[0], second_archive=ARCHIVES[1])
+    |                                                                                                     ^^^^
+159 |     (root / 'historical/timing-sidecars/second-original-proposed-sidecar.json').write_text('altered')
+160 |     with pytest.raises(ValueError, match='HISTORY_DRIFT'): verify_imported_first(root)
+    |
+
+E501 Line too long (101 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:159:101
+    |
+157 |     with pytest.raises(ValueError, match='RETAIN_ATTEMPTS'):
+158 |         stage(MASTER, FIRST, root, second=SECOND, first_archive=ARCHIVES[0], second_archive=ARCHIVES[1])
+159 |     (root / 'historical/timing-sidecars/second-original-proposed-sidecar.json').write_text('altered')
+    |                                                                                                     ^
+160 |     with pytest.raises(ValueError, match='HISTORY_DRIFT'): verify_imported_first(root)
+    |
+
+E701 Multiple statements on one line (colon)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:160:58
+    |
+158 |         stage(MASTER, FIRST, root, second=SECOND, first_archive=ARCHIVES[0], second_archive=ARCHIVES[1])
+159 |     (root / 'historical/timing-sidecars/second-original-proposed-sidecar.json').write_text('altered')
+160 |     with pytest.raises(ValueError, match='HISTORY_DRIFT'): verify_imported_first(root)
+    |                                                          ^
+161 |
+162 | @pytest.mark.parametrize('mutation', ['missing-dump', 'archive', 'sidecar', 'receipt'])
+    |
+
+E702 Multiple statements on one line (semicolon)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:165:36
+    |
+163 | def test_incomplete_original_backup_rejected(tmp_path: Path, mutation: str) -> None:
+164 |     master, second = tmp_path / 'master', tmp_path / 'second'
+165 |     shutil.copytree(MASTER, master); shutil.copytree(SECOND, second)
+    |                                    ^
+166 |     slot = ro_rows(master)[1]; side = tmp_path / 'sidecar.json'
+167 |     shutil.copyfile(HERE / 'second-original-proposed-sidecar.json', side)
+    |
+
+E702 Multiple statements on one line (semicolon)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:166:30
+    |
+164 |     master, second = tmp_path / 'master', tmp_path / 'second'
+165 |     shutil.copytree(MASTER, master); shutil.copytree(SECOND, second)
+166 |     slot = ro_rows(master)[1]; side = tmp_path / 'sidecar.json'
+    |                              ^
+167 |     shutil.copyfile(HERE / 'second-original-proposed-sidecar.json', side)
+168 |     archive = tmp_path / 'archive.tar.gz'; shutil.copyfile(ARCHIVES[1], archive)
+    |
+
+E702 Multiple statements on one line (semicolon)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:168:42
+    |
+166 |     slot = ro_rows(master)[1]; side = tmp_path / 'sidecar.json'
+167 |     shutil.copyfile(HERE / 'second-original-proposed-sidecar.json', side)
+168 |     archive = tmp_path / 'archive.tar.gz'; shutil.copyfile(ARCHIVES[1], archive)
+    |                                          ^
+169 |     if mutation == 'missing-dump': (second / 'setup_truth.sql.gz').unlink()
+170 |     elif mutation == 'archive': archive.write_bytes(archive.read_bytes()[:-8])
+    |
+
+E701 Multiple statements on one line (colon)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:169:34
+    |
+167 |     shutil.copyfile(HERE / 'second-original-proposed-sidecar.json', side)
+168 |     archive = tmp_path / 'archive.tar.gz'; shutil.copyfile(ARCHIVES[1], archive)
+169 |     if mutation == 'missing-dump': (second / 'setup_truth.sql.gz').unlink()
+    |                                  ^
+170 |     elif mutation == 'archive': archive.write_bytes(archive.read_bytes()[:-8])
+171 |     elif mutation == 'sidecar': side.write_text(side.read_text().replace('NO_SUPPORTED_COMPLETION', 'INVALID'))
+    |
+
+E701 Multiple statements on one line (colon)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:170:31
+    |
+168 |     archive = tmp_path / 'archive.tar.gz'; shutil.copyfile(ARCHIVES[1], archive)
+169 |     if mutation == 'missing-dump': (second / 'setup_truth.sql.gz').unlink()
+170 |     elif mutation == 'archive': archive.write_bytes(archive.read_bytes()[:-8])
+    |                               ^
+171 |     elif mutation == 'sidecar': side.write_text(side.read_text().replace('NO_SUPPORTED_COMPLETION', 'INVALID'))
+172 |     else:
+    |
+
+E701 Multiple statements on one line (colon)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:171:31
+    |
+169 |     if mutation == 'missing-dump': (second / 'setup_truth.sql.gz').unlink()
+170 |     elif mutation == 'archive': archive.write_bytes(archive.read_bytes()[:-8])
+171 |     elif mutation == 'sidecar': side.write_text(side.read_text().replace('NO_SUPPORTED_COMPLETION', 'INVALID'))
+    |                               ^
+172 |     else:
+173 |         receipt = master / 'backups' / (slot['execution_id'] + '.json')
+    |
+
+E501 Line too long (111 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:171:101
+    |
+169 |     if mutation == 'missing-dump': (second / 'setup_truth.sql.gz').unlink()
+170 |     elif mutation == 'archive': archive.write_bytes(archive.read_bytes()[:-8])
+171 |     elif mutation == 'sidecar': side.write_text(side.read_text().replace('NO_SUPPORTED_COMPLETION', 'INVALID'))
+    |                                                                                                     ^^^^^^^^^^^
+172 |     else:
+173 |         receipt = master / 'backups' / (slot['execution_id'] + '.json')
+    |
+
+E702 Multiple statements on one line (semicolon)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:174:29
+    |
+172 |     else:
+173 |         receipt = master / 'backups' / (slot['execution_id'] + '.json')
+174 |         data = read(receipt); data['cloud']['version_id'] = None; receipt.write_text(json.dumps(data))
+    |                             ^
+175 |     from two_originals import SECOND_HASH
+176 |     with pytest.raises((ValueError, OSError, EOFError)):
+    |
+
+E702 Multiple statements on one line (semicolon)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:174:65
+    |
+172 |     else:
+173 |         receipt = master / 'backups' / (slot['execution_id'] + '.json')
+174 |         data = read(receipt); data['cloud']['version_id'] = None; receipt.write_text(json.dumps(data))
+    |                                                                 ^
+175 |     from two_originals import SECOND_HASH
+176 |     with pytest.raises((ValueError, OSError, EOFError)):
+    |
+
+E501 Line too long (102 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\test_combined.py:174:101
+    |
+172 |     else:
+173 |         receipt = master / 'backups' / (slot['execution_id'] + '.json')
+174 |         data = read(receipt); data['cloud']['version_id'] = None; receipt.write_text(json.dumps(data))
+    |                                                                                                     ^^
+175 |     from two_originals import SECOND_HASH
+176 |     with pytest.raises((ValueError, OSError, EOFError)):
+    |
+
+E501 Line too long (101 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\two_originals.py:25:101
+   |
+23 |     if [r['execution_id'] for r in rows[:3]] != [FIRST, SECOND, NEXT]:
+24 |         raise ValueError('ORIGINALS_OR_NEXT_P2_DRIFT')
+25 |     if any(r['state'] != 'BACKED_UP' or not r['backup_hash'] or not r['deadline'] for r in rows[:2]):
+   |                                                                                                     ^
+26 |         raise ValueError('TWO_ORIGINALS_NOT_BACKED_UP')
+27 |     if any(r['state'] != 'PLANNED' or any(r[k] is not None for k in ('deadline', 'backup_hash', 'error')) for r in rows[2:]):
+   |
+
+E501 Line too long (125 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\two_originals.py:27:101
+   |
+25 |     if any(r['state'] != 'BACKED_UP' or not r['backup_hash'] or not r['deadline'] for r in rows[:2]):
+26 |         raise ValueError('TWO_ORIGINALS_NOT_BACKED_UP')
+27 |     if any(r['state'] != 'PLANNED' or any(r[k] is not None for k in ('deadline', 'backup_hash', 'error')) for r in rows[2:]):
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+28 |         raise ValueError('ACTIVE_OR_CHANGED_SLOT_NO_COLD_HANDOVER')
+   |
+
+E501 Line too long (128 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\two_originals.py:36:101
+   |
+34 |     verify_members(folder)
+35 |     manifest = read(folder / 'manifest.json')
+36 |     if manifest.get('postgres_dumps') is not True or not {'setup_app.sql.gz', 'setup_truth.sql.gz'}.issubset(manifest['files']):
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+37 |         raise ValueError('INCOMPLETE_POSTGRES_BACKUP')
+38 |     exported = folder / 'executions' / slot['execution_id'] / 'export.json'
+   |
+
+E501 Line too long (181 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\two_originals.py:40:101
+   |
+38 | …'
+39 | …
+40 | …['execution_id'] != slot['execution_id'] or raw['attempt'] != slot['attempt'] or raw['arm'] != slot['arm']:
+   |                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+41 | …
+42 | …
+   |
+
+E501 Line too long (105 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\two_originals.py:45:101
+   |
+43 |     receipt = read(receipt_path)
+44 |     cloud = receipt['cloud']
+45 |     if (hash_file(receipt_path) != slot['backup_hash'] or receipt['execution_id'] != slot['execution_id']
+   |                                                                                                     ^^^^^
+46 |             or not cloud.get('version_id') or not cloud.get('bucket') or not cloud.get('key')
+47 |             or cloud['sha256'] != receipt['sha256'] or cloud['bytes'] != archive.stat().st_size):
+   |
+
+E501 Line too long (143 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\two_originals.py:57:101
+   |
+55 | …ST_DRIFT')
+56 | …
+57 | …car.json' if slot['execution_id'] == FIRST else 'second-original-proposed-sidecar.json')
+   |                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+58 | …
+59 | …
+   |
+
+E501 Line too long (134 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\two_originals.py:94:101
+   |
+92 |     if bindings != [{k: r[k] for k in bindings[0]} for r in rows]:
+93 |         raise ValueError('ORIGINAL_BINDINGS_DRIFT')
+94 |     if read(master / 'binding-seal.json') != {'run': hash_file(master / 'run.json'), 'bindings': hash_file(master / 'bindings.json')}:
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+95 |         raise ValueError('ORIGINAL_BINDING_SEAL_DRIFT')
+96 |     sides = [HERE / 'first-original-proposed-sidecar.json', HERE / 'second-original-proposed-sidecar.json']
+   |
+
+E501 Line too long (107 > 100)
+  --> artifacts\phase-8-runner-amendment\v3\two_originals.py:96:101
+   |
+94 |     if read(master / 'binding-seal.json') != {'run': hash_file(master / 'run.json'), 'bindings': hash_file(master / 'bindings.json')}:
+95 |         raise ValueError('ORIGINAL_BINDING_SEAL_DRIFT')
+96 |     sides = [HERE / 'first-original-proposed-sidecar.json', HERE / 'second-original-proposed-sidecar.json']
+   |                                                                                                     ^^^^^^^
+97 |     proofs = [original_proof(master, f, a, s, side, digest) for f, a, s, side, digest in zip(
+98 |         (first, second), (first_archive, second_archive), rows[:2], sides, (FIRST_HASH, SECOND_HASH), strict=True)]
+   |
+
+E501 Line too long (115 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\two_originals.py:98:101
+    |
+ 96 |     sides = [HERE / 'first-original-proposed-sidecar.json', HERE / 'second-original-proposed-sidecar.json']
+ 97 |     proofs = [original_proof(master, f, a, s, side, digest) for f, a, s, side, digest in zip(
+ 98 |         (first, second), (first_archive, second_archive), rows[:2], sides, (FIRST_HASH, SECOND_HASH), strict=True)]
+    |                                                                                                     ^^^^^^^^^^^^^^^
+ 99 |     # Every validation precedes the import. No services, DB restoration or driver exists here.
+100 |     destination.mkdir(parents=True)
+    |
+
+E501 Line too long (155 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\two_originals.py:113:101
+    |
+111 | …
+112 | … with its own version.
+113 | …r-amendment/v1/first-original-sidecar.json', sides_dir / 'historical-accepted-first-v1.json')
+    |                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+114 | …st='/opt/fyp-phase8-combined-v3/artifacts/phase-8-review-freeze/v2/review-inventory.json',
+115 | …uation={'manifest': 'artifacts/phase-8-runner-amendment/v3/candidate-inventory.json', 'receipts': '/var/lib/fyp-owner/combined-v3-re…
+    |
+
+E501 Line too long (152 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\two_originals.py:114:101
+    |
+112 | …y, with its own version.
+113 | …ner-amendment/v1/first-original-sidecar.json', sides_dir / 'historical-accepted-first-v1.json')
+114 | …fest='/opt/fyp-phase8-combined-v3/artifacts/phase-8-review-freeze/v2/review-inventory.json',
+    |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+115 | …inuation={'manifest': 'artifacts/phase-8-runner-amendment/v3/candidate-inventory.json', 'receipts': '/var/lib/fyp-owner/combined-v3-…
+116 | …
+    |
+
+E501 Line too long (203 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\two_originals.py:115:101
+    |
+113 | …ginal-sidecar.json', sides_dir / 'historical-accepted-first-v1.json')
+114 | …ined-v3/artifacts/phase-8-review-freeze/v2/review-inventory.json',
+115 | …ifacts/phase-8-runner-amendment/v3/candidate-inventory.json', 'receipts': '/var/lib/fyp-owner/combined-v3-receipts'})
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+116 | …
+117 | …json'), 'bindings': hash_file(destination / 'bindings.json')})
+    |
+
+E501 Line too long (148 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\two_originals.py:117:101
+    |
+115 | …ntinuation={'manifest': 'artifacts/phase-8-runner-amendment/v3/candidate-inventory.json', 'receipts': '/var/lib/fyp-owner/combined-v…
+116 | …
+117 | …ash_file(destination / 'run.json'), 'bindings': hash_file(destination / 'bindings.json')})
+    |                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+118 | …'kind': 'CLOSED_TWO_ORIGINAL_METADATA_IMPORT_NOT_LAUNCH',
+119 | …': 1498, 'backed_up': 2,
+    |
+
+E501 Line too long (115 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\two_originals.py:118:101
+    |
+116 |     write_new(destination / 'run.json', config)
+117 |     write_new(destination / 'binding-seal.json', {'run': hash_file(destination / 'run.json'), 'bindings': hash_file(destination / 'bi…
+118 |     record = {'version': 'phase85-combined-amendment-v3', 'kind': 'CLOSED_TWO_ORIGINAL_METADATA_IMPORT_NOT_LAUNCH',
+    |                                                                                                     ^^^^^^^^^^^^^^^
+119 |               'run_id': RUN, 'originals': proofs, 'planned': 1498, 'backed_up': 2,
+120 |               'next_execution_id': NEXT, 'source_ledger_sha256': hash_file(master / 'campaign.sqlite3'),
+    |
+
+E501 Line too long (104 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\two_originals.py:120:101
+    |
+118 |     record = {'version': 'phase85-combined-amendment-v3', 'kind': 'CLOSED_TWO_ORIGINAL_METADATA_IMPORT_NOT_LAUNCH',
+119 |               'run_id': RUN, 'originals': proofs, 'planned': 1498, 'backed_up': 2,
+120 |               'next_execution_id': NEXT, 'source_ledger_sha256': hash_file(master / 'campaign.sqlite3'),
+    |                                                                                                     ^^^^
+121 |               'saved_identities_sha256': hash_file(destination / 'saved-identities.json'),
+122 |               'parent_freeze_sha256': PARENT_FREEZE, 'immediate_parent_freeze_sha256': IMMEDIATE_PARENT,
+    |
+
+E501 Line too long (104 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\two_originals.py:122:101
+    |
+120 |               'next_execution_id': NEXT, 'source_ledger_sha256': hash_file(master / 'campaign.sqlite3'),
+121 |               'saved_identities_sha256': hash_file(destination / 'saved-identities.json'),
+122 |               'parent_freeze_sha256': PARENT_FREEZE, 'immediate_parent_freeze_sha256': IMMEDIATE_PARENT,
+    |                                                                                                     ^^^^
+123 |               'history_files': {p.relative_to(history).as_posix(): hash_file(p) for p in history.rglob('*') if p.is_file()},
+124 |               'accepted': False, 'frozen': False, 'launch_authorized': False, 'driver_calls': 0,
+    |
+
+E501 Line too long (124 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\two_originals.py:123:101
+    |
+121 |               'saved_identities_sha256': hash_file(destination / 'saved-identities.json'),
+122 |               'parent_freeze_sha256': PARENT_FREEZE, 'immediate_parent_freeze_sha256': IMMEDIATE_PARENT,
+123 |               'history_files': {p.relative_to(history).as_posix(): hash_file(p) for p in history.rglob('*') if p.is_file()},
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^
+124 |               'accepted': False, 'frozen': False, 'launch_authorized': False, 'driver_calls': 0,
+125 |               'old_application_state_restored': False, 'operational_clock_reset': False}
+    |
+
+E501 Line too long (128 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\two_originals.py:130:101
+    |
+128 |     journal.verify()
+129 |     journal.event('CLOSED_TWO_ORIGINAL_IMPORT', proof=hash_file(destination / 'handover.json'))
+130 |     journal.event('BINDINGS_SEALED', run=hash_file(destination / 'run.json'), bindings=hash_file(destination / 'bindings.json'))
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+131 |     journal.pause('CONTINUATION_REVIEW_REQUIRED')
+132 |     verify(destination)
+    |
+
+E501 Line too long (177 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\two_originals.py:138:101
+    |
+136 | …
+137 | …
+138 | …] != IMMEDIATE_PARENT or [p['export_sha256'] for p in record['originals']] != [FIRST_HASH, SECOND_HASH]:
+    |                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+139 | …
+140 | …
+    |
+
+E501 Line too long (136 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\two_originals.py:149:101
+    |
+147 | …RIFT')
+148 | …
+149 | … any(any(a[k] != b[k] for k in IDENTITY) for a, b in zip(rows, saved, strict=True)):
+    |                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+150 | …
+151 | …
+    |
+
+E501 Line too long (109 > 100)
+   --> artifacts\phase-8-runner-amendment\v3\two_originals.py:160:101
+    |
+158 |         raise ValueError('HISTORICAL_NOTICE_PREFIX_DRIFT')
+159 |     for proof in record['originals']:
+160 |         if hash_file(root / 'backups' / (proof['execution_id'] + '.json')) != proof['backup_receipt_sha256']:
+    |                                                                                                     ^^^^^^^^^
+161 |             raise ValueError('IMPORTED_BACKUP_DRIFT')
+    |
+
+Found 162 errors (7 fixed, 155 remaining).
+No fixes available (1 hidden fix can be enabled with the `--unsafe-fixes` option).

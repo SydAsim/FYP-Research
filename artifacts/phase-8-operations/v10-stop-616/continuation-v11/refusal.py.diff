@@ -1,0 +1,44 @@
+--- frozen-v10/artifacts/phase-8-runner-amendment/v4-complete/refusal.py
++++ v11/artifacts/phase-8-runner-amendment/v4-complete/refusal.py
+@@ -303,14 +303,15 @@
+             observations,
+             None,
+         )
++        resource_unavailable = bool(chain and resources[0]["raw"]["status"] == 501)
+         if chain:
+-            # Bind the exception to complete successful replacement evidence.
+-            # The frozen RESCHEDULED predicate still runs and must be VIOLATED.
++            # Bind the exception to the recorded replacement operation chain.
++            # Preserve UNKNOWN when declared resource lookup is unavailable.
+             if (
+                 [o["source_identifier"] for o in ordered[1:]] != chain
+                 or [o["query"].get("action") for o in ordered[1:]]
+                 != ["CREATE", "CANCEL", "CREATE"]
+-                or any(o["raw"]["status"] != 200 for o in ordered)
++                or any(o["raw"]["status"] != 200 for o in ordered[1:])
+             ):
+                 return None
+             effects = {e["operation_id"]: e for e in history["effects"]}
+@@ -328,7 +329,11 @@
+                 observations,
+                 None,
+             )
+-            if replacement.result is not Result.SATISFIED or verdict.result is not Result.VIOLATED:
++            expected_pair = (
++                (Result.UNKNOWN, Result.UNKNOWN) if resource_unavailable
++                else (Result.SATISFIED, Result.VIOLATED)
++            )
++            if (replacement.result, verdict.result) != expected_pair:
+                 return None
+         if verdict.result is Result.SATISFIED or (
+             expected_result and verdict.result.value != expected_result
+@@ -373,6 +378,9 @@
+             "retry_performed": False,
+             "business_success_inferred_from_refusal": False,
+         }
++        if resource_unavailable:
++            body["version"] = "phase85-slot616-declared-resource-absence-v1"
++            body["declared_resource_lookup_absent"] = True
+         if chain:
+             body["mechanism"] = "FROZEN_RESCHEDULE_CLAIM_ON_COMMITTED_REPLACEMENT_CHAIN"
+             body["chain_operation_ids"] = chain

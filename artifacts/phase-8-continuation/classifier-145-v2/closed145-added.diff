@@ -1,0 +1,107 @@
+--- /dev/null
++++ candidate/artifacts/phase-8-runner-amendment/v4-complete/closed145.py
+@@ -0,0 +1,104 @@
++"""Read-only closed-boundary gate. Never imports, admits, clears pause or writes outcomes."""
++from __future__ import annotations
++
++import hashlib
++import json
++import sqlite3
++from pathlib import Path
++from typing import Any
++
++HERE = Path(__file__).resolve().parent
++NEXT = "01a11705-11f1-772d-8190-c43552871801"
++
++
++def digest(path: Path) -> str:
++    with path.open("rb") as file:
++        return hashlib.file_digest(file, "sha256").hexdigest()
++
++
++def read(path: Path) -> Any:
++    return json.loads(path.read_text(encoding="utf-8"))
++
++
++def check_rows(rows: list[dict[str, Any]], saved: list[dict[str, Any]]) -> None:
++    if len(rows) != 1500 or len(saved) != 1500 or rows != saved:
++        raise ValueError("EXACT_CLOSED145_ROWS_REQUIRED")
++    if len({r["execution_id"] for r in rows}) != 1500:
++        raise ValueError("DUPLICATE_ORIGINAL_IDENTITY")
++    if any(
++        row["sequence"] != index + 1 or row["attempt"] != 1
++        for index, row in enumerate(rows)
++    ):
++        raise ValueError("ORIGINAL_ORDER_OR_ATTEMPT_DRIFT")
++    if any(
++        r["state"] != "BACKED_UP" or not r["backup_hash"] or not r["deadline"]
++        for r in rows[:145]
++    ) or any(
++        r["state"] != "PLANNED"
++        or any(r[k] is not None for k in ("deadline", "backup_hash", "error"))
++        for r in rows[145:]
++    ):
++        raise ValueError("CLOSED145_ACTIVE_OR_INCOMPLETE_BOUNDARY")
++    if rows[145]["execution_id"] != NEXT or rows[145]["arm"] != "P2":
++        raise ValueError("NEXT146_P2_DRIFT")
++
++
++def snapshot(path: Path) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
++    with sqlite3.connect(path.resolve().as_uri() + "?mode=ro", uri=True) as db:
++        db.row_factory = sqlite3.Row
++        db.execute("BEGIN")
++        if db.execute("PRAGMA integrity_check").fetchone()[0] != "ok":
++            raise ValueError("RETAINED_LEDGER_CORRUPTION")
++        notices = []
++        previous = "GENESIS"
++        for event in db.execute("SELECT * FROM notices ORDER BY n"):
++            if (
++                event["previous"] != previous
++                or hashlib.sha256((event["body"] + previous).encode()).hexdigest()
++                != event["hash"]
++            ):
++                raise ValueError("RETAINED_NOTICE_CHAIN_CORRUPTION")
++            notices.append(json.loads(event["body"]))
++            previous = event["hash"]
++        return [dict(row) for row in db.execute("SELECT * FROM slots ORDER BY sequence")], notices
++
++
++def verify_retained_root(root: Path) -> dict[str, Any]:
++    """Future external readiness gate; requires stopped owned units before invocation."""
++    closed = HERE / "closed-145"
++    saved = read(closed / "read-only-ledger.json")["rows"]
++    rows, notices = snapshot(root / "campaign.sqlite3")
++    check_rows(rows, saved)
++    historical = read(closed / "historical-notices.json")["notices"]
++    if notices[: len(historical)] != historical:
++        raise ValueError("HISTORICAL_NOTICE_PREFIX_DRIFT")
++    if digest(root / "pause.json") != digest(closed / "pause.json"):
++        raise ValueError("ORIGINAL_DURABLE_PAUSE_DRIFT")
++    bindings = read(closed / "bindings.json")
++    if read(root / "bindings.json") != bindings:
++        raise ValueError("SAVED_BINDINGS_DRIFT")
++    refs = read(closed / "backup-reference-index.json")
++    exports = {}
++    for row in rows[:145]:
++        identity = row["execution_id"]
++        receipt_path = root / "backups" / (identity + ".json")
++        receipt = read(receipt_path)
++        if (
++            digest(receipt_path) != row["backup_hash"]
++            or receipt["execution_id"] != identity
++            or receipt["cloud"] != refs[identity]["cloud"]
++            or receipt["sha256"] != receipt["cloud"]["sha256"]
++            or not receipt["cloud"]["version_id"]
++        ):
++            raise ValueError("RETAINED_BACKUP_REFERENCE_DRIFT")
++        path = root / "exports" / f"{row['sequence']:04d}" / "export.json"
++        raw = read(path)
++        if any(raw[k] != row[k] for k in ("execution_id", "arm", "attempt", "fixture_hash")):
++            raise ValueError("RETAINED_EXPORT_IDENTITY_DRIFT")
++        exports[identity] = {"sha256": digest(path), "raw_status": raw["status"]}
++    return {
++        "kind": "READ_ONLY_CLOSED145_GATE_NOT_AUTHORIZATION",
++        "backed_up": 145, "planned": 1355, "next": rows[145],
++        "exports": exports, "driver_calls": 0, "outcome_writes": 0,
++        "ledger_restore": False, "pause_clear": False,
++    }

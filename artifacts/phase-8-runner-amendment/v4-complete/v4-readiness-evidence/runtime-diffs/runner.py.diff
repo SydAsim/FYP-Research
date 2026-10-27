@@ -1,0 +1,36 @@
+--- accepted-v3/runner.py
++++ candidate-v4/runner.py
+@@ -17,6 +17,7 @@
+ REPO = HERE.parents[2]
+ sys.path.insert(0, str(REPO))
+ 
++from closed_prefix import imported as imported_closed  # noqa: E402
+ from controls import (  # noqa: E402
+     Authority,
+     Journal,
+@@ -29,10 +30,8 @@
+     write_new,
+ )
+ from handover import (  # noqa: E402
+-    FIRST,
+     ContinuationAuthority,
+     record_provenance,
+-    verify_imported_first,
+ )
+ from storage import (  # noqa: E402
+     Cloud,
+@@ -509,13 +508,9 @@
+             authority = verify_run(root)
+             # Recover crash after backup commit but before releasing the prior ports.
+             for closed in journal.rows():
+-                if (
+-                    closed["execution_id"] in (FIRST, "01a11705-11f0-7826-bd9d-9066d82c4452")
+-                    and (root / "handover.json").exists()
+-                ):
++                if imported_closed(root, closed["execution_id"]):
+                     # Closed evidence imported; old host resources were not restored here.
+                     # This does not assert that old volumes were deleted or retired.
+-                    verify_imported_first(root)
+                     continue
+                 if (
+                     closed["state"] == "BACKED_UP"

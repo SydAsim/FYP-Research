@@ -1,0 +1,22 @@
+--- external-projection-v2
++++ external-release-order-v3
+@@ -27,7 +27,7 @@
+     assert all(cmd(['systemctl','show',u,'--property=MainPID','--value']).strip()=='0' for u in UNITS),'OWNED_UNITS_MUST_BE_QUIESCED'
+ def modules():
+     sys.path.insert(0,str(SOURCE/R));sys.path.insert(1,str(SOURCE))
+-def payload():return read(DEP/'external-input-projection-v2.json')
++def payload():return read(DEP/'external-input-release-order-v3.json')
+ def closed_rows():
+     from closed145 import snapshot
+     rows,notices=snapshot(ROOT/'campaign.sqlite3')
+@@ -262,8 +262,9 @@
+     live=read(DEP/'live-checks.json');assert sample['backup_bytes']-live['resource_sample']['backup_bytes']<=live['preparation_copy_bound_bytes']
+     for name,text in zip(UNITS,(campaign_unit(ROOT),watchdog_unit(ROOT))):assert Path('/etc/systemd/system',name).read_text()==text
+     assert digest(Path('/etc/needrestart/conf.d/99-fyp-phase8-defer-restarts.conf'))=='a2fa11ad5a52dce6d32ce8731bf1bc8bea6eee6d76872a55e02bb01cda4cbe73'
+-    verify_clock(ROOT,a.policy);verify_host_timer(ROOT)
++    verify_clock(ROOT,a.policy)
+     cmd(['systemctl','start','fyp-phase8-watchdog.service'])
++    verify_host_timer(ROOT)
+     release_reviewed_boundary(ROOT)
+     record('actual-release.json',{'status':'PASS_REVIEWED_RELEASE_NOT_YET_ADMISSION','at':datetime.now(UTC).isoformat(),'next_sequence':1298,'next_execution_id':NEXT,'old_pause_preserved':digest(ROOT/'retained-protocol1297-pause-v12.json'),'forecast':f})
+     cmd(['systemctl','start','fyp-phase8-campaign.service'])

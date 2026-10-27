@@ -1,0 +1,31 @@
+--- accepted-v3/imported_analysis.py
++++ candidate-v4/imported_analysis.py
+@@ -16,6 +16,28 @@
+ 
+ def imported_row(root: Path, execution_id: str) -> tuple[AnalysisRow, dict[str, Any]]:
+     verify_imported_first(root)
++    record = read(root / "handover.json")
++    closed = next(
++        p for p in record["closed_originals"] if p["identity"]["execution_id"] == execution_id
++    )
++    if closed["identity"]["sequence"] > 2:
++        path = (
++            root
++            / "historical/boundary/exports"
++            / f"{closed['identity']['sequence']:04d}"
++            / "export.json"
++        )
++        trace = read(path)
++        if hash_file(path) != closed["export_sha256"]:
++            raise ValueError("IMPORTED_ORIGINAL_EXPORT_DRIFT")
++        return AnalysisRow.model_validate(trace["analysis_row"]), {
++            "execution_id": execution_id,
++            "raw_status": trace["status"],
++            "export_hash": closed["export_sha256"],
++            "original_analysis_row": trace["analysis_row"],
++            "replacement_or_driver_replay": False,
++            "status": "IMMUTABLE_RECORDED_V3_ANALYSIS",
++        }
+     proof = next(
+         p for p in read(root / "handover.json")["originals"] if p["execution_id"] == execution_id
+     )

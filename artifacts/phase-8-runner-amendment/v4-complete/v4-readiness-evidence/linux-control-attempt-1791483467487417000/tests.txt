@@ -1,0 +1,43 @@
+..........................F..                                            [100%]
+=================================== FAILURES ===================================
+_______________ test_later_closed_slot_preserves_imported_prefix _______________
+
+staged = PosixPath('/tmp/cal-v4-controls/cal-v4-metadata0/import')
+tmp_path = PosixPath('/tmp/cal-v4-controls/test_later_closed_slot_preserv0')
+
+    def test_later_closed_slot_preserves_imported_prefix(staged: Path, tmp_path: Path) -> None:
+        root = clone(staged, tmp_path / "later")
+        journal = Journal(root)
+>       journal.update(NEXT, state="RUNNING", deadline="2026-10-08T23:00:00+00:00")
+
+artifacts/phase-8-runner-amendment/v4-complete/test_closed_prefix.py:158: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <controls.Journal object at 0x716ca2df7590>
+execution = '01a11705-11f0-73c0-af15-dd9f1d590b08'
+
+    def update(
+        self,
+        execution: str,
+        *,
+        state: str | None = None,
+        deadline: str | None = None,
+        backup_hash: str | None = None,
+    ) -> None:
+        with self.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute("SELECT * FROM slots WHERE execution_id=?", (execution,)).fetchone()
+            if row is None or row["state"] == "BACKED_UP":
+                raise ValueError("ORIGINAL_IMMUTABLE")
+            if row["deadline"] and deadline and row["deadline"] != deadline:
+                raise ValueError("ORIGINAL_DEADLINE_IMMUTABLE")
+            legal = {"RUNNING": {"RUNNING", "EXPORTED"}, "EXPORTED": {"BACKED_UP"}}
+            if state and state not in legal.get(row["state"], set()):
+>               raise ValueError("ILLEGAL_TRANSITION")
+E               ValueError: ILLEGAL_TRANSITION
+
+artifacts/phase-8-runner-amendment/v4-complete/controls.py:424: ValueError
+--------------------- generated xml file: /out/results.xml ---------------------
+=========================== short test summary info ============================
+FAILED artifacts/phase-8-runner-amendment/v4-complete/test_closed_prefix.py::test_later_closed_slot_preserves_imported_prefix
+1 failed, 28 passed in 107.59s (0:01:47)

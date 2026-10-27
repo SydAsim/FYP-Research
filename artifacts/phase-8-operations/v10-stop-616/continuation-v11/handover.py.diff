@@ -1,0 +1,80 @@
+--- frozen-v10/artifacts/phase-8-runner-amendment/v4-complete/handover.py
++++ v11/artifacts/phase-8-runner-amendment/v4-complete/handover.py
+@@ -76,16 +76,10 @@
+ 
+ 
+ def closed_boundary(rows: list[dict[str, Any]], saved: list[dict[str, Any]]) -> None:
+-
+-    # Verify frozen schedule columns as well as every existing execution identity.
+-    if len(saved) != 1500 or any(
+-        any(a[k] != b[k] for k in ("sequence", "case_id", "arm", "attempt", "fixture_hash"))
+-        for a, b in zip(rows, saved, strict=True)
+-    ):
++    from closed616 import check_rows, REL
++    if any(any(a[k] != b[k] for k in ("sequence","case_id","arm","attempt","fixture_hash")) for a,b in zip(rows,saved,strict=True)):
+         raise ValueError("SAVED_ORDER_OR_BINDING_DRIFT")
+-    from closed145 import check_rows
+-
+-    check_rows(rows, read(HERE / "closed-145/read-only-ledger.json")["rows"])
++    check_rows(rows,read(Path("/var/lib/p8-continuation-v9/run") / REL)["rows"])
+ 
+ 
+ def original_policy(raw: dict[str, Any]) -> Policy:
+@@ -111,6 +105,8 @@
+     from closed_prefix import verify
+ 
+     verify(root)
++    from closed616 import verify as verify616
++    verify616(root)
+     from closed_restart import verify as verify_closed82
+ 
+     verify_closed82(root)
+@@ -125,7 +121,7 @@
+     config = read(root / "run.json")
+     inventory = read(Path(config["source"]) / config["continuation"]["manifest"])
+     value = {
+-        "version": "phase85-continuation-v10",
++        "version": "phase85-continuation-v11",
+         "execution_id": execution_id,
+         "run_id": RUN,
+         "parent_freeze_sha256": PARENT_FREEZE,
+@@ -163,7 +159,7 @@
+     kind: Literal["CONTINUATION_ACCEPTED", "CONTINUATION_FREEZE", "CONTINUATION_LAUNCH"]
+     package_hash: str = Field(pattern=r"^[a-f0-9]{64}$")
+     operational_limits_sha256: Literal[
+-        "6d86b62931593e80e7cedd5371d9a72c14075b17d9a30c541e950e0f6af9af68"
++        "566556298a1135ed4f60cd78770415e74705a08a1dbff25398183ce863007869"
+     ]
+     predecessor_hash: str = Field(pattern=r"^[a-f0-9]{64}$")
+     policy_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+@@ -176,7 +172,7 @@
+         "bd4d32f4968eaff243d65d9cfe8fad36c603cd709c09ee7fdebd29746e90da42"
+     ]
+     immediate_parent_freeze_sha256: Literal[
+-        "92ef953de04518facf4c6dcc72d13572e1648ccad28001bad58ee435969a5162"
++        "b886fff14d4e8384c406deb68a875bc21a9c53e2bac5a17787d800fc1d2d192f"
+     ]
+     expires_at: datetime
+     signer: str
+@@ -326,7 +322,7 @@
+     if at < authority.policy.host_started_at or at >= authority.policy.stop_at:
+         raise ValueError("ORIGINAL_DEADLINE_EXPIRED_OR_CLOCK_ROLLBACK")
+     path = root / "host-clock.json"
+-    path.rename(root / "retained-host-clock-before-v10.json")
++    path.rename(root / "retained-host-clock-before-v11.json")
+     write_new(path, anchor_record(reading, boot))
+     journal = Journal(root)
+     journal.event("HOST_CLOCK_SEALED", hash=hash_file(path), measurement=read(path))
+@@ -359,10 +355,10 @@
+     rows = journal.rows()
+     saved = read(REPO / "artifacts/phase-8-review-freeze/v2/schedule.json")["rows"]
+     closed_boundary(rows, saved)
+-    if hash_file(root / "pause.json") != hash_file(HERE / "closed-145/pause.json"):
++    if hash_file(root / "pause.json") != "b2cddd1475c8b1dd2e471b7bc2cde283dfb4ef23a928a12a56be06086d8840fc":
+         raise ValueError("ONLY_REVIEWED_IMPORT_PAUSE_CAN_BE_RELEASED")
+     pause = root / "pause.json"
+-    pause.rename(root / "retained-driver145-pause-v10.json")
++    pause.rename(root / "retained-driver616-pause-v11.json")
+     journal.event(
+         "CONTINUATION_REVIEW_RELEASED", proof=proof, first=FIRST, operational_clock_reset=False
+     )

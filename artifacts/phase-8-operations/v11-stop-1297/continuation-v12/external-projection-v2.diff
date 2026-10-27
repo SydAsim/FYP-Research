@@ -1,0 +1,26 @@
+--- external-controller-v1
++++ external-controller-projection-v2
+@@ -27,7 +27,7 @@
+     assert all(cmd(['systemctl','show',u,'--property=MainPID','--value']).strip()=='0' for u in UNITS),'OWNED_UNITS_MUST_BE_QUIESCED'
+ def modules():
+     sys.path.insert(0,str(SOURCE/R));sys.path.insert(1,str(SOURCE))
+-def payload():return read(DEP/'external-input.json')
++def payload():return read(DEP/'external-input-projection-v2.json')
+ def closed_rows():
+     from closed145 import snapshot
+     rows,notices=snapshot(ROOT/'campaign.sqlite3')
+@@ -38,10 +38,10 @@
+ def forecast(policy,sample,cloudbytes,*,prep=0):
+     at=datetime.now(UTC);finish=at+timedelta(hours=203*262.31642189586114/1355+2.5);uncertain=finish+timedelta(hours=24)
+     extra=payload()['external']['cost']['extra_root_reserve']
+-    cloud_projection=cloudbytes+203*60*1024**2+1024**3+300*1024**2
+-    local_projection=sample['backup_bytes']+203*60*1024**2+1024**3+prep
+-    physical=203*60*1024**2+1024**3+(50*1024**3-sample['working_bytes'])+20*1024**3+1024**3+prep
+-    v={'at':at.isoformat(),'completion':finish.isoformat(),'uncertainty_completion':uncertain.isoformat(),'uncertainty_plus_margin_usd':policy.committed_cost(uncertain+timedelta(minutes=30))+extra,'full_deadline_usd':policy.committed_cost(policy.stop_at)+extra,'extra_root_reserve_usd':extra,'cloud_all_versions_bytes':cloudbytes,'cloud_projection_bytes':cloud_projection,'local_projection_bytes':local_projection,'required_free_bytes':physical,'preparation_bound_bytes':prep,'stop_at':policy.stop_at.isoformat()}
++    cloud_projection=cloudbytes+203*68*1024**2+1024**3+300*1024**2
++    local_projection=sample['backup_bytes']+203*68*1024**2+1024**3+prep
++    physical=203*68*1024**2+1024**3+(50*1024**3-sample['working_bytes'])+20*1024**3+1024**3+prep
++    v={'at':at.isoformat(),'completion':finish.isoformat(),'uncertainty_completion':uncertain.isoformat(),'uncertainty_plus_margin_usd':policy.committed_cost(uncertain+timedelta(minutes=30))+extra,'full_deadline_usd':policy.committed_cost(policy.stop_at)+extra,'extra_root_reserve_usd':extra,'cloud_all_versions_bytes':cloudbytes,'cloud_projection_bytes':cloud_projection,'local_projection_bytes':local_projection,'required_free_bytes':physical,'future_archive_allowance_bytes':71303168,'preparation_bound_bytes':prep,'stop_at':policy.stop_at.isoformat()}
+     assert uncertain<policy.stop_at-timedelta(minutes=30) and v['uncertainty_plus_margin_usd']<76 and v['full_deadline_usd']<77,'TIME_COST_FEASIBILITY_STOP'
+     assert max(cloud_projection,local_projection)<80*1024**3 and sample['system_free_bytes']>=physical,'FULL_CAPACITY_FEASIBILITY_STOP'
+     return v

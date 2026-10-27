@@ -1,0 +1,22 @@
+--- frozen-v11/artifacts/phase-8-runner-amendment/v4-complete/controls.py
++++ v12/artifacts/phase-8-runner-amendment/v4-complete/controls.py
+@@ -70,8 +70,8 @@
+     host_hours: Literal[360, 432] | float = 360
+     admission_cutoff_seconds: Literal[1800] = 1800
+     observation_seconds: Literal[600] = 600
+-    budget_usd: Literal[65, 75] = 65
+-    admission_committed_usd: Literal[55, 60, 70, 74] = 55
++    budget_usd: Literal[65, 75, 77] = 65
++    admission_committed_usd: Literal[55, 60, 70, 74, 76] = 55
+     volume_gib: Literal[160] = 160
+     stopped_retention_hours: Literal[48] = 48
+     admission_ram_bytes: int = Field(default=2 * 1024**3, ge=2 * 1024**3)
+@@ -94,7 +94,7 @@
+     @field_validator("host_hours")
+     @classmethod
+     def allowed_host_hours(cls, value: int | float) -> int | float:
+-        if value not in (360, 432, 440.5933859238889):
++        if value not in (360, 432, 440.5933859238889, 452.5933859238889):
+             raise ValueError("UNAPPROVED_HOST_LIMIT")
+         return value
+ 

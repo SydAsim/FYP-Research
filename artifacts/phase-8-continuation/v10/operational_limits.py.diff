@@ -1,0 +1,50 @@
+--- accepted/operational_limits.py
++++ v10/operational_limits.py
+@@ -9,20 +9,24 @@
+ from controls import Policy, Strict, hash_file, read
+ 
+ HERE = Path(__file__).resolve().parent
+-LIMITS_SHA256 = "b0349d0814cb519445a40cf430ee3f4aad50cf2d326509f96d6b59f36b4c44eb"
++LIMITS_SHA256 = "6d86b62931593e80e7cedd5371d9a72c14075b17d9a30c541e950e0f6af9af68"
+ BASE_V6_PACKAGE = "3807d690ad46abdd07da12710ea933e03e3d86fb4440f5933b186db74de76a34"
+ 
+ 
+ class OperationalLimits(Strict):
+     kind: Literal["PROPOSED_OPERATIONAL_LIMIT_AMENDMENT_NOT_AUTHORIZATION"]
+-    version: Literal["phase85-continuation-v9"]
++    version: Literal["phase85-continuation-v10"]
+     qualified_v6_package_hash: Literal[
+         "3807d690ad46abdd07da12710ea933e03e3d86fb4440f5933b186db74de76a34"
+     ]
+     run_id: Literal["p85-01a116f7-3b82-7a79-8653-3aee62dc99e9"]
+     original_deadline: Literal["2026-10-22T15:24:23.810674Z"]
+-    admission_committed_usd: Literal[60]
+-    budget_usd: Literal[65]
++    amended_deadline: Literal["2026-10-25T15:24:23.810674Z"]
++    original_clock_anchor: Literal["2026-10-07T15:24:23.810674Z"]
++    elapsed_host_limit_hours: Literal[432]
++    retention_decision_deadline: Literal["2026-10-27T15:24:23.810674Z"]
++    admission_committed_usd: Literal[70]
++    budget_usd: Literal[75]
+     cloud_limit_bytes: Literal[85899345920]
+     backup_archive_limit_bytes: Literal[85899345920]
+     working_limit_bytes: Literal[53687091200]
+@@ -41,6 +45,9 @@
+ 
+ 
+ class EffectiveContinuationPolicy(Policy):
++    host_hours: Literal[360, 432] = 432
++    budget_usd: Literal[65, 75] = 75
++    admission_committed_usd: Literal[55, 60, 70] = 70
+     @property
+     def backup_archive_limit_bytes(self) -> int:
+         return verified_limits().backup_archive_limit_bytes
+@@ -56,6 +63,8 @@
+     return EffectiveContinuationPolicy.model_validate(
+         {
+             **original,
++            "host_hours": limits.elapsed_host_limit_hours,
++            "budget_usd": limits.budget_usd,
+             "admission_committed_usd": limits.admission_committed_usd,
+             "cloud_limit_bytes": limits.cloud_limit_bytes,
+         }

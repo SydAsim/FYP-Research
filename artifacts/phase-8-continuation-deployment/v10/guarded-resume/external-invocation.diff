@@ -1,0 +1,17 @@
+--- prepare-source.sh (retained failed invocation)
++++ prepare-source.corrected.sh (not executed)
+@@ -6,10 +6,12 @@
+ test ! -e /opt/fyp-phase8-continuation-v10
+ test ! -e /var/lib/p8-continuation-v10/deployment/package.tar.gz
+ /opt/fyp-phase8-combined-v4/.venv/bin/python -B - <<'IMPORT_CHECK'
+-import boto3,botocore,sys,hashlib
++import boto3,botocore,sys,hashlib,json
+ from pathlib import Path
+ assert sys.version_info[:3]==(3,12,13),'PINNED_TRANSPORT_INTERPRETER'
+-assert hashlib.sha256(Path(sys.executable).resolve().read_bytes()).hexdigest()=='0e6475dfda68a9b2d93501449fc47593ca169010e8f4881577b97463fd0c1263'
++qualified=json.loads(Path('/var/lib/p8-combined-v4/deployment/host-health-readiness.json').read_text())
++assert sys.version==qualified['python'],'QUALIFIED_HOST_PYTHON_BUILD_DRIFT'
++print(json.dumps({'kind':'EXISTING_HOST_TRANSPORT_BINDING','python':sys.version,'binary_sha256':hashlib.sha256(Path(sys.executable).resolve().read_bytes()).hexdigest()}))
+ print('PASS_PINNED_EXISTING_TRANSPORT_IMPORT')
+ IMPORT_CHECK
+ cat >/var/lib/p8-continuation-v10/deployment/bootstrap-objects.json <<'OBJECTS'

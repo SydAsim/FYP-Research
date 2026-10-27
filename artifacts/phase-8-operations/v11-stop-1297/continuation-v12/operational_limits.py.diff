@@ -1,0 +1,47 @@
+--- frozen-v11/artifacts/phase-8-runner-amendment/v4-complete/operational_limits.py
++++ v12/artifacts/phase-8-runner-amendment/v4-complete/operational_limits.py
+@@ -10,24 +10,24 @@
+ from pydantic import Field
+ 
+ HERE = Path(__file__).resolve().parent
+-LIMITS_SHA256 = "566556298a1135ed4f60cd78770415e74705a08a1dbff25398183ce863007869"
++LIMITS_SHA256 = "68421df365be6cd8696c137e7b5f32c27634b87085315086ee3b1841c2841769"
+ BASE_V6_PACKAGE = "3807d690ad46abdd07da12710ea933e03e3d86fb4440f5933b186db74de76a34"
+ 
+ 
+ class OperationalLimits(Strict):
+     kind: Literal["PROPOSED_OPERATIONAL_LIMIT_AMENDMENT_NOT_AUTHORIZATION"]
+-    version: Literal["phase85-continuation-v11"]
++    version: Literal["phase85-continuation-v12"]
+     qualified_v6_package_hash: Literal[
+         "3807d690ad46abdd07da12710ea933e03e3d86fb4440f5933b186db74de76a34"
+     ]
+     run_id: Literal["p85-01a116f7-3b82-7a79-8653-3aee62dc99e9"]
+     original_deadline: Literal["2026-10-22T15:24:23.810674Z"]
+-    amended_deadline: Literal["2026-10-26T00:00:00Z"]
++    amended_deadline: Literal["2026-10-26T12:00:00Z"]
+     original_clock_anchor: Literal["2026-10-07T15:24:23.810674Z"]
+-    elapsed_host_limit_hours: float = Field(ge=440.5933859238889, le=440.5933859238889)
+-    retention_decision_deadline: Literal["2026-10-28T00:00:00Z"]
+-    admission_committed_usd: Literal[74]
+-    budget_usd: Literal[75]
++    elapsed_host_limit_hours: float = Field(ge=452.5933859238889, le=452.5933859238889)
++    retention_decision_deadline: Literal["2026-10-28T12:00:00Z"]
++    admission_committed_usd: Literal[76]
++    budget_usd: Literal[77]
+     cloud_limit_bytes: Literal[85899345920]
+     backup_archive_limit_bytes: Literal[85899345920]
+     working_limit_bytes: Literal[53687091200]
+@@ -46,9 +46,9 @@
+ 
+ 
+ class EffectiveContinuationPolicy(Policy):
+-    host_hours: Literal[360, 432] | float = 440.5933859238889
+-    budget_usd: Literal[65, 75] = 75
+-    admission_committed_usd: Literal[55, 60, 70, 74] = 74
++    host_hours: Literal[360, 432] | float = 452.5933859238889
++    budget_usd: Literal[65, 75, 77] = 77
++    admission_committed_usd: Literal[55, 60, 70, 74, 76] = 76
+ 
+     @property
+     def backup_archive_limit_bytes(self) -> int:

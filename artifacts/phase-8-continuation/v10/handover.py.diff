@@ -1,0 +1,95 @@
+--- accepted/handover.py
++++ v10/handover.py
+@@ -76,7 +76,6 @@
+ 
+ 
+ def closed_boundary(rows: list[dict[str, Any]], saved: list[dict[str, Any]]) -> None:
+-    from closed_restart import boundary
+ 
+     # Verify frozen schedule columns as well as every existing execution identity.
+     if len(saved) != 1500 or any(
+@@ -84,7 +83,9 @@
+         for a, b in zip(rows, saved, strict=True)
+     ):
+         raise ValueError("SAVED_ORDER_OR_BINDING_DRIFT")
+-    boundary(rows, saved)
++    from closed145 import check_rows
++
++    check_rows(rows, read(HERE / "closed-145/read-only-ledger.json")["rows"])
+ 
+ 
+ def original_policy(raw: dict[str, Any]) -> Policy:
+@@ -113,6 +114,9 @@
+     from closed_restart import verify as verify_closed82
+ 
+     verify_closed82(root)
++    from closed145 import verify_history
++
++    verify_history(root)
+ 
+ 
+ def record_provenance(root: Path, folder: Path, execution_id: str) -> None:
+@@ -121,7 +125,7 @@
+     config = read(root / "run.json")
+     inventory = read(Path(config["source"]) / config["continuation"]["manifest"])
+     value = {
+-        "version": "phase85-continuation-v9",
++        "version": "phase85-continuation-v10",
+         "execution_id": execution_id,
+         "run_id": RUN,
+         "parent_freeze_sha256": PARENT_FREEZE,
+@@ -159,7 +163,7 @@
+     kind: Literal["CONTINUATION_ACCEPTED", "CONTINUATION_FREEZE", "CONTINUATION_LAUNCH"]
+     package_hash: str = Field(pattern=r"^[a-f0-9]{64}$")
+     operational_limits_sha256: Literal[
+-        "b0349d0814cb519445a40cf430ee3f4aad50cf2d326509f96d6b59f36b4c44eb"
++        "6d86b62931593e80e7cedd5371d9a72c14075b17d9a30c541e950e0f6af9af68"
+     ]
+     predecessor_hash: str = Field(pattern=r"^[a-f0-9]{64}$")
+     policy_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+@@ -172,7 +176,7 @@
+         "bd4d32f4968eaff243d65d9cfe8fad36c603cd709c09ee7fdebd29746e90da42"
+     ]
+     immediate_parent_freeze_sha256: Literal[
+-        "3a4bf3b0f6d833bc89744778557258f6612a3622337511fb6ff9841ce27f5e46"
++        "92ef953de04518facf4c6dcc72d13572e1648ccad28001bad58ee435969a5162"
+     ]
+     expires_at: datetime
+     signer: str
+@@ -269,13 +273,13 @@
+             self.schedule_hash,
+             self.receipts,
+             self.key,
+-        ).verify(at)
++        ).verify(datetime.fromisoformat(START.replace("Z", "+00:00")))
+         predecessor = hashlib.sha256(canonical(read(self.receipts / "LAUNCH.json"))).hexdigest()
+         launch = verify_chain(
+             Path(self.config["continuation"]["receipts"]),
+             self.key.read_bytes(),
+             package,
+-            original_policy(self.config["policy"]),
++            self.policy,
+             hash_file(self.root / "saved-identities.json"),
+             predecessor,
+             at,
+@@ -322,6 +326,7 @@
+     if at < authority.policy.host_started_at or at >= authority.policy.stop_at:
+         raise ValueError("ORIGINAL_DEADLINE_EXPIRED_OR_CLOCK_ROLLBACK")
+     path = root / "host-clock.json"
++    path.rename(root / "retained-host-clock-before-v10.json")
+     write_new(path, anchor_record(reading, boot))
+     journal = Journal(root)
+     journal.event("HOST_CLOCK_SEALED", hash=hash_file(path), measurement=read(path))
+@@ -354,10 +359,10 @@
+     rows = journal.rows()
+     saved = read(REPO / "artifacts/phase-8-review-freeze/v2/schedule.json")["rows"]
+     closed_boundary(rows, saved)
+-    if read(root / "pause.json")["reason"] != "CONTINUATION_REVIEW_REQUIRED":
++    if hash_file(root / "pause.json") != hash_file(HERE / "closed-145/pause.json"):
+         raise ValueError("ONLY_REVIEWED_IMPORT_PAUSE_CAN_BE_RELEASED")
+     pause = root / "pause.json"
+-    pause.rename(root / "retained-import-pause.json")
++    pause.rename(root / "retained-driver145-pause-v10.json")
+     journal.event(
+         "CONTINUATION_REVIEW_RELEASED", proof=proof, first=FIRST, operational_clock_reset=False
+     )

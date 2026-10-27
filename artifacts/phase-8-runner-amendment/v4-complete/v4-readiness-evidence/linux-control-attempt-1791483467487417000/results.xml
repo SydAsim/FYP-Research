@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="29" time="107.578" timestamp="2026-10-08T18:18:24.213541+00:00" hostname="116223f6c724"><testcase classname="artifacts.phase-8-runner-amendment.v4-complete.test_ledger_snapshot" name="test_legacy_false_drift[deadline]" time="0.034" /><testcase classname="artifacts.phase-8-runner-amendment.v4-complete.test_ledger_snapshot" name="test_legacy_false_drift[backup]" time="0.043" /><testcase classname="artifacts.phase-8-runner-amendment.v4-complete.test_ledger_snapshot" name="test_revised_consistent_snapshot[deadline]" time="0.211" /><testcase classname="artifacts.phase-8-runner-amendment.v4-complete.test_ledger_snapshot" name="test_revised_consistent_snapshot[backup]" time="0.060" /><testcase classname="artifacts.phase-8-runner-amendment.v4-complete.test_ledger_snapshot" name="test_rollback_journal_commit_waits_for_reader" time="0.032" /><testcase classname="artifacts.phase-8-runner-amendment.v4-complete.test_ledger_snapshot" name="test_valid_ledger" time="0.029" /><testcase classname="artifacts.phase-8-runner-amendment.v4-complete.test_ledger_snapshot" name="test_genuine_corruption_rejected[state]" time="0.039" /><testcase classname="artifacts.phase-8-runner-amendment.v4-complete.test_ledger_snapshot" name="test_genuine_corruption_rejected[deadline]" time="0.041" /><testcase classname="artifacts.phase-8-runner-amendment.v4-complete.test_ledger_snapshot" name="test_genuine_corruption_rejected[backup_hash]" time="0.055" /><testcase classname="artifacts.phase-8-runner-amendment.v4-complete.test_ledger_snapshot" name="test_genuine_corruption_rejected[notice_hash]" time="0.036" /><testcase classname="artifacts.phase-8-runner-amendment.v4-complete.test_ledger_snapshot" name="test_genuine_corruption_rejected[missing_notice]" time="0.036" /><testcase classname="artifacts.phase-8-runner-amendment.v4-complete.test_ledger_snapshot" name="test_genuine_corruption_rejected[file]" time="0.031" /><testcase classname="artifacts.phase-8-runner-amendment.v4-complete.test_ledger_snapshot" name="test_uncommitted_write_not_visible" time="0.026" /><testcase classname="artifacts.phase-8-runner-amendment.v4-complete.test_ledger_snapshot" name="test_newly_committed_corruption_detected_next_read" time="0.037" /><testcase classname="artifacts.phase-8-runner-amendment.v4-complete.test_ledger_snapshot" name="test_retained_boundary_on_disposable_copy" time="0.260" /><testcase classname="artifacts.phase-8-runner-amendment.v4-complete.test_closed_prefix" name="test_actual_import_packed_recovery_and_preserved_analysis" time="69.958" /><testcase classname="artifacts.phase-8-runner-amendment.v4-complete.test_closed_prefix" name="test_reject_changed_identities[execution_id]" time="0.016" /><testcase classname="artifacts.phase-8-runner-amendment.v4-complete.test_closed_prefix" name="test_reject_changed_identities[attempt]" time="0.017" /><testcase classname="artifacts.phase-8-runner-amendment.v4-complete.test_closed_prefix" name="test_reject_changed_identities[sequence]" time="0.017" /><testcase classname="artifacts.phase-8-runner-amendment.v4-complete.test_closed_prefix" name="test_reject_active_slot_import[RUNNING]" time="0.019" /><testcase classname="artifacts.phase-8-runner-amendment.v4-complete.test_closed_prefix" name="test_reject_active_slot_import[EXPORTED]" time="0.018" /><testcase classname="artifacts.phase-8-runner-amendment.v4-complete.test_closed_prefix" name="test_missing_complete_backup" time="0.005" /><testcase classname="artifacts.phase-8-runner-amendment.v4-complete.test_closed_prefix" name="test_missing_postgres_dump_is_rejected" time="0.008" /><testcase classname="artifacts.phase-8-runner-amendment.v4-complete.test_closed_prefix" name="test_altered_export_is_rejected" time="0.211" /><testcase classname="artifacts.phase-8-runner-amendment.v4-complete.test_closed_prefix" name="test_historical_notice_corruption_is_rejected" time="17.341" /><testcase classname="artifacts.phase-8-runner-amendment.v4-complete.test_closed_prefix" name="test_altered_backup_receipt_is_rejected" time="17.321" /><testcase classname="artifacts.phase-8-runner-amendment.v4-complete.test_closed_prefix" name="test_later_closed_slot_preserves_imported_prefix" time="0.018"><failure message="ValueError: ILLEGAL_TRANSITION">staged = PosixPath('/tmp/cal-v4-controls/cal-v4-metadata0/import')
+tmp_path = PosixPath('/tmp/cal-v4-controls/test_later_closed_slot_preserv0')
+
+    def test_later_closed_slot_preserves_imported_prefix(staged: Path, tmp_path: Path) -&gt; None:
+        root = clone(staged, tmp_path / "later")
+        journal = Journal(root)
+&gt;       journal.update(NEXT, state="RUNNING", deadline="2026-10-08T23:00:00+00:00")
+
+artifacts/phase-8-runner-amendment/v4-complete/test_closed_prefix.py:158: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;controls.Journal object at 0x716ca2df7590&gt;
+execution = '01a11705-11f0-73c0-af15-dd9f1d590b08'
+
+    def update(
+        self,
+        execution: str,
+        *,
+        state: str | None = None,
+        deadline: str | None = None,
+        backup_hash: str | None = None,
+    ) -&gt; None:
+        with self.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute("SELECT * FROM slots WHERE execution_id=?", (execution,)).fetchone()
+            if row is None or row["state"] == "BACKED_UP":
+                raise ValueError("ORIGINAL_IMMUTABLE")
+            if row["deadline"] and deadline and row["deadline"] != deadline:
+                raise ValueError("ORIGINAL_DEADLINE_IMMUTABLE")
+            legal = {"RUNNING": {"RUNNING", "EXPORTED"}, "EXPORTED": {"BACKED_UP"}}
+            if state and state not in legal.get(row["state"], set()):
+&gt;               raise ValueError("ILLEGAL_TRANSITION")
+E               ValueError: ILLEGAL_TRANSITION
+
+artifacts/phase-8-runner-amendment/v4-complete/controls.py:424: ValueError</failure></testcase><testcase classname="artifacts.phase-8-runner-amendment.v4-complete.test_closed_prefix" name="test_retirement_eligibility_uses_only_reviewed_imports" time="0.139" /><testcase classname="artifacts.phase-8-runner-amendment.v4-complete.test_closed_prefix" name="test_parent_v3_receipt_cannot_authorize_v4" time="0.001" /></testsuite></testsuites>

@@ -1,0 +1,430 @@
+...........FFFFFF............................                            [100%]
+================================== FAILURES ===================================
+_ test_six_unexpected_http_responses_persist_even_if_driver_succeeds[409-B3] __
+
+tmp_path = WindowsPath('C:/p8v3-tests/attempt2/test_six_unexpected_http_respo0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000026D56300680>
+arm = 'B3', status = 409
+
+    @pytest.mark.parametrize('arm', ['B3', 'P1', 'P2'])
+    @pytest.mark.parametrize('status', [409, 500])
+    def test_six_unexpected_http_responses_persist_even_if_driver_succeeds(
+            tmp_path: Path, monkeypatch: pytest.MonkeyPatch, arm: str, status: int) -> None:
+        root, authority = calibration(tmp_path)
+        slot = Journal(root).admit(authority, sample(), utc(), 0)
+        assert slot is not None
+        folder = prepare_slot(root, slot)
+        ledger = Ledger(folder)
+        record = copy.deepcopy(next(r for r in RECORDS if r['family'] == 'buffered-stale' and r['arm'] == arm))
+        trial = collector.Trial.__new__(collector.Trial)
+        trial.row, trial.item, trial.scenario = record['row'], record['row']['fixture_identity'], record['row']['scenario_id']
+        trial.ledger, trial.slot, trial.id = ledger, slot, slot['execution_id']
+        trial.execution_directory = folder / 'executions' / trial.id
+        trial.path = trial.execution_directory / 'checkpoint.json'
+        # Preserve recorded pre-call context but no later successful steps.
+        call = record['call']; trial.row['http'] = [c for c in trial.row['http'] if c['received_at'] <= call['sent_at']]
+        path = call['path']
+        body = {'type': 'https://example.invalid/problems/calibration-unrecognized-defect', 'title': 'Unrecognized injected defect',
+                'status': status, 'detail': 'No declared scenario authorizes this problem', 'instance': path,
+                'trace_id': str(uuid4()), 'retryable': False}
+        def fail(request: Any, **kwargs: Any) -> Any:
+            raise HTTPError(request.full_url, status, 'control', {}, io.BytesIO(json.dumps(body).encode()))
+        monkeypatch.setattr(adapter, 'urlopen', fail)
+        returned = trial.request(adapter.API, 'POST', path, call['request'], allow_failure=True)
+        assert returned == body
+        assert trial.row['permissive_response_errors'][0]['response'] == body
+        assert read(root / 'pause.json')['reason'] == 'UNEXPECTED_PERMISSIVE_RESPONSE'
+        trial.row['status'] = 'COMPLETED'  # Later ordinary update cannot hide it.
+        finish_driver(trial)
+        trial.row['driver_finished_at'] = utc().isoformat(); trial.save()
+        assert trial.row['status'] == 'FAILED' and 'driver_classification' not in trial.row
+        recovered = ledger.recover_checkpoint(trial.id)
+        assert recovered['failure']['type'] == 'UNEXPECTED_PERMISSIVE_RESPONSE'
+        # Existing active slot can finish collection/backup; closed slot cannot admit next.
+>       Journal(root).update(trial.id, state='BACKED_UP')
+
+artifacts\phase-8-runner-amendment\v3\test_combined.py:75: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <controls.Journal object at 0x0000026D563014F0>
+execution = '01a11999-65cb-7148-aea6-dec8176465f2'
+
+    def update(
+        self,
+        execution: str,
+        *,
+        state: str | None = None,
+        deadline: str | None = None,
+        backup_hash: str | None = None,
+    ) -> None:
+        with self.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute("SELECT * FROM slots WHERE execution_id=?", (execution,)).fetchone()
+            if row is None or row["state"] == "BACKED_UP":
+                raise ValueError("ORIGINAL_IMMUTABLE")
+            if row["deadline"] and deadline and row["deadline"] != deadline:
+                raise ValueError("ORIGINAL_DEADLINE_IMMUTABLE")
+            legal = {"RUNNING": {"RUNNING", "EXPORTED"}, "EXPORTED": {"BACKED_UP"}}
+            if state and state not in legal.get(row["state"], set()):
+>               raise ValueError("ILLEGAL_TRANSITION")
+E               ValueError: ILLEGAL_TRANSITION
+
+artifacts\phase-8-runner-amendment\v3\controls.py:424: ValueError
+_ test_six_unexpected_http_responses_persist_even_if_driver_succeeds[409-P1] __
+
+tmp_path = WindowsPath('C:/p8v3-tests/attempt2/test_six_unexpected_http_respo1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000026D578D6060>
+arm = 'P1', status = 409
+
+    @pytest.mark.parametrize('arm', ['B3', 'P1', 'P2'])
+    @pytest.mark.parametrize('status', [409, 500])
+    def test_six_unexpected_http_responses_persist_even_if_driver_succeeds(
+            tmp_path: Path, monkeypatch: pytest.MonkeyPatch, arm: str, status: int) -> None:
+        root, authority = calibration(tmp_path)
+        slot = Journal(root).admit(authority, sample(), utc(), 0)
+        assert slot is not None
+        folder = prepare_slot(root, slot)
+        ledger = Ledger(folder)
+        record = copy.deepcopy(next(r for r in RECORDS if r['family'] == 'buffered-stale' and r['arm'] == arm))
+        trial = collector.Trial.__new__(collector.Trial)
+        trial.row, trial.item, trial.scenario = record['row'], record['row']['fixture_identity'], record['row']['scenario_id']
+        trial.ledger, trial.slot, trial.id = ledger, slot, slot['execution_id']
+        trial.execution_directory = folder / 'executions' / trial.id
+        trial.path = trial.execution_directory / 'checkpoint.json'
+        # Preserve recorded pre-call context but no later successful steps.
+        call = record['call']; trial.row['http'] = [c for c in trial.row['http'] if c['received_at'] <= call['sent_at']]
+        path = call['path']
+        body = {'type': 'https://example.invalid/problems/calibration-unrecognized-defect', 'title': 'Unrecognized injected defect',
+                'status': status, 'detail': 'No declared scenario authorizes this problem', 'instance': path,
+                'trace_id': str(uuid4()), 'retryable': False}
+        def fail(request: Any, **kwargs: Any) -> Any:
+            raise HTTPError(request.full_url, status, 'control', {}, io.BytesIO(json.dumps(body).encode()))
+        monkeypatch.setattr(adapter, 'urlopen', fail)
+        returned = trial.request(adapter.API, 'POST', path, call['request'], allow_failure=True)
+        assert returned == body
+        assert trial.row['permissive_response_errors'][0]['response'] == body
+        assert read(root / 'pause.json')['reason'] == 'UNEXPECTED_PERMISSIVE_RESPONSE'
+        trial.row['status'] = 'COMPLETED'  # Later ordinary update cannot hide it.
+        finish_driver(trial)
+        trial.row['driver_finished_at'] = utc().isoformat(); trial.save()
+        assert trial.row['status'] == 'FAILED' and 'driver_classification' not in trial.row
+        recovered = ledger.recover_checkpoint(trial.id)
+        assert recovered['failure']['type'] == 'UNEXPECTED_PERMISSIVE_RESPONSE'
+        # Existing active slot can finish collection/backup; closed slot cannot admit next.
+>       Journal(root).update(trial.id, state='BACKED_UP')
+
+artifacts\phase-8-runner-amendment\v3\test_combined.py:75: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <controls.Journal object at 0x0000026D5257D4C0>
+execution = '01a11999-6d0d-77b7-ab67-abd741df8a05'
+
+    def update(
+        self,
+        execution: str,
+        *,
+        state: str | None = None,
+        deadline: str | None = None,
+        backup_hash: str | None = None,
+    ) -> None:
+        with self.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute("SELECT * FROM slots WHERE execution_id=?", (execution,)).fetchone()
+            if row is None or row["state"] == "BACKED_UP":
+                raise ValueError("ORIGINAL_IMMUTABLE")
+            if row["deadline"] and deadline and row["deadline"] != deadline:
+                raise ValueError("ORIGINAL_DEADLINE_IMMUTABLE")
+            legal = {"RUNNING": {"RUNNING", "EXPORTED"}, "EXPORTED": {"BACKED_UP"}}
+            if state and state not in legal.get(row["state"], set()):
+>               raise ValueError("ILLEGAL_TRANSITION")
+E               ValueError: ILLEGAL_TRANSITION
+
+artifacts\phase-8-runner-amendment\v3\controls.py:424: ValueError
+_ test_six_unexpected_http_responses_persist_even_if_driver_succeeds[409-P2] __
+
+tmp_path = WindowsPath('C:/p8v3-tests/attempt2/test_six_unexpected_http_respo2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000026D5793FA70>
+arm = 'P2', status = 409
+
+    @pytest.mark.parametrize('arm', ['B3', 'P1', 'P2'])
+    @pytest.mark.parametrize('status', [409, 500])
+    def test_six_unexpected_http_responses_persist_even_if_driver_succeeds(
+            tmp_path: Path, monkeypatch: pytest.MonkeyPatch, arm: str, status: int) -> None:
+        root, authority = calibration(tmp_path)
+        slot = Journal(root).admit(authority, sample(), utc(), 0)
+        assert slot is not None
+        folder = prepare_slot(root, slot)
+        ledger = Ledger(folder)
+        record = copy.deepcopy(next(r for r in RECORDS if r['family'] == 'buffered-stale' and r['arm'] == arm))
+        trial = collector.Trial.__new__(collector.Trial)
+        trial.row, trial.item, trial.scenario = record['row'], record['row']['fixture_identity'], record['row']['scenario_id']
+        trial.ledger, trial.slot, trial.id = ledger, slot, slot['execution_id']
+        trial.execution_directory = folder / 'executions' / trial.id
+        trial.path = trial.execution_directory / 'checkpoint.json'
+        # Preserve recorded pre-call context but no later successful steps.
+        call = record['call']; trial.row['http'] = [c for c in trial.row['http'] if c['received_at'] <= call['sent_at']]
+        path = call['path']
+        body = {'type': 'https://example.invalid/problems/calibration-unrecognized-defect', 'title': 'Unrecognized injected defect',
+                'status': status, 'detail': 'No declared scenario authorizes this problem', 'instance': path,
+                'trace_id': str(uuid4()), 'retryable': False}
+        def fail(request: Any, **kwargs: Any) -> Any:
+            raise HTTPError(request.full_url, status, 'control', {}, io.BytesIO(json.dumps(body).encode()))
+        monkeypatch.setattr(adapter, 'urlopen', fail)
+        returned = trial.request(adapter.API, 'POST', path, call['request'], allow_failure=True)
+        assert returned == body
+        assert trial.row['permissive_response_errors'][0]['response'] == body
+        assert read(root / 'pause.json')['reason'] == 'UNEXPECTED_PERMISSIVE_RESPONSE'
+        trial.row['status'] = 'COMPLETED'  # Later ordinary update cannot hide it.
+        finish_driver(trial)
+        trial.row['driver_finished_at'] = utc().isoformat(); trial.save()
+        assert trial.row['status'] == 'FAILED' and 'driver_classification' not in trial.row
+        recovered = ledger.recover_checkpoint(trial.id)
+        assert recovered['failure']['type'] == 'UNEXPECTED_PERMISSIVE_RESPONSE'
+        # Existing active slot can finish collection/backup; closed slot cannot admit next.
+>       Journal(root).update(trial.id, state='BACKED_UP')
+
+artifacts\phase-8-runner-amendment\v3\test_combined.py:75: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <controls.Journal object at 0x0000026D5512E360>
+execution = '01a11999-71ad-7f14-ad82-70b18f809ca5'
+
+    def update(
+        self,
+        execution: str,
+        *,
+        state: str | None = None,
+        deadline: str | None = None,
+        backup_hash: str | None = None,
+    ) -> None:
+        with self.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute("SELECT * FROM slots WHERE execution_id=?", (execution,)).fetchone()
+            if row is None or row["state"] == "BACKED_UP":
+                raise ValueError("ORIGINAL_IMMUTABLE")
+            if row["deadline"] and deadline and row["deadline"] != deadline:
+                raise ValueError("ORIGINAL_DEADLINE_IMMUTABLE")
+            legal = {"RUNNING": {"RUNNING", "EXPORTED"}, "EXPORTED": {"BACKED_UP"}}
+            if state and state not in legal.get(row["state"], set()):
+>               raise ValueError("ILLEGAL_TRANSITION")
+E               ValueError: ILLEGAL_TRANSITION
+
+artifacts\phase-8-runner-amendment\v3\controls.py:424: ValueError
+_ test_six_unexpected_http_responses_persist_even_if_driver_succeeds[500-B3] __
+
+tmp_path = WindowsPath('C:/p8v3-tests/attempt2/test_six_unexpected_http_respo3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000026D57836EA0>
+arm = 'B3', status = 500
+
+    @pytest.mark.parametrize('arm', ['B3', 'P1', 'P2'])
+    @pytest.mark.parametrize('status', [409, 500])
+    def test_six_unexpected_http_responses_persist_even_if_driver_succeeds(
+            tmp_path: Path, monkeypatch: pytest.MonkeyPatch, arm: str, status: int) -> None:
+        root, authority = calibration(tmp_path)
+        slot = Journal(root).admit(authority, sample(), utc(), 0)
+        assert slot is not None
+        folder = prepare_slot(root, slot)
+        ledger = Ledger(folder)
+        record = copy.deepcopy(next(r for r in RECORDS if r['family'] == 'buffered-stale' and r['arm'] == arm))
+        trial = collector.Trial.__new__(collector.Trial)
+        trial.row, trial.item, trial.scenario = record['row'], record['row']['fixture_identity'], record['row']['scenario_id']
+        trial.ledger, trial.slot, trial.id = ledger, slot, slot['execution_id']
+        trial.execution_directory = folder / 'executions' / trial.id
+        trial.path = trial.execution_directory / 'checkpoint.json'
+        # Preserve recorded pre-call context but no later successful steps.
+        call = record['call']; trial.row['http'] = [c for c in trial.row['http'] if c['received_at'] <= call['sent_at']]
+        path = call['path']
+        body = {'type': 'https://example.invalid/problems/calibration-unrecognized-defect', 'title': 'Unrecognized injected defect',
+                'status': status, 'detail': 'No declared scenario authorizes this problem', 'instance': path,
+                'trace_id': str(uuid4()), 'retryable': False}
+        def fail(request: Any, **kwargs: Any) -> Any:
+            raise HTTPError(request.full_url, status, 'control', {}, io.BytesIO(json.dumps(body).encode()))
+        monkeypatch.setattr(adapter, 'urlopen', fail)
+        returned = trial.request(adapter.API, 'POST', path, call['request'], allow_failure=True)
+        assert returned == body
+        assert trial.row['permissive_response_errors'][0]['response'] == body
+        assert read(root / 'pause.json')['reason'] == 'UNEXPECTED_PERMISSIVE_RESPONSE'
+        trial.row['status'] = 'COMPLETED'  # Later ordinary update cannot hide it.
+        finish_driver(trial)
+        trial.row['driver_finished_at'] = utc().isoformat(); trial.save()
+        assert trial.row['status'] == 'FAILED' and 'driver_classification' not in trial.row
+        recovered = ledger.recover_checkpoint(trial.id)
+        assert recovered['failure']['type'] == 'UNEXPECTED_PERMISSIVE_RESPONSE'
+        # Existing active slot can finish collection/backup; closed slot cannot admit next.
+>       Journal(root).update(trial.id, state='BACKED_UP')
+
+artifacts\phase-8-runner-amendment\v3\test_combined.py:75: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <controls.Journal object at 0x0000026D5357CD10>
+execution = '01a11999-75fd-70e6-b0c0-79f34da5e8a0'
+
+    def update(
+        self,
+        execution: str,
+        *,
+        state: str | None = None,
+        deadline: str | None = None,
+        backup_hash: str | None = None,
+    ) -> None:
+        with self.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute("SELECT * FROM slots WHERE execution_id=?", (execution,)).fetchone()
+            if row is None or row["state"] == "BACKED_UP":
+                raise ValueError("ORIGINAL_IMMUTABLE")
+            if row["deadline"] and deadline and row["deadline"] != deadline:
+                raise ValueError("ORIGINAL_DEADLINE_IMMUTABLE")
+            legal = {"RUNNING": {"RUNNING", "EXPORTED"}, "EXPORTED": {"BACKED_UP"}}
+            if state and state not in legal.get(row["state"], set()):
+>               raise ValueError("ILLEGAL_TRANSITION")
+E               ValueError: ILLEGAL_TRANSITION
+
+artifacts\phase-8-runner-amendment\v3\controls.py:424: ValueError
+_ test_six_unexpected_http_responses_persist_even_if_driver_succeeds[500-P1] __
+
+tmp_path = WindowsPath('C:/p8v3-tests/attempt2/test_six_unexpected_http_respo4')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000026D578368A0>
+arm = 'P1', status = 500
+
+    @pytest.mark.parametrize('arm', ['B3', 'P1', 'P2'])
+    @pytest.mark.parametrize('status', [409, 500])
+    def test_six_unexpected_http_responses_persist_even_if_driver_succeeds(
+            tmp_path: Path, monkeypatch: pytest.MonkeyPatch, arm: str, status: int) -> None:
+        root, authority = calibration(tmp_path)
+        slot = Journal(root).admit(authority, sample(), utc(), 0)
+        assert slot is not None
+        folder = prepare_slot(root, slot)
+        ledger = Ledger(folder)
+        record = copy.deepcopy(next(r for r in RECORDS if r['family'] == 'buffered-stale' and r['arm'] == arm))
+        trial = collector.Trial.__new__(collector.Trial)
+        trial.row, trial.item, trial.scenario = record['row'], record['row']['fixture_identity'], record['row']['scenario_id']
+        trial.ledger, trial.slot, trial.id = ledger, slot, slot['execution_id']
+        trial.execution_directory = folder / 'executions' / trial.id
+        trial.path = trial.execution_directory / 'checkpoint.json'
+        # Preserve recorded pre-call context but no later successful steps.
+        call = record['call']; trial.row['http'] = [c for c in trial.row['http'] if c['received_at'] <= call['sent_at']]
+        path = call['path']
+        body = {'type': 'https://example.invalid/problems/calibration-unrecognized-defect', 'title': 'Unrecognized injected defect',
+                'status': status, 'detail': 'No declared scenario authorizes this problem', 'instance': path,
+                'trace_id': str(uuid4()), 'retryable': False}
+        def fail(request: Any, **kwargs: Any) -> Any:
+            raise HTTPError(request.full_url, status, 'control', {}, io.BytesIO(json.dumps(body).encode()))
+        monkeypatch.setattr(adapter, 'urlopen', fail)
+        returned = trial.request(adapter.API, 'POST', path, call['request'], allow_failure=True)
+        assert returned == body
+        assert trial.row['permissive_response_errors'][0]['response'] == body
+        assert read(root / 'pause.json')['reason'] == 'UNEXPECTED_PERMISSIVE_RESPONSE'
+        trial.row['status'] = 'COMPLETED'  # Later ordinary update cannot hide it.
+        finish_driver(trial)
+        trial.row['driver_finished_at'] = utc().isoformat(); trial.save()
+        assert trial.row['status'] == 'FAILED' and 'driver_classification' not in trial.row
+        recovered = ledger.recover_checkpoint(trial.id)
+        assert recovered['failure']['type'] == 'UNEXPECTED_PERMISSIVE_RESPONSE'
+        # Existing active slot can finish collection/backup; closed slot cannot admit next.
+>       Journal(root).update(trial.id, state='BACKED_UP')
+
+artifacts\phase-8-runner-amendment\v3\test_combined.py:75: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <controls.Journal object at 0x0000026D5257D4C0>
+execution = '01a11999-7a81-719c-a8a6-00ee3f4af146'
+
+    def update(
+        self,
+        execution: str,
+        *,
+        state: str | None = None,
+        deadline: str | None = None,
+        backup_hash: str | None = None,
+    ) -> None:
+        with self.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute("SELECT * FROM slots WHERE execution_id=?", (execution,)).fetchone()
+            if row is None or row["state"] == "BACKED_UP":
+                raise ValueError("ORIGINAL_IMMUTABLE")
+            if row["deadline"] and deadline and row["deadline"] != deadline:
+                raise ValueError("ORIGINAL_DEADLINE_IMMUTABLE")
+            legal = {"RUNNING": {"RUNNING", "EXPORTED"}, "EXPORTED": {"BACKED_UP"}}
+            if state and state not in legal.get(row["state"], set()):
+>               raise ValueError("ILLEGAL_TRANSITION")
+E               ValueError: ILLEGAL_TRANSITION
+
+artifacts\phase-8-runner-amendment\v3\controls.py:424: ValueError
+_ test_six_unexpected_http_responses_persist_even_if_driver_succeeds[500-P2] __
+
+tmp_path = WindowsPath('C:/p8v3-tests/attempt2/test_six_unexpected_http_respo5')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000026D5793F890>
+arm = 'P2', status = 500
+
+    @pytest.mark.parametrize('arm', ['B3', 'P1', 'P2'])
+    @pytest.mark.parametrize('status', [409, 500])
+    def test_six_unexpected_http_responses_persist_even_if_driver_succeeds(
+            tmp_path: Path, monkeypatch: pytest.MonkeyPatch, arm: str, status: int) -> None:
+        root, authority = calibration(tmp_path)
+        slot = Journal(root).admit(authority, sample(), utc(), 0)
+        assert slot is not None
+        folder = prepare_slot(root, slot)
+        ledger = Ledger(folder)
+        record = copy.deepcopy(next(r for r in RECORDS if r['family'] == 'buffered-stale' and r['arm'] == arm))
+        trial = collector.Trial.__new__(collector.Trial)
+        trial.row, trial.item, trial.scenario = record['row'], record['row']['fixture_identity'], record['row']['scenario_id']
+        trial.ledger, trial.slot, trial.id = ledger, slot, slot['execution_id']
+        trial.execution_directory = folder / 'executions' / trial.id
+        trial.path = trial.execution_directory / 'checkpoint.json'
+        # Preserve recorded pre-call context but no later successful steps.
+        call = record['call']; trial.row['http'] = [c for c in trial.row['http'] if c['received_at'] <= call['sent_at']]
+        path = call['path']
+        body = {'type': 'https://example.invalid/problems/calibration-unrecognized-defect', 'title': 'Unrecognized injected defect',
+                'status': status, 'detail': 'No declared scenario authorizes this problem', 'instance': path,
+                'trace_id': str(uuid4()), 'retryable': False}
+        def fail(request: Any, **kwargs: Any) -> Any:
+            raise HTTPError(request.full_url, status, 'control', {}, io.BytesIO(json.dumps(body).encode()))
+        monkeypatch.setattr(adapter, 'urlopen', fail)
+        returned = trial.request(adapter.API, 'POST', path, call['request'], allow_failure=True)
+        assert returned == body
+        assert trial.row['permissive_response_errors'][0]['response'] == body
+        assert read(root / 'pause.json')['reason'] == 'UNEXPECTED_PERMISSIVE_RESPONSE'
+        trial.row['status'] = 'COMPLETED'  # Later ordinary update cannot hide it.
+        finish_driver(trial)
+        trial.row['driver_finished_at'] = utc().isoformat(); trial.save()
+        assert trial.row['status'] == 'FAILED' and 'driver_classification' not in trial.row
+        recovered = ledger.recover_checkpoint(trial.id)
+        assert recovered['failure']['type'] == 'UNEXPECTED_PERMISSIVE_RESPONSE'
+        # Existing active slot can finish collection/backup; closed slot cannot admit next.
+>       Journal(root).update(trial.id, state='BACKED_UP')
+
+artifacts\phase-8-runner-amendment\v3\test_combined.py:75: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <controls.Journal object at 0x0000026D560CBCB0>
+execution = '01a11999-7ffc-7f08-9810-6f6d6c70a4d4'
+
+    def update(
+        self,
+        execution: str,
+        *,
+        state: str | None = None,
+        deadline: str | None = None,
+        backup_hash: str | None = None,
+    ) -> None:
+        with self.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute("SELECT * FROM slots WHERE execution_id=?", (execution,)).fetchone()
+            if row is None or row["state"] == "BACKED_UP":
+                raise ValueError("ORIGINAL_IMMUTABLE")
+            if row["deadline"] and deadline and row["deadline"] != deadline:
+                raise ValueError("ORIGINAL_DEADLINE_IMMUTABLE")
+            legal = {"RUNNING": {"RUNNING", "EXPORTED"}, "EXPORTED": {"BACKED_UP"}}
+            if state and state not in legal.get(row["state"], set()):
+>               raise ValueError("ILLEGAL_TRANSITION")
+E               ValueError: ILLEGAL_TRANSITION
+
+artifacts\phase-8-runner-amendment\v3\controls.py:424: ValueError
+=========================== short test summary info ===========================
+FAILED artifacts/phase-8-runner-amendment/v3/test_combined.py::test_six_unexpected_http_responses_persist_even_if_driver_succeeds[409-B3]
+FAILED artifacts/phase-8-runner-amendment/v3/test_combined.py::test_six_unexpected_http_responses_persist_even_if_driver_succeeds[409-P1]
+FAILED artifacts/phase-8-runner-amendment/v3/test_combined.py::test_six_unexpected_http_responses_persist_even_if_driver_succeeds[409-P2]
+FAILED artifacts/phase-8-runner-amendment/v3/test_combined.py::test_six_unexpected_http_responses_persist_even_if_driver_succeeds[500-B3]
+FAILED artifacts/phase-8-runner-amendment/v3/test_combined.py::test_six_unexpected_http_responses_persist_even_if_driver_succeeds[500-P1]
+FAILED artifacts/phase-8-runner-amendment/v3/test_combined.py::test_six_unexpected_http_responses_persist_even_if_driver_succeeds[500-P2]
+6 failed, 39 passed in 40.70s

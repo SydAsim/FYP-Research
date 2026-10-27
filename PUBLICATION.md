@@ -1,27 +1,23 @@
-# Public research snapshot
+# Public research repository
 
-This directory is the public publication copy of the Commit-Aware Voice Agent FYP, prepared on 11 October 2026. It is separate from the private working directory and immutable experiment packages.
+Updated 27 October 2026 in the existing SydAsim/FYP-Research repository. Previous commits and historical research evidence are preserved.
 
-## Research status
+## Completed-study status
 
-Phase 8 is incomplete and paused. The retained boundary is 145 BACKED_UP original executions and 1,355 PLANNED originals, out of 1,500 slots for 500 inputs across B3/P1/P2. This publication does not authorize continuation. Earlier reports retain their historical status and must not be read as current campaign status. No completed-study or superiority claim is made.
+All 500 synthetic inputs have B3/P1/P2 results: 1,500 retained originals, 500 complete paired sets, and completed statistical analysis. Final business correctness is 455/500 in every arm; primary comparisons do not demonstrate an additional benefit. In 33 designated recovery inputs all arms have ordinary supported updates, while the fixed explicit-withdrawal endpoint credits P2 in 33 and records 26 FALSE/7 UNKNOWN for each comparator. This is a narrow template/protocol finding, not evidence of better human understanding or general agent superiority.
 
-## Included material
+Read artifacts/phase-8-final-analysis/v1/FINAL_REPORT.md and the full-results manuscript before interpreting percentages. The manuscript is an unsubmitted review draft. There is no claimed peer-review acceptance, public DOI or full raw-evidence deposit.
 
-Application source, migrations, contracts, UI, dependency locks, tests, scripted audio fixtures, research runners, oracle/analysis code, versioned design documents, reports and safe non-archive research artifacts are included. Files copied unchanged retain their source SHA-256 values in PUBLICATION-INVENTORY.json.
+## Included
 
-## Material retained privately
+Application and research code; frontend; contracts; migrations; dependency locks; tests; versioned fixtures/designs; reports; final statistical inputs/outputs; manuscript source/PDF; explanatory study guide; and the compact final-results ZIP. Final frozen runner code absent from the working directory is copied byte-for-byte from the verified v12 source, at its original relative path. PUBLICATION-UPDATE-2026-10-27.json records source-copy hashes and origins. Root README.md and .gitignore are publication-only adaptations, not altered research artifacts.
 
-Local .env credentials, key/certificate files, database files, large compressed evidence/deployment archives, installed dependencies, model weights, logs, caches, temporary staging and repeated extracted source trees are excluded. PUBLICATION-EXCLUSIONS.json lists the exclusions. All originals remain in their original locations; nothing was deleted. References to excluded archives or absolute local paths in historical manifests and reports remain historical references.
+## Excluded and preserved locally
 
-This public directory is not a complete frozen deployment or evidence-recovery package. Historical freeze hashes apply to their original complete packages, not to this publication copy. Missing archive references must not be interpreted as verified reproduction, available backup, silence, success or an unstarted campaign.
+Credentials and local .env files; key/owner-key-envelope files; private databases; large raw evidence/deployment archives; installed dependencies and models; caches and temporary/duplicate source trees; personal CVs. No original evidence was deleted. The small final-results ZIP is an explicit checked exception to the general archive exclusion. Prior public commits remain historical snapshots. PUBLICATION-EXCLUSIONS-2026-10-27.json records this update's exclusions.
 
-README.md receives a publication-status preface; .gitignore receives public-repository safety exclusions. No application, fixture, oracle, analysis or historical report content is changed. Original source hashes for these two publication-only adaptations are recorded separately in PUBLICATION-ADAPTATIONS.json. No license grant has been invented.
+This repository is not a complete frozen deployment package. Historical absolute paths, pinned S3 references, source inventories and freeze hashes describe original retained packages; missing private dependencies are not silently substituted. Do not deploy or launch a campaign by treating a published historical receipt as live authority. No AWS operations, research executions, regrading, analysis reruns or new study freeze were performed for this publication.
 
-## Secrets check
+## Integrity and reproducibility
 
-The publication preparation performed a filename and pattern scan for local environment files, private keys, AWS/GitHub credentials, signed S3 URLs and credential values. This is a precaution, not a mathematical guarantee. Do not commit future credentials, live databases or private backup archives.
-
-## Results shared on 12 October 2026
-
-`artifacts/phase-8-results-share/v1/` adds the 145-row XLSX/CSV and a small, verified ZIP of derived results and provenance. There are 39 locally verified saved grades; 106 outcomes remain explicitly unavailable locally. This ZIP is an intentional exception to the archive exclusion for large private experiment/deployment backups. No results were rerun or regraded.
+Copied artifacts retain their original bytes and hashes. Secret-pattern checks are precautionary and cannot prove absence of every possible secret. No license grant has been invented. Existing historical CI is preserved; this documentation/artifact publication does not claim a fresh application regression run. Final report and analysis verification retain their original scientific limitations and UNKNOWNs.

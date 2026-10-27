@@ -1,0 +1,219 @@
+I001 [*] Import block is un-sorted or un-formatted
+  --> artifacts\study-guide\2026-10-25\v1\build_guide.py:3:1
+   |
+ 1 |   """Build one learning PDF from preserved results and authored teaching notes."""
+ 2 |
+ 3 | / from __future__ import annotations
+ 4 | |
+ 5 | | import hashlib
+ 6 | | import json
+ 7 | | import re
+ 8 | | from html import escape
+ 9 | | from pathlib import Path
+10 | | from typing import Any
+11 | |
+12 | | from pypdf import PdfReader, PdfWriter
+13 | | from reportlab.graphics.shapes import Drawing, Line, Rect, String
+14 | | from reportlab.lib import colors
+15 | | from reportlab.lib.enums import TA_JUSTIFY, TA_LEFT
+16 | | from reportlab.lib.pagesizes import A4
+17 | | from reportlab.lib.styles import ParagraphStyle
+18 | | from reportlab.lib.units import mm
+19 | | from reportlab.pdfbase import pdfmetrics
+20 | | from reportlab.pdfbase.ttfonts import TTFont
+21 | | from reportlab.platypus import (
+22 | |     BaseDocTemplate,
+23 | |     Frame,
+24 | |     Image,
+25 | |     PageBreak,
+26 | |     PageTemplate,
+27 | |     Paragraph,
+28 | |     Spacer,
+29 | |     Table,
+30 | |     TableStyle,
+31 | | )
+32 | | from reportlab.platypus.tableofcontents import TableOfContents
+33 | |
+34 | | from annotations import NOTES
+35 | | from glossary import GLOSSARY
+36 | | from questions import QUESTIONS
+37 | | from references import REFERENCES
+   | |_________________________________^
+38 |
+39 |   HERE = Path(__file__).resolve().parent
+   |
+help: Organize imports
+   |
+11 |
+12 + from annotations import NOTES
+13 + from glossary import GLOSSARY
+14 | from pypdf import PdfReader, PdfWriter
+15 + from questions import QUESTIONS
+16 + from references import REFERENCES
+17 | from reportlab.graphics.shapes import Drawing, Line, Rect, String
+--------------------------------------------------------------------------------
+36 | from reportlab.platypus.tableofcontents import TableOfContents
+   -
+   - from annotations import NOTES
+   - from glossary import GLOSSARY
+   - from questions import QUESTIONS
+   - from references import REFERENCES
+37 |
+   |
+
+E501 Line too long (244 > 100)
+   --> artifacts\study-guide\2026-10-25\v1\build_guide.py:413:101
+    |
+411 | …
+412 | …
+413 | …w in gray. Read it, then read the explanation. The separate appendix reproduces all eight original pages. Table values remain the original values.\n"
+    |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+414 | …
+415 | …
+    |
+
+E501 Line too long (443 > 100)
+   --> artifacts\study-guide\2026-10-25\v1\build_guide.py:453:101
+    |
+451 | …
+452 | …
+453 | …ge models installed in our system. Some are algor…endix retain the manuscript's references.\n"
+    |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^…^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+454 | …
+455 | …
+    |
+
+E501 Line too long (318 > 100)
+   --> artifacts\study-guide\2026-10-25\v1\build_guide.py:466:101
+    |
+464 | …
+465 | …
+466 | …e answers, not permission to claim expertise or work you did not perform. Read the short answer first. The follow-up explains the boundary a professor may test. Adapt personal-contribution statements to your actual work.\n"
+    |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+467 | …
+468 | …
+    |
+
+E501 Line too long (229 > 100)
+   --> artifacts\study-guide\2026-10-25\v1\build_guide.py:482:101
+    |
+480 | …
+481 | …
+482 | …errupts your reading. Definitions explain this project's usage. Exact executable constraints remain in the frozen contracts/source.\n"
+    |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+483 | …
+484 | …
+    |
+
+E501 Line too long (610 > 100)
+   --> artifacts\study-guide\2026-10-25\v1\build_guide.py:487:101
+    |
+485 | …
+486 | …
+487 | …the complete original research manuscript, includ…nding and accurate scientific discussion.\n"
+    |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^…^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+488 | …
+489 | …
+    |
+
+E501 Line too long (104 > 100)
+   --> artifacts\study-guide\2026-10-25\v1\build_guide.py:574:101
+    |
+572 |         Image(str(HERE / "assets/fictional-booking-story.png"), width=WIDTH, height=WIDTH * 2 / 3),
+573 |         Paragraph(
+574 |             "AI-generated fictional teaching scenes, not research photographs or participant evidence.",
+    |                                                                                                     ^^^^
+575 |             styles["caption"],
+576 |         ),
+    |
+
+E501 Line too long (111 > 100)
+   --> artifacts\study-guide\2026-10-25\v1\build_guide.py:578:101
+    |
+576 |         ),
+577 |         Paragraph(
+578 |             "Prepared for Syed Asim Bacha\nDepartment of Computer Science, Islamia College Peshawar, Pakistan",
+    |                                                                                                     ^^^^^^^^^^^
+579 |             styles["body"],
+580 |         ),
+    |
+
+E501 Line too long (172 > 100)
+   --> artifacts\study-guide\2026-10-25\v1\build_guide.py:582:101
+    |
+580 | …
+581 | …
+582 | …nce explainers, fifty professor questions, a technical dictionary and the original eight-page paper.",
+    |                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+583 | …
+584 | …
+    |
+
+E501 Line too long (230 > 100)
+   --> artifacts\study-guide\2026-10-25\v1\build_guide.py:592:101
+    |
+590 | …
+591 | …
+592 | …ndix. Meeting route: Parts VII-VIII, then revisit the evidence and glossary. The contents links and PDF bookmarks provide navigation.",
+    |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+593 | …
+594 | …
+    |
+
+E501 Line too long (152 > 100)
+   --> artifacts\study-guide\2026-10-25\v1\build_guide.py:636:101
+    |
+634 | …
+635 | …
+636 | … learning. It is not an actual experiment, author, participant, interface or AWS facility.",
+    |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+637 | …
+638 | …
+    |
+
+E501 Line too long (182 > 100)
+   --> artifacts\study-guide\2026-10-25\v1\build_guide.py:645:101
+    |
+643 | …
+644 | …
+645 | … layer grades external observations; this drawing does not replace the exact executable transition rules.",
+    |                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+646 | …
+647 | …
+    |
+
+E501 Line too long (173 > 100)
+   --> artifacts\study-guide\2026-10-25\v1\build_guide.py:662:101
+    |
+660 | …
+661 | …
+662 | …ation: TRUE, FALSE and UNKNOWN kept distinct. Ordinary supported updates succeed 33/33 in every arm.",
+    |                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+663 | …
+664 | …
+    |
+
+E501 Line too long (178 > 100)
+   --> artifacts\study-guide\2026-10-25\v1\build_guide.py:670:101
+    |
+668 | …
+669 | …
+670 | …in each arm, planned n=500 per arm. This is the observed business tie, not an AWS command success rate.",
+    |                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+671 | …
+672 | …
+    |
+
+E501 Line too long (101 > 100)
+   --> artifacts\study-guide\2026-10-25\v1\build_guide.py:694:101
+    |
+692 |             "/Title": "Commit-Aware Agents - Complete Plain-English Study Guide",
+693 |             "/Author": "Learning companion prepared for Syed Asim Bacha",
+694 |             "/Subject": "Annotated paper, story, system, AWS, methods, references and professor Q&A",
+    |                                                                                                     ^
+695 |         }
+696 |     )
+    |
+
+Found 15 errors.
+[*] 1 fixable with the `--fix` option.

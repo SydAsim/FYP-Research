@@ -1,0 +1,264 @@
+E501 Line too long (113 > 100)
+   --> E:/p8v4/source/artifacts/phase-8-runner-amendment/v4-complete/closed_prefix.py:143:101
+    |
+141 |     destination.mkdir(parents=True)
+142 |     history = destination / "historical"
+143 |     shutil.copytree(master, history / "boundary", ignore=shutil.ignore_patterns("authoritative-snapshot.tar.gz"))
+    |                                                                                                     ^^^^^^^^^^^^^
+144 |     # Materialize just the first two raw archives for the accepted timing sidecars.
+145 |     for index, label in ((0, "first-slot"), (1, "second-slot")):
+    |
+
+E501 Line too long (135 > 100)
+   --> E:/p8v4/source/artifacts/phase-8-runner-amendment/v4-complete/closed_prefix.py:154:101
+    |
+152 | …
+153 | …
+154 | …on", "second-original-proposed-sidecar.json", "historical-accepted-first-v1.json"):
+    |                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+155 | …
+156 | …, "cloud.json"):
+    |
+
+E501 Line too long (127 > 100)
+   --> E:/p8v4/source/artifacts/phase-8-runner-amendment/v4-complete/closed_prefix.py:165:101
+    |
+163 |         manifest="/opt/fyp-phase8-combined-v4/artifacts/phase-8-review-freeze/v2/review-inventory.json",
+164 |         backup="/var/lib/p8-combined-v4/backup",
+165 |         continuation={"manifest": PREFIX + "/candidate-inventory.json", "receipts": "/var/lib/fyp-owner/combined-v4-receipts"},
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+166 |     )
+167 |     write_new(destination / "run.json", config)
+    |
+
+E501 Line too long (148 > 100)
+   --> E:/p8v4/source/artifacts/phase-8-runner-amendment/v4-complete/closed_prefix.py:168:101
+    |
+166 | …
+167 | …
+168 | …ash_file(destination / "run.json"), "bindings": hash_file(destination / "bindings.json")})
+    |                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+169 | …
+170 | …
+    |
+
+E501 Line too long (103 > 100)
+   --> E:/p8v4/source/artifacts/phase-8-runner-amendment/v4-complete/closed_prefix.py:172:101
+    |
+170 |     for index, proof in enumerate(proofs[:2]):
+171 |         original_proofs.append({
+172 |             "execution_id": proof["identity"]["execution_id"], "export_sha256": proof["export_sha256"],
+    |                                                                                                     ^^^
+173 |             "backup_receipt_sha256": proof["receipt_sha256"], "archive_sha256": proof["cloud"]["sha256"],
+174 |             "pinned_cloud": proof["cloud"], "sidecar_sha256": hash_file(sides / (("first" if index == 0 else "second") + "-original-p…
+    |
+
+E501 Line too long (105 > 100)
+   --> E:/p8v4/source/artifacts/phase-8-runner-amendment/v4-complete/closed_prefix.py:173:101
+    |
+171 | …     original_proofs.append({
+172 | …         "execution_id": proof["identity"]["execution_id"], "export_sha256": proof["export_sha256"],
+173 | …         "backup_receipt_sha256": proof["receipt_sha256"], "archive_sha256": proof["cloud"]["sha256"],
+    |                                                                                                   ^^^^^
+174 | …         "pinned_cloud": proof["cloud"], "sidecar_sha256": hash_file(sides / (("first" if index == 0 else "second") + "-original-pro…
+175 | …     })
+    |
+
+E501 Line too long (181 > 100)
+   --> E:/p8v4/source/artifacts/phase-8-runner-amendment/v4-complete/closed_prefix.py:174:101
+    |
+172 | …56": proof["export_sha256"],
+173 | …56": proof["cloud"]["sha256"],
+174 | …es / (("first" if index == 0 else "second") + "-original-proposed-sidecar.json")), "raw_status": "FAILED",
+    |                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+175 | …
+176 | …
+    |
+
+E501 Line too long (111 > 100)
+   --> E:/p8v4/source/artifacts/phase-8-runner-amendment/v4-complete/closed_prefix.py:177:101
+    |
+175 |         })
+176 |     record = {
+177 |         "version": "phase85-complete-continuation-v4", "kind": "CLOSED_38_ORIGINAL_METADATA_IMPORT_NOT_LAUNCH",
+    |                                                                                                     ^^^^^^^^^^^
+178 |         "run_id": RUN, "backed_up": COUNT, "planned": 1462, "next_execution_id": NEXT,
+179 |         "originals": original_proofs, "closed_originals": proofs,
+    |
+
+E501 Line too long (118 > 100)
+   --> E:/p8v4/source/artifacts/phase-8-runner-amendment/v4-complete/closed_prefix.py:184:101
+    |
+182 |         "parent_freeze_sha256": PARENT_FREEZE, "immediate_parent_freeze_sha256": PARENT,
+183 |         "stopped_boundary_reference": read(HERE / "stopped-boundary-reference.json"),
+184 |         "history_files": {p.relative_to(history).as_posix(): hash_file(p) for p in history.rglob("*") if p.is_file()},
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^
+185 |         "accepted": False, "frozen": False, "launch_authorized": False,
+186 |         "driver_calls": 0, "old_application_state_restored": False, "operational_clock_reset": False,
+    |
+
+E501 Line too long (101 > 100)
+   --> E:/p8v4/source/artifacts/phase-8-runner-amendment/v4-complete/closed_prefix.py:186:101
+    |
+184 |         "history_files": {p.relative_to(history).as_posix(): hash_file(p) for p in history.rglob("*") if p.is_file()},
+185 |         "accepted": False, "frozen": False, "launch_authorized": False,
+186 |         "driver_calls": 0, "old_application_state_restored": False, "operational_clock_reset": False,
+    |                                                                                                     ^
+187 |     }
+188 |     with tarfile.open(destination / "historical-evidence.tar.gz", "x:gz") as output:
+    |
+
+E501 Line too long (128 > 100)
+   --> E:/p8v4/source/artifacts/phase-8-runner-amendment/v4-complete/closed_prefix.py:195:101
+    |
+193 |     journal.verify()
+194 |     journal.event("CLOSED_38_ORIGINAL_IMPORT", proof=hash_file(destination / "handover.json"))
+195 |     journal.event("BINDINGS_SEALED", run=hash_file(destination / "run.json"), bindings=hash_file(destination / "bindings.json"))
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+196 |     journal.pause("CONTINUATION_REVIEW_REQUIRED")
+197 |     verify(destination)
+    |
+
+E501 Line too long (222 > 100)
+   --> E:/p8v4/source/artifacts/phase-8-runner-amendment/v4-complete/closed_prefix.py:205:101
+    |
+204 | …
+205 | …(HERE / "retained-slot-proofs.json") or record["stopped_boundary_reference"] != read(HERE / "stopped-boundary-reference.json"):
+    |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+206 | …
+207 | …
+    |
+
+E501 Line too long (143 > 100)
+   --> E:/p8v4/source/artifacts/phase-8-runner-amendment/v4-complete/closed_prefix.py:235:101
+    |
+233 | …
+234 | …
+235 | …rd["saved_identities_sha256"] or read(root / "saved-identities.json")["rows"] != saved:
+    |                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+236 | …")
+237 | …
+    |
+
+E501 Line too long (144 > 100)
+   --> E:/p8v4/source/artifacts/phase-8-runner-amendment/v4-complete/closed_prefix.py:238:101
+    |
+236 | …")
+237 | …
+238 | …] or any(any(a[k] != b[k] for k in IDENTITY) for a, b in zip(rows, saved, strict=True)):
+    |                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+239 | …
+240 | …tself uses one explicit snapshot.
+    |
+
+E501 Line too long (114 > 100)
+   --> E:/p8v4/source/artifacts/phase-8-runner-amendment/v4-complete/closed_prefix.py:250:101
+    |
+248 |         raise ValueError("HISTORICAL_NOTICE_PREFIX_DRIFT")
+249 |     for proof in record["closed_originals"]:
+250 |         if hash_file(root / "backups" / (proof["identity"]["execution_id"] + ".json")) != proof["receipt_sha256"]:
+    |                                                                                                     ^^^^^^^^^^^^^^
+251 |             raise ValueError("IMPORTED_BACKUP_DRIFT")
+    |
+
+E501 Line too long (108 > 100)
+   --> E:/p8v4/source/artifacts/phase-8-runner-amendment/v4-complete/handover.py:267:101
+    |
+265 |         if (
+266 |             ready["instance_id"] != launch.instance_id
+267 |             or ready["instance_id"] in ("i-0a6196aff6f8098ac", "i-034252c3e9b083abf", "i-002b63326e1566005")
+    |                                                                                                     ^^^^^^^^
+268 |             or ready["run_id"] != RUN
+269 |             or ready["policy_sha256"] != launch.policy_sha256
+    |
+
+E501 Line too long (105 > 100)
+  --> E:/p8v4/source/artifacts/phase-8-runner-amendment/v4-complete/imported_analysis.py:20:101
+   |
+18 |     verify_imported_first(root)
+19 |     record = read(root / "handover.json")
+20 |     closed = next(p for p in record["closed_originals"] if p["identity"]["execution_id"] == execution_id)
+   |                                                                                                     ^^^^^
+21 |     if closed["identity"]["sequence"] > 2:
+22 |         path = root / "historical/boundary/exports" / f"{closed['identity']['sequence']:04d}" / "export.json"
+   |
+
+E501 Line too long (109 > 100)
+  --> E:/p8v4/source/artifacts/phase-8-runner-amendment/v4-complete/imported_analysis.py:22:101
+   |
+20 |     closed = next(p for p in record["closed_originals"] if p["identity"]["execution_id"] == execution_id)
+21 |     if closed["identity"]["sequence"] > 2:
+22 |         path = root / "historical/boundary/exports" / f"{closed['identity']['sequence']:04d}" / "export.json"
+   |                                                                                                     ^^^^^^^^^
+23 |         trace = read(path)
+24 |         if hash_file(path) != closed["export_sha256"]:
+   |
+
+E402 Module level import not at top of file
+  --> E:/p8v4/source/artifacts/phase-8-runner-amendment/v4-complete/runner.py:20:1
+   |
+18 | sys.path.insert(0, str(REPO))
+19 |
+20 | from closed_prefix import imported as imported_closed
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+21 | from controls import (  # noqa: E402
+22 |     Authority,
+   |
+help: Move module level imports to top of file
+
+E501 Line too long (187 > 100)
+  --> E:/p8v4/source/artifacts/phase-8-runner-amendment/v4-complete/test_closed_prefix.py:30:101
+   |
+28 | …
+29 | …
+30 | …, "historical-evidence.tar.gz", "run.json", "bindings.json", "binding-seal.json", "cloud.json", "pause.json"):
+   |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+31 | …
+32 | …
+   |
+
+E501 Line too long (102 > 100)
+  --> E:/p8v4/source/artifacts/phase-8-runner-amendment/v4-complete/test_closed_prefix.py:47:101
+   |
+45 |     for slot in rows[:COUNT]:
+46 |         row, provenance = imported_row(root, slot["execution_id"])
+47 |         trace = read(root / "historical/boundary/exports" / f"{slot['sequence']:04d}" / "export.json")
+   |                                                                                                     ^^
+48 |         assert row.execution_id == slot["execution_id"]
+49 |         assert provenance["export_hash"] == hash_file(root / "historical/boundary/exports" / f"{slot['sequence']:04d}" / "export.json")
+   |
+
+E501 Line too long (135 > 100)
+  --> E:/p8v4/source/artifacts/phase-8-runner-amendment/v4-complete/test_closed_prefix.py:49:101
+   |
+47 |         trace = read(root / "historical/boundary/exports" / f"{slot['sequence']:04d}" / "export.json")
+48 |         assert row.execution_id == slot["execution_id"]
+49 |         assert provenance["export_hash"] == hash_file(root / "historical/boundary/exports" / f"{slot['sequence']:04d}" / "export.json")
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+50 |         assert provenance["replacement_or_driver_replay"] is False
+51 |         if slot["sequence"] > 2:
+   |
+
+E501 Line too long (114 > 100)
+  --> E:/p8v4/source/artifacts/phase-8-runner-amendment/v4-complete/test_closed_prefix.py:91:101
+   |
+89 |     with tarfile.open(archive, "x:gz") as target:
+90 |         target.add(member, arcname="slot/manifest.json")
+91 |     proof.update(archive=str(archive), manifest_sha256=hashlib.sha256(raw).hexdigest(), members=manifest["files"])
+   |                                                                                                     ^^^^^^^^^^^^^^
+92 |     proof["cloud"].update(bytes=archive.stat().st_size, sha256=hash_file(archive))
+93 |     master = tmp_path / "master"
+   |
+
+E501 Line too long (153 > 100)
+  --> E:/p8v4/source/artifacts/phase-8-runner-amendment/v4-complete/test_closed_prefix.py:96:101
+   |
+94 | …execution_id"] + ".json")
+95 | …
+96 | …f["identity"]["execution_id"], "cloud": proof["cloud"], "sha256": proof["cloud"]["sha256"]}))
+   |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+97 | …
+98 | …S_BACKUP"):
+   |
+
+Found 28 errors (4 fixed, 24 remaining).

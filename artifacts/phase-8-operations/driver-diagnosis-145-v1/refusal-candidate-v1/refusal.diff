@@ -1,0 +1,131 @@
+--- frozen-v9/refusal.py
++++ candidate-v1/refusal.py
+@@ -17,6 +17,60 @@
+ 
+ VERSION = "phase85-preflight-amendment-v2"
+ EXPECTED = "EXPECTED_EVIDENCE_REFUSAL"
++REPLACEMENT_VERSION = "phase85-slot145-replacement-refusal-candidate-v1"
++
++
++def replacement_chain(
++    row: dict[str, Any], current: list[dict[str, Any]], revision: int
++) -> list[str] | None:
++    """Recognize only the recorded first-correction CREATE/CANCEL/CREATE topology.
++
++    PRESENT means a committed effect, including cancellation; it does not mean
++    there must be only one operation. This does not change the requested claim.
++    """
++    history = row["snapshot"]["history"]
++    operations = {o["id"]: o for o in history["operations"]}
++    effects = history["effects"]
++    if (
++        revision != 2
++        or row["input"]["stratum"] != "HIDDEN_COMMIT"
++        or row["input"]["provider"]["supports_reschedule"] is not False
++        or len(current) != 2
++        or len(operations) != 3
++        or len(effects) != 3
++        or {e["operation_id"] for e in effects} != set(operations)
++    ):
++        return None
++    by_id = {e["operation_id"]: e for e in effects}
++    creates = [e for e in effects if e["effect_type"] == "PROVIDER_CREATE_APPOINTMENT"]
++    cancels = [e for e in effects if e["effect_type"] == "PROVIDER_COMPENSATE_CANCEL"]
++    old = [e for e in creates if operations[e["operation_id"]]["intent_revision"] == 1]
++    new = [e for e in creates if operations[e["operation_id"]]["intent_revision"] == 2]
++    if len(old) != 1 or len(new) != 1 or len(cancels) != 1:
++        return None
++    ordered = [new[0], cancels[0], old[0]]
++    ids = [e["operation_id"] for e in ordered]
++    if {o["id"] for o in current} != set(ids[:2]):
++        return None
++    previous = operations[ids[2]]
++    if previous["effect_knowledge"] != "PRESENT" or previous["applicability"] != "SUPERSEDED":
++        return None
++    key = row["targets"][-1]["resource_key"]
++    for identity in ids:
++        effect, operation = by_id[identity], operations[identity]
++        facts = effect["after_facts"]
++        if (
++            facts["resource_key"] != key
++            or effect["resource_id"] != facts["appointment_id"]
++            or operation["target_resource_id"] != effect["resource_id"]
++        ):
++            return None
++    if (
++        ordered[0]["resource_id"] == ordered[1]["resource_id"]
++        or ordered[1]["resource_id"] != ordered[2]["resource_id"]
++    ):
++        return None
++    return ids
+ 
+ 
+ class ReceiptProblem(BaseModel):
+@@ -109,9 +163,10 @@
+             and o["applicability"] == "CURRENT"
+             and o["effect_knowledge"] == "PRESENT"
+         ]
+-        if len(current) != 1:
+-            return None
+-        operation = current[0]
++        chain = None if len(current) == 1 else replacement_chain(row, current, revision)
++        if len(current) != 1 and chain is None:
++            return None
++        operation = operations[chain[0]] if chain else current[0]
+         claim_type = (
+             ClaimType.CURRENT_APPOINTMENT if revision == 1 else ClaimType.RESCHEDULED_APPOINTMENT
+         )
+@@ -248,6 +303,33 @@
+             observations,
+             None,
+         )
++        if chain:
++            # Bind the exception to complete successful replacement evidence.
++            # The frozen RESCHEDULED predicate still runs and must be VIOLATED.
++            if (
++                [o["source_identifier"] for o in ordered[1:]] != chain
++                or [o["query"].get("action") for o in ordered[1:]]
++                != ["CREATE", "CANCEL", "CREATE"]
++                or any(o["raw"]["status"] != 200 for o in ordered)
++            ):
++                return None
++            effects = {e["operation_id"]: e for e in history["effects"]}
++            if any(
++                o["raw"]["body"].get("operation_id") != o["source_identifier"]
++                or o["raw"]["body"].get("facts")
++                != effects[o["source_identifier"]]["after_facts"]
++                for o in ordered[1:]
++            ):
++                return None
++            replacement = _evaluate(
++                ClaimType.COMPENSATED_APPOINTMENT,
++                {"desired_state_json": desired},
++                {"provider_adapter": "simulator", "normalized_request_json": {"resource_key": key}},
++                observations,
++                None,
++            )
++            if replacement.result is not Result.SATISFIED or verdict.result is not Result.VIOLATED:
++                return None
+         if verdict.result is Result.SATISFIED or (
+             expected_result and verdict.result.value != expected_result
+         ):
+@@ -268,7 +350,7 @@
+             if receipt["observed_resource_version"] != verdict.resource_version:
+                 return None
+         body = {
+-            "version": VERSION,
++            "version": REPLACEMENT_VERSION if chain else VERSION,
+             "classification": EXPECTED,
+             "raw_driver_status": "FAILED",
+             "original_instrument_status": "INFRASTRUCTURE_FAILURE",
+@@ -291,6 +373,10 @@
+             "retry_performed": False,
+             "business_success_inferred_from_refusal": False,
+         }
++        if chain:
++            body["mechanism"] = "FROZEN_RESCHEDULE_CLAIM_ON_COMMITTED_REPLACEMENT_CHAIN"
++            body["chain_operation_ids"] = chain
++            body["application_behavior_changed"] = False
+         return {**body, "hash": stable_hash(body)}
+     except (KeyError, IndexError, TypeError, ValueError, StopIteration, ValidationError):
+         return None

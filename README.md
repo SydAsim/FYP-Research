@@ -1,4 +1,6 @@
-> **Public snapshot, 11 October 2026:** Phase 8 is paused at 145/1,500 backed-up original executions. Historical sections below describe earlier stages. See [PUBLICATION.md](PUBLICATION.md) for current status, included material and excluded private/archive dependencies. This copy is not a complete frozen deployment package.
+> **Completed study - updated 27 October 2026:** all **500 inputs across B3/P1/P2 (1,500 original executions)** and the computational analyses are complete. Each arm achieved **455/500 correct final business states**; the co-primary comparisons do not demonstrate an incremental benefit. A narrower, qualified difference appears in explicit corrective communication. This is a synthetic protocol study, not a real-speech or human-understanding benchmark.
+>
+> Start with [final findings and limitations](artifacts/phase-8-final-analysis/v1/FINAL_REPORT.md), [all 1,500 original rows](artifacts/phase-8-final-analysis/v1/analysis/original-results.csv), [the research manuscript](output/pdf/commit-aware-agents-full-v1/commit-aware-agents-full.pdf), and [publication scope](PUBLICATION.md). The paper is a review draft, not an accepted publication. Older sections below are preserved historical documentation; their "not started" or "paused" statements are superseded by the final report. This public copy is not the complete private frozen deployment/recovery package.
 
 # Commit-Aware Voice Agent
 

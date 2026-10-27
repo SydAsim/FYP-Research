@@ -1,0 +1,227 @@
+I001 [*] Import block is un-sorted or un-formatted
+  --> artifacts\study-guide\2026-10-25\v1\build_guide.py:3:1
+   |
+ 1 |   """Build one learning PDF from preserved results and authored teaching notes."""
+ 2 |
+ 3 | / from __future__ import annotations
+ 4 | |
+ 5 | | import hashlib
+ 6 | | import json
+ 7 | | import re
+ 8 | | from html import escape
+ 9 | | from pathlib import Path
+10 | | from typing import Any
+11 | |
+12 | | from pypdf import PdfReader, PdfWriter
+13 | | from reportlab.graphics.shapes import Drawing, Line, Rect, String
+14 | | from reportlab.lib import colors
+15 | | from reportlab.lib.enums import TA_JUSTIFY, TA_LEFT
+16 | | from reportlab.lib.pagesizes import A4
+17 | | from reportlab.lib.styles import ParagraphStyle
+18 | | from reportlab.lib.units import mm
+19 | | from reportlab.pdfbase import pdfmetrics
+20 | | from reportlab.pdfbase.ttfonts import TTFont
+21 | | from reportlab.platypus import (
+22 | |     BaseDocTemplate,
+23 | |     Frame,
+24 | |     Image,
+25 | |     PageBreak,
+26 | |     PageTemplate,
+27 | |     Paragraph,
+28 | |     Spacer,
+29 | |     Table,
+30 | |     TableStyle,
+31 | | )
+32 | | from reportlab.platypus.tableofcontents import TableOfContents
+33 | |
+34 | | from annotations import NOTES
+35 | | from glossary import GLOSSARY
+36 | | from questions import QUESTIONS
+37 | | from references import REFERENCES
+   | |_________________________________^
+38 |
+39 |   HERE = Path(__file__).resolve().parent
+   |
+help: Organize imports
+   |
+11 |
+12 + from annotations import NOTES
+13 + from glossary import GLOSSARY
+14 | from pypdf import PdfReader, PdfWriter
+15 + from questions import QUESTIONS
+16 + from references import REFERENCES
+17 | from reportlab.graphics.shapes import Drawing, Line, Rect, String
+--------------------------------------------------------------------------------
+36 | from reportlab.platypus.tableofcontents import TableOfContents
+   -
+   - from annotations import NOTES
+   - from glossary import GLOSSARY
+   - from questions import QUESTIONS
+   - from references import REFERENCES
+37 |
+   |
+
+UP034 [*] Avoid extraneous parentheses
+   --> artifacts\study-guide\2026-10-25\v1\build_guide.py:413:9
+    |
+411 |       parts = [(HERE / "lessons.md").read_text(encoding="utf-8")]
+412 |       parts.append(
+413 | /         (
+414 | |             "# PART V - Read the full manuscript closely\n\nEvery original prose block "
+415 | |             "appears below in gray. Read it, then read the explanation. The separate "
+416 | |             "appendix reproduces all eight original pages. Table values remain the "
+417 | |             "original values.\n"
+418 | |         )
+    | |_________^
+419 |       )
+420 |       block_index, last_page = 0, 0
+    |
+help: Remove extraneous parentheses
+    |
+412 |     parts.append(
+    -         (
+413 +         
+414 |             "# PART V - Read the full manuscript closely\n\nEvery original prose block "
+415 |             "appears below in gray. Read it, then read the explanation. The separate "
+416 |             "appendix reproduces all eight original pages. Table values remain the "
+417 |             "original values.\n"
+    -         )
+418 +         
+419 |     )
+    |
+
+UP034 [*] Avoid extraneous parentheses
+   --> artifacts\study-guide\2026-10-25\v1\build_guide.py:458:9
+    |
+456 |       assert block_index == len(NOTES) == 52
+457 |       parts.append(
+458 | /         (
+459 | |             "# PART VI - The twelve referenced works explained\n\nThese works are not "
+460 | |             "twelve language models installed in our system. Some are algorithms, "
+461 | |             "runtimes, theories or benchmarks; one is an engineering article. The "
+462 | |             "following concise summaries explain their role. They do not reproduce "
+463 | |             "the papers, claim their code was run, or compare their rates with ours. "
+464 | |             "The close-reading chapter and the appendix retain the manuscript's "
+465 | |             "references.\n"
+466 | |         )
+    | |_________^
+467 |       )
+468 |       for title, kind, url, summary, connection in REFERENCES:
+    |
+help: Remove extraneous parentheses
+    |
+457 |     parts.append(
+    -         (
+458 +         
+459 |             "# PART VI - The twelve referenced works explained\n\nThese works are not "
+--------------------------------------------------------------------------------
+465 |             "references.\n"
+    -         )
+466 +         
+467 |     )
+    |
+
+UP034 [*] Avoid extraneous parentheses
+   --> artifacts\study-guide\2026-10-25\v1\build_guide.py:479:9
+    |
+477 |           )
+478 |       parts.append(
+479 | /         (
+480 | |             "# PART VII - Difficult professor questions and defensible answers\n\nThese"
+481 | |             " are practice answers, not permission to claim expertise or work you did"
+482 | |             " not perform. Read the short answer first. The follow-up explains the "
+483 | |             "boundary a professor may test. Adapt personal-contribution statements to"
+484 | |             " your actual work.\n"
+485 | |         )
+    | |_________^
+486 |       )
+487 |       category = ""
+    |
+help: Remove extraneous parentheses
+    |
+478 |     parts.append(
+    -         (
+479 +         
+480 |             "# PART VII - Difficult professor questions and defensible answers\n\nThese"
+--------------------------------------------------------------------------------
+484 |             " your actual work.\n"
+    -         )
+485 +         
+486 |     )
+    |
+
+UP034 [*] Avoid extraneous parentheses
+   --> artifacts\study-guide\2026-10-25\v1\build_guide.py:501:9
+    |
+499 |       parts.append((HERE / "meeting.md").read_text(encoding="utf-8"))
+500 |       parts.append(
+501 | /         (
+502 | |             "# PART IX - Technical words in everyday English\n\nUse this dictionary "
+503 | |             "when a word interrupts your reading. Definitions explain this project's "
+504 | |             "usage. Exact executable constraints remain in the frozen "
+505 | |             "contracts/source.\n"
+506 | |         )
+    | |_________^
+507 |       )
+508 |       for term, meaning in GLOSSARY:
+    |
+help: Remove extraneous parentheses
+    |
+500 |     parts.append(
+    -         (
+501 +         
+502 |             "# PART IX - Technical words in everyday English\n\nUse this dictionary "
+503 |             "when a word interrupts your reading. Definitions explain this project's "
+504 |             "usage. Exact executable constraints remain in the frozen "
+505 |             "contracts/source.\n"
+    -         )
+506 +         
+507 |     )
+    |
+
+UP034 [*] Avoid extraneous parentheses
+   --> artifacts\study-guide\2026-10-25\v1\build_guide.py:511:9
+    |
+509 |           parts.append(f"**{term}.** {meaning}\n")
+510 |       parts.append(
+511 | /         (
+512 | |             "# APPENDIX - The preserved original manuscript\n\nThe following eight "
+513 | |             "pages reproduce the complete original research manuscript, including its"
+514 | |             " tables, figures and references. Its original printed page numbers "
+515 | |             "restart at 1. Use the PDF's Appendix bookmark to return here. This book "
+516 | |             "does not change the original file, its grades, or its source "
+517 | |             "commitments.\n\nBefore you present: explain the main result in your own "
+518 | |             "words, identify one verified trace, name the strongest measurement "
+519 | |             "limitation, and state what your evidence cannot answer. The goal is "
+520 | |             "understanding and accurate scientific discussion.\n"
+521 | |         )
+    | |_________^
+522 |       )
+523 |       return "\n".join(parts), coverage
+    |
+help: Remove extraneous parentheses
+    |
+510 |     parts.append(
+    -         (
+511 +         
+512 |             "# APPENDIX - The preserved original manuscript\n\nThe following eight "
+--------------------------------------------------------------------------------
+520 |             "understanding and accurate scientific discussion.\n"
+    -         )
+521 +         
+522 |     )
+    |
+
+E501 Line too long (102 > 100)
+   --> artifacts\study-guide\2026-10-25\v1\build_guide.py:698:101
+    |
+696 |                     Paragraph(
+697 |                         (
+698 |                             "Simplified component map. The independent research layer grades external"
+    |                                                                                                     ^^
+699 |                             " observations; this drawing does not replace the exact executable "
+700 |                             "transition rules."
+    |
+
+Found 7 errors.
+[*] 6 fixable with the `--fix` option.

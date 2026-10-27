@@ -1,0 +1,366 @@
+[
+  {
+    "block": 1,
+    "manuscript_page": 1,
+    "original_text": "An agent can change an external resource correctly while lacking evidence for its confirmation; a later correct update can also leave an earlier incompatible statement unwithdrawn. We investigate these distinctions in a maintenance-booking system with changing requests, ambiguous commits, and delayed playback. A competent baseline, B3, includes durable idempotency, reconciliation, revision invalidation, staging, compensation, playback tracking, and ordinary corrective updates. P1 adds explicit claim permits and product-state invariants; P2 additionally persists played-content repair obligations. A fixed synthetic study runs 500 paired inputs across the three arms, retaining all 1,500 originals and their 600-second observation windows. Each arm achieves 455/500 correct final business states and 155/200 successful corrections, with identical paired business outcomes. No incremental benefit is demonstrated on the two co-primary endpoints. In 33 predeclared recovery inputs, every arm delivers an ordinary supported update; complete corrective communication is TRUE in 33/33 P2 inputs, versus 26 FALSE and seven UNKNOWN for each comparator. This secondary result is bounded by a fixed withdrawal-template grader and scripted tone/playback acknowledgements. The study contributes an implemented protocol and auditable endpoint separation, rather than evidence of general voice-agent superiority or human-belief repair.",
+    "sha256": "1e81d14d7b4f70faf027c1b16263fc02daff01b9ff70fc5e3d972d854a8502d5",
+    "explanation_title": "Abstract: the entire study in one paragraph"
+  },
+  {
+    "block": 2,
+    "manuscript_page": 1,
+    "original_text": "Suppose an agent requests an appointment at 12:15. The provider commits, but the response disappears. The user then requests 14:15. Retrying the first operation can duplicate effects; stopping audio cannot undo a booking; and changing the database does not retract a confirmation that has already reached playback. These events cross distinct boundaries: accepted intent, external effect, available evidence, publication, playback, and correction.",
+    "sha256": "e79e97e360f4ca9c66919f709c07564b729ca0d199874654177f0bef6842a174",
+    "explanation_title": "Introduction: why a missing reply is dangerous"
+  },
+  {
+    "block": 3,
+    "manuscript_page": 1,
+    "original_text": "Idempotent APIs already address retry safety and changing intent [1]. Transactional agent runtimes and revision-recovery systems address related effect and validity problems [2-5]. The question here is incremental: **when do evidence-bound claim permission and durable corrective delivery provide observable protection beyond a competent baseline's existing safeguards?**",
+    "sha256": "b6894763eaf14757fca43e05264a320b27b241e18c990f50e8edebc9f93f5cae",
+    "explanation_title": "Introduction: the incremental research question"
+  },
+  {
+    "block": 4,
+    "manuscript_page": 1,
+    "original_text": "The experiment separates business correctness from communication correctness. A backend refusal can be appropriate even if the requested speech outcome is unsuccessful. Conversely, normal driver completion does not establish the correct business state. An ordinary corrected statement is credited in every arm; the baseline is not required to possess the proposed receipt objects.",
+    "sha256": "e9a729336c698f6545b3516533ccd650feca6c7a4391a6464717918b83717b54",
+    "explanation_title": "Introduction: a refusal can protect truth and still leave a task unfinished"
+  },
+  {
+    "block": 5,
+    "manuscript_page": 1,
+    "original_text": "This paper makes three bounded contributions: an implemented revision/evidence/claim/repair contract; a paired, fixed-frame evaluation with separately observable endpoints and preserved UNKNOWNs; and a completed result showing a primary business-outcome tie alongside a narrower distinction in explicit corrective communication. These are implementation and measurement contributions. They are not a new transaction primitive, a proof of universal safety, or a claim that existing systems lack correction mechanisms.",
+    "sha256": "f12f010abd9a67baedc239bd81feb6852004fb2318e1c095bef77e1dfb72cb9d",
+    "explanation_title": "Introduction: what the paper contributes"
+  },
+  {
+    "block": 6,
+    "manuscript_page": 2,
+    "original_text": "**Transactional effects and uncertain completion.** Safe idempotent API design distinguishes duplicate requests from changed intent [1]. Atomix gates settlement using progress-aware transactions and effect classification [2]. Cordon stages external effects within a task-scoped boundary with lineage and authority checks [3]. These are direct antecedents: irreversible-effect gating and recovery are not new here. Our empirical question concerns the relationship between resource evidence and the lifecycle of an outcome statement, including correction after previously exposed content.",
+    "sha256": "bd7f023afc03425db8ae69f8262c79b0b6b95b80079633c37a4a5ca13c2b7719",
+    "explanation_title": "Related work: transaction boundaries"
+  },
+  {
+    "block": 7,
+    "manuscript_page": 2,
+    "original_text": "**Revisions and recoverability.** Revisable by Design formalizes concurrent intervention and action reversibility [4]. REVISE preserves validity-established work while recomputing affected workflow regions [5]. DART studies admissible recovery boundaries after downstream commitment [6]. These works prevent a broad novelty claim about handling revisions, retaining progress, or recognizing irreversible consequences. Our study evaluates a specific booking implementation, rather than comparing their algorithms or proving a stronger recovery guarantee.",
+    "sha256": "2e88fb4858e87008fad510fa2c9e56e5fae72259062a4913c7a3547c5d857eca",
+    "explanation_title": "Related work: changing instructions and recovery"
+  },
+  {
+    "block": 8,
+    "manuscript_page": 2,
+    "original_text": "**Verification and receipts.** Verified Tool Calls combines postcondition verification, idempotency, and verify-before-retry behavior [7]. Tool Receipts links response claims to execution evidence [8]. Consequently, neither verification before retry nor evidence-backed claims is asserted as original in isolation. The proposed composition additionally treats accepted intent revision, resource version, exposure, and persistent corrective obligations as separately recorded concerns.",
+    "sha256": "5d7479c22081a92e7866ae6fcbd22711087f3b9658ab92425ae9b878526349b2",
+    "explanation_title": "Related work: observations and receipts"
+  },
+  {
+    "block": 9,
+    "manuscript_page": 2,
+    "original_text": "**Playback and dialogue repair.** Incremental speech-generation research already addresses self-monitoring and revision during output [9]. PACE aligns model-facing context with client playback and distinguishes physical playback evidence from semantic commitment and comprehension [10]. Our protocol also distinguishes generated and exposed output, but evaluates truth/evidence applicability and explicit withdrawal after changing booking targets. It does not reproduce PACE's live speech-model evaluation or establish superiority over it.",
+    "sha256": "49ad6b1890aadd652f2dc74293c3cba4c88cef003c477008931ff0100331f436",
+    "explanation_title": "Related work: generated output versus played output"
+  },
+  {
+    "block": 10,
+    "manuscript_page": 2,
+    "original_text": "**Evaluation.** Tau-bench evaluates tool-agent-user interaction using final database state [11]; tau-Voice extends grounded evaluation to full-duplex audio [12]. Our typed-intent, scripted-tone path isolates protocol behavior. Its results cannot be numerically compared with their model success rates. It measures neither speech recognition nor a language model's ability to choose an intent or formulate a correction.",
+    "sha256": "6baadc78252aa0dec571fc35cc8c78282a829ffae4453bb313d11eec62658e4e",
+    "explanation_title": "Related work: what kind of benchmark this is"
+  },
+  {
+    "block": 11,
+    "manuscript_page": 2,
+    "original_text": "These comparisons are a targeted primary-source review, not an exhaustive systematic review. The strongest candidate contribution is the integrated, auditable evaluation of business state, available evidence, exposure, and explicit corrective delivery against an already protected baseline. The study does not establish priority for that entire combination. External novelty assessment remains a peer-review question, especially given the close transactional and playback literature.",
+    "sha256": "194c7a7cc061b1b6a1da01988e1194fdf265ac66819a07e852a26752abd7fe76",
+    "explanation_title": "Related work: why novelty stays qualified"
+  },
+  {
+    "block": 12,
+    "manuscript_page": 2,
+    "original_text": "The application manages property-maintenance appointments. A model proposal has no authority to create business records directly. Deterministic acceptance establishes a new intent revision in PostgreSQL, which is the durable correctness authority. Redis is disposable. The experiment injects typed requests and therefore bypasses recognition and proposal-model uncertainty.",
+    "sha256": "8220f5c9dbd1c7b9ce407993ca589aba9642abcc4574ab803032e858a7fbbcd2",
+    "explanation_title": "System: where authority comes from"
+  },
+  {
+    "block": 13,
+    "manuscript_page": 2,
+    "original_text": "The operation is represented by orthogonal dimensions rather than a single linear success state. A request can have a committed external effect, UNKNOWN local knowledge, an invalidated claim, and an outstanding repair obligation simultaneously. External simulator truth is distinct from the observations available to the application.",
+    "sha256": "b699de2ab92653eae8b1c921dae46c2857310d96a5bbfae1c55efa9ce0bf4e1f",
+    "explanation_title": "System: orthogonal state dimensions"
+  },
+  {
+    "block": 14,
+    "manuscript_page": 3,
+    "original_text": "After a possibly sent operation times out, the effect remains UNKNOWN until reconciliation establishes whether a retry is safe. A materially changed request receives a linked logical operation. A verification receipt records the accepted revision, operation, claim predicates, resource version, evidence provenance, and validity interval, with SATISFIED, VIOLATED, or UNKNOWN results. A permit authorizes a particular claim using applicable evidence; it does not establish that an external transaction committed.",
+    "sha256": "0a92a64e61d4353dff8b9b2552abed724f153dba719d266ad9d3e23d8dd7cffb",
+    "explanation_title": "System: UNKNOWN, reconciliation, receipt, and permit"
+  },
+  {
+    "block": 15,
+    "manuscript_page": 3,
+    "original_text": "Applicability is checked at the configured publication/playback gates. A newer accepted revision can invalidate an unplayed claim. Provider changes can invalidate resource-version evidence even when an appointment-time phrase remains true. Model prose and tool-return text do not independently authorize decisive outcome speech. B3 uses its ordinary evidence checks and can also refuse an unsupported statement.",
+    "sha256": "dca4a29897b9b71fbcb77a6e7e47df8dd3c1397ab38195c52916907772838bf6",
+    "explanation_title": "System: why a publication check is not enough"
+  },
+  {
+    "block": 16,
+    "manuscript_page": 3,
+    "original_text": "Generation, publication, playback start, progress, completion, and interruption are separate events. If incompatible decisive content has already been exposed, suppressing a future segment does not withdraw it. P2 persists an obligation, attempts an applicable corrective statement, and retains its delivery state. Duplicate or delayed acknowledgements must be processed without losing already recorded effects.",
+    "sha256": "d6ab1253de22adff6db23e8ed36c260b2970bdb23aaeb068d55a211dcfdbe761",
+    "explanation_title": "System: preventing future output versus repairing past exposure"
+  },
+  {
+    "block": 17,
+    "manuscript_page": 3,
+    "original_text": "Figure 1. Independent dimensions of the implemented contract. Rows may coexist; this is not a sequence of mutually exclusive states. The experiment observes scripted exposure, not a person's understanding.",
+    "sha256": "15ba657d046fa18585582fb162204101de496d946dd96dcfb1a2f1ca0690bcf6",
+    "explanation_title": "Figure 1: how to read independent dimensions"
+  },
+  {
+    "block": 18,
+    "manuscript_page": 3,
+    "original_text": "Table 1. Explicit main-study profiles. Incremental switches are read from the frozen arm configuration; ordinary supported baseline updates receive full outcome credit.",
+    "sha256": "97e025f62011de3b55aa91730e1bf9ed86075fd26b8e67a314a12e56c2f39ce1",
+    "explanation_title": "Table 1: what the arm names mean"
+  },
+  {
+    "block": 19,
+    "manuscript_page": 3,
+    "original_text": "The independent grader reads scripted accepted targets, simulator truth, ordinary observations, output segments, and client testimony. It does not use an arm label, receipt verdict, permit identifier, or internal obligation state to decide observable success. Internal repair persistence/completion is reported separately as mechanism telemetry.",
+    "sha256": "a6731197453683483dda23862b0293d33323c3f4d127bda1bf2bc0d16f3fe676",
+    "explanation_title": "Measurement: the grader must not trust the system's own confidence"
+  },
+  {
+    "block": 20,
+    "manuscript_page": 3,
+    "original_text": "The endpoints distinguish final business state; claim truth and supporting evidence at publication/playback; incompatible stale exposure; a correct supported final update; explicit withdrawal; and persistence/completion of repair. Missing relevant evidence or playback acknowledgements remains UNKNOWN. Introductory words do not establish decisive confirmation. All main-study audio evidence is labelled SCRIPTED_TONE_SEMANTIC_PROXY: word-index acknowledgements are logical proxies, without verified acoustic word alignment or human listening.",
+    "sha256": "88525fa8abd9574a2ed842a10eb01965093683e1e93dabfb527d031df621dd8d",
+    "explanation_title": "Measurement: separate questions, separate answers"
+  },
+  {
+    "block": 21,
+    "manuscript_page": 4,
+    "original_text": "The frame combines 50 fixed simulator recipe families with generated appointment contexts. Recipes are sampled within strata with replacement under their context constraints. The target estimand is an arm difference over this declared recipe/context mixture, not a production population of callers, providers, or arbitrary agents. The input draw is the sampling unit; its three arm outcomes form a paired cluster. Repeated recipe families do not become independent domains.",
+    "sha256": "78633f89e65c039e9dff9fa70fb97919a248d7052e7ee0b2a0fea06e1c5ae2e3",
+    "explanation_title": "Design: 500 draws from 50 recipe families"
+  },
+  {
+    "block": 22,
+    "manuscript_page": 4,
+    "original_text": "Table 2. Fixed allocation. Each input receives all three arms, yielding 500 complete comparison sets and 1,500 original executions.",
+    "sha256": "9b92b5a06f07c897af40ea5f640a3d557582a9228035900ac5289106219709c7",
+    "explanation_title": "Table 2: count inputs and executions correctly"
+  },
+  {
+    "block": 23,
+    "manuscript_page": 4,
+    "original_text": "The saved input identities and serial order are retained. Comparable provider capabilities, faults, evidence availability, and budgets apply across arms. Named barriers control intended event order. Each original retains a 600-second collection horizon anchored to the saved final-request deadline, including recognized refusals. Checkpoint recovery preserves identity and deadline without replaying commands. Calibration and diagnostic runs are separate from main outcomes.",
+    "sha256": "cf4ff3ba259d2e7b40907918a52ea9ef835e0f4a1c4d1b2efff868341b87778f",
+    "explanation_title": "Design: controlled faults and full observation"
+  },
+  {
+    "block": 24,
+    "manuscript_page": 4,
+    "original_text": "All 1,500 originals reached BACKED_UP. The ledger contains one admission, export, and backup transition per original; all export transitions follow their saved observation deadlines. This verifies window accounting, not perfect event capture. Failures, timeouts, refusals, and UNKNOWN values are retained. The campaign had pauses and versioned experiment-control amendments; it was not an uninterrupted reliability endurance run.",
+    "sha256": "dc38d710c5c2cf232322f30ddc90edcac5a22cabca1b26431f4f89a065ae2ac4",
+    "explanation_title": "Design: BACKED_UP is an evidence status"
+  },
+  {
+    "block": 25,
+    "manuscript_page": 4,
+    "original_text": "The co-primary P2-B3 comparisons are correction success on 200 non-clean inputs and unsupported decisive exposure on 100 hidden-commit inputs. Correction risk differences standardize saturated arm-by-stratum means using weights 0.50/0.30/0.20. Conservative paired component bounds allocate error across strata and the two co-primary quantities; each reported co-primary interval is 97.5%. Clean-task usefulness has an accepted five-percentage-point tolerance with a one-sided 95% bound. Secondary P1-B3 and P2-P1 contrasts examine incremental mechanisms.",
+    "sha256": "f042966d34e9f26b58530aef9ee54bbbafba998b2b0710d32becbf553aaf5681",
+    "explanation_title": "Analysis: two primary endpoints and a clean-case tolerance"
+  },
+  {
+    "block": 26,
+    "manuscript_page": 4,
+    "original_text": "The 33 recovery inputs are designated before analysis; eligibility does not depend on an arm creating its own repair obligation. Ordinary supported updates and complete corrective communication are distinct. Planned-denominator best/worst assignments retain missing outcomes. The ten-comparison Holm family reports diagnostic paired tests, not permission to reinterpret UNKNOWNs as successful prevention. Twenty fixed temporal-block omission summaries assess the primary correction contrast.",
+    "sha256": "994b965aef0467742320a535b963d4fe9711e6d4ae3c74e784e420329cae9037",
+    "explanation_title": "Analysis: prevent selection bias in recovery evaluation"
+  },
+  {
+    "block": 27,
+    "manuscript_page": 4,
+    "original_text": "The accepted timing computation uses a 600-second restricted horizon, 2,000 stratified paired input bootstrap draws (seed 8042051), and a right-censored lognormal accelerated-failure-time model with arm and stratum terms. Its 1,000 bootstrap draws (seed 8042052) resample input IDs with all three arms together. This is time to a supported scripted-ACK completion, not complete corrective communication or human call latency. Shared-host dependence, censoring validity, and model form remain assumptions. The analysis retains its restricted claim-permission flags; computation alone does not validate them.",
+    "sha256": "69418613e87c5f44b6181738d8a16cdf6f53f18ad10040dc43d81c8293c56acd",
+    "explanation_title": "Analysis: timing and the bootstrap"
+  },
+  {
+    "block": 28,
+    "manuscript_page": 5,
+    "original_text": "Table 3. Final stored grades. Fractions use all planned inputs eligible for that endpoint. TRUE is adverse for unsupported exposure and forbidden effects.",
+    "sha256": "8e6adb38ddba6c529ab392fbbe19c0611851855b5567a608a5a1c75e157d8379",
+    "explanation_title": "Table 3: know whether TRUE is good or bad"
+  },
+  {
+    "block": 29,
+    "manuscript_page": 5,
+    "original_text": "Business correctness is 91% for every arm, with correction outcomes identical input by input: 73/100 hidden commit, 56/60 playout, and 26/40 other boundary. The weighted correction difference is zero; its conservative 97.5% interval is [-8.79, +8.79] percentage points (pp). The hidden-commit adverse-exposure comparison is 0/100 per arm, with difference interval [-4.95, +4.95] pp. These results demonstrate no incremental benefit on the co-primary endpoints; they do not prove universal equivalence or zero risk.",
+    "sha256": "871315d9794af797a9c1ca1a754b047b4e065f9e25ed7c099bff67c0f086497f",
+    "explanation_title": "Results: the main business comparison tied"
+  },
+  {
+    "block": 30,
+    "manuscript_page": 5,
+    "original_text": "All 300 clean inputs succeed per arm. The P2-B3 one-sided 95% lower bound is -1.22 pp, above the accepted -5 pp tolerance under the frozen conditional rule. Every primary correction block-omission estimate remains zero. Neither result establishes independence or stationarity for timing or secondary endpoints.",
+    "sha256": "bc0272300e7c4800cc48d11dd3853c0094c8383e21f301332da51f5954f63695",
+    "explanation_title": "Results: clean usefulness and block sensitivity"
+  },
+  {
+    "block": 31,
+    "manuscript_page": 5,
+    "original_text": "Table 4. Unsupported exposed claims across all 500 inputs per arm. No UNKNOWN is counted as safe.",
+    "sha256": "b860c0c17e552e280dd55aed7c3bfdfd06a462711d6cc8199a76de69393a5761",
+    "explanation_title": "Table 4: UNKNOWN stays visible"
+  },
+  {
+    "block": 32,
+    "manuscript_page": 5,
+    "original_text": "The four B3 TRUE outcomes occur in the version-change-before-start playout recipe. Their P1/P2 counterparts are UNKNOWN. Thus the observed 4-versus-0 TRUE count does not establish that permits eliminated exposure. None of the four belongs to the hidden-commit primary denominator. Incompatible stale exposure has zero TRUEs but 15 UNKNOWNs for B3 and 19 each for P1/P2. Content can become outdated after a later accepted request even when it was compatible when originally played.",
+    "sha256": "8782bdf0cc53bae31ee6d4ca5777393dd8e9b1d4746c532a05f188aeac774d92",
+    "explanation_title": "Results: the four exposure cases do not identify prevention"
+  },
+  {
+    "block": 33,
+    "manuscript_page": 5,
+    "original_text": "The raw statuses are 1,359 COMPLETED and 141 FAILED, with 47 failures per arm. All 141 FAILED records nevertheless have correct final business state, and none records a supported final update. Conversely, 135 COMPLETED records have incorrect final business state. The paired business result is therefore not a renamed driver success rate. Original failures and grades remain unchanged. Available compact records do not justify calling every historical exception an expected refusal; such a classification requires its original evidence and response context.",
+    "sha256": "390e5bb008bc9b7ca136f893874416fd7cb8d561c931fafc137a9ed02752bddf",
+    "explanation_title": "Results: FAILED and COMPLETED are process labels"
+  },
+  {
+    "block": 34,
+    "manuscript_page": 6,
+    "original_text": "All three arms deliver an ordinary supported corrected update in each of the 33 designated recovery inputs. Complete corrective communication is TRUE for all 33 P2 inputs; B3 and P1 each have 26 FALSE and seven UNKNOWN. A claim that the baseline never corrects the appointment would contradict these results.",
+    "sha256": "617f3578562216aa734d8eb73dcbc55bef063e76f35e81f3fa41d8da46546a8d",
+    "explanation_title": "Recovery results: an update is not the full correction criterion"
+  },
+  {
+    "block": 35,
+    "manuscript_page": 6,
+    "original_text": "Figure 2. Complete corrective communication in the 33 planned recovery inputs per arm. FALSE and UNKNOWN remain distinct; the endpoint includes the fixed explicit-withdrawal criterion. Ordinary supported updates succeed in 33/33 for every arm.",
+    "sha256": "7b0a22b190fb98a9dfa5248b08cc3d79dc4314c43ac3bdaf8308813b10439418",
+    "explanation_title": "Figure 2: explain all three colors"
+  },
+  {
+    "block": 36,
+    "manuscript_page": 6,
+    "original_text": "The recovery families comprise full playback before correction (9 inputs), delayed decisive acknowledgement (7), partial decisive-time playback (7), reconnect with another revision (7), and restart before repair (3). P2 is TRUE throughout. Comparator FALSEs occur in the first, second, fourth, and fifth families; the partial-time family supplies all seven comparator UNKNOWNs.",
+    "sha256": "7d7ece2ed191383611e84901f2eaec478442fe98ce413d206790100f87bbbb12",
+    "explanation_title": "Recovery results: the five challenge families"
+  },
+  {
+    "block": 37,
+    "manuscript_page": 6,
+    "original_text": "For P2-B3 and P2-P1, 26 known pairs favor P2, none favors the comparator, and seven pairs are missing. The exact McNemar diagnostic p-value is 2.9802e-8; the ten-family Holm diagnostic value is 2.9802e-7. These complete-pair diagnostics are not missingness-free confirmatory claims. Assigning all possible binary values to the seven baseline UNKNOWNs yields an empirical planned-denominator difference range of +78.79 to +100 pp. That range is an identification bound, not a confidence interval.",
+    "sha256": "b4d14a9c0636d11fa04d71ee74a6af4999ac1aa3edf4ad072d9ffd61aab2829e",
+    "explanation_title": "Recovery analysis: tiny p-values and seven unknowns"
+  },
+  {
+    "block": 38,
+    "manuscript_page": 6,
+    "original_text": "P2 telemetry records 40 obligations across the 33 inputs, all REPAIR_PLAYED. Additional obligations occur after another revision. This supports retained obligation/playback-state accounting. It does not independently prove unattended discovery: the sampled repair trace includes experiment-invoked worker processes. Observable communication grades do not use those internal obligation states.",
+    "sha256": "42cd9980a50fa9ff964914c5447829c0fe244bc730e84e43d36e468d6c1c4d8d",
+    "explanation_title": "Recovery telemetry: 40 obligations across 33 inputs"
+  },
+  {
+    "block": 39,
+    "manuscript_page": 6,
+    "original_text": "**Measurement qualification.** The frozen withdrawal matcher requires a supported, fully acknowledged update beginning with \"Correction: my earlier confirmation was outdated.\" It is arm-label neutral but template-specific. The positive result partly reflects the intended output behavior and its matching instrument. It does not establish semantically superior natural-language repair, restored human belief, or benefit over an alternative ordinary phrasing.",
+    "sha256": "5e5dfd0793f7e63b991dbc91db6b22ab1142c664db3caaea3c5b25fb36630f3b",
+    "explanation_title": "Measurement: the fixed phrase is a serious limitation"
+  },
+  {
+    "block": 40,
+    "manuscript_page": 6,
+    "original_text": "Table 5. Conditional restricted-mean scripted completion-time differences. Positive values mean longer recorded time; intervals are paired input-bootstrap 95% intervals.",
+    "sha256": "cba89a3cc5e4f418d5f61085df467363a4b370aed3196732a612ca1db999709a",
+    "explanation_title": "Table 5: plus means slower in this endpoint"
+  },
+  {
+    "block": 41,
+    "manuscript_page": 6,
+    "original_text": "The timing set contains 1,224 completion events and 276 censored rows, without missing or zero times. All 1,000 AFT bootstrap fits converge. Conditional time ratios versus B3 are 1.2258 for P1 (interval 1.2044-1.2451) and 1.2265 for P2 (1.2034-1.2506). Lognormal form and independent censoring are unproven; convergence does not resolve either assumption. No faster-agent claim follows.",
+    "sha256": "cf0389d113bf10f7b1cc27925e4c3cbab68b770be64348d2e6b6c6b0ce15fe16",
+    "explanation_title": "Timing: event observations, censoring, and model convergence"
+  },
+  {
+    "block": 42,
+    "manuscript_page": 7,
+    "original_text": "**A correct transaction with a refused statement.** Sequence 145 begins with a committed booking and a deliberately lost response. Reconciliation cancels the first appointment and creates the corrected one because in-place rescheduling is unavailable. The synthesis path nevertheless selects RESCHEDULED_APPOINTMENT from the accepted revision number. That claim's predicate is VIOLATED, so B3 refuses the speech request with HTTP 409. Its raw FAILED status coexists with correct business/correction grades and an unsuccessful final-update outcome. P1/P2 share this revision-only claim-selection limitation; it was preserved, not silently repaired by a collector change.",
+    "sha256": "9be5927f358496a32c992e3efd09a52c1930b2ef84334ed76ea4b457d8dff0ca",
+    "explanation_title": "Trace 145: right booking, wrong claim predicate"
+  },
+  {
+    "block": 43,
+    "manuscript_page": 7,
+    "original_text": "**Evidence can expire without changing every word's truth.** Sequence 59, B3, records a provider resource change before playback. The original grade has TRUE truth at publication/playback but FALSE evidence at playback, with unsupported exposure TRUE and final business state FALSE. An appointment-time component can remain true while its resource/evidence binding is inapplicable. The trace illustrates why a scalar success label is insufficient; it is not a formal proof of completeness of the oracle.",
+    "sha256": "4c63e760cce5659243b153dbfc613844c1b68e7ea19cbb8a007ca86265cfb8d5",
+    "explanation_title": "Trace 59: factual phrase versus applicable evidence"
+  },
+  {
+    "block": 44,
+    "manuscript_page": 7,
+    "original_text": "**Another revision during repair.** Sequence 82, P2, retains an initial confirmation, an interrupted revision-two repair, a revision-three corrective statement, and delayed earlier testimony. Two obligations end REPAIR_PLAYED, with correct final state, update, and withdrawal grades. This is a concrete recorded repair path. Its explicitly invoked workers preclude presenting it alone as autonomous recovery evidence.",
+    "sha256": "00ea1d7a44954efee835dabfc9dc87e2b3117f94c823accefa490330a2c648d9",
+    "explanation_title": "Trace 82: correction can itself become outdated"
+  },
+  {
+    "block": 45,
+    "manuscript_page": 7,
+    "original_text": "**Construct validity.** Typed intents and tones isolate protocol state. Word-index ACKs do not verify intelligible audio, attention, or understanding. Missing terminal testimony remains UNKNOWN. The exact-prefix withdrawal test is narrower than general semantic retraction and may favor the particular repair template by construction. The complete communication difference must be read alongside equal ordinary-update performance. Repair telemetry is a mechanism observation, not an independent delivery oracle.",
+    "sha256": "fa3887524b353b3ddc33b8c28ddd5518b3054bf61a987f61137b04284387cdf7",
+    "explanation_title": "Validity: are we measuring the thing we care about?"
+  },
+  {
+    "block": 46,
+    "manuscript_page": 7,
+    "original_text": "**Implementation validity.** The shared claim-selection limitation can withhold useful confirmations in all arms. Outcomes concern these implementations, not ideal mechanisms. Preventive permits and product-state invariants change together in P1, so their individual effects are not identified. P2 differs by the repair package, including its output behavior, rather than storage persistence alone. The study cannot attribute the secondary difference solely to durability.",
+    "sha256": "324102bfbd3567a2f2df4f535693cba4b9bee4c364e2f54c08b9931c144e215b",
+    "explanation_title": "Validity: what did each arm actually change?"
+  },
+  {
+    "block": 47,
+    "manuscript_page": 7,
+    "original_text": "**Statistical validity.** Five hundred context draws arise from 50 fixed families, not 1,500 independent tasks. Shared serial infrastructure, temporal drift, and operational interruptions weaken independence assumptions. The block sensitivity addresses the primary contrast only. The helper outputs retain confirmatory/model claim guards as false; this paper reports conditional bounds and diagnostic tests rather than overriding those restrictions.",
+    "sha256": "023edf308048e3f24b98d297acca2c1686295dfbfec2449eb2583f7d30c38e4d",
+    "explanation_title": "Validity: independence is an assumption"
+  },
+  {
+    "block": 48,
+    "manuscript_page": 7,
+    "original_text": "Four raw timing records retain INFRASTRUCTURE_FAILURE labels (sequences 1, 2, 145, 616). A separate accepted view reuses only the previously approved first-two label sidecars, with identical numeric durations and outcomes; two infrastructure labels remain in that view. No new sidecar or retrospective regrade was applied. These histories do not establish independent administrative censoring. Restricted-horizon and AFT estimates therefore require qualified interpretation.",
+    "sha256": "158cb53b6060b760e56094a6b6f228661605fc7b9e5fece6f096012eb23708f9",
+    "explanation_title": "Validity: preserve timing history rather than rewriting it"
+  },
+  {
+    "block": 49,
+    "manuscript_page": 7,
+    "original_text": "**Operational and external validity.** Nine admission-controller binding segments document amendments and pauses. A binding is a provenance reference, not per-process binary attestation. Hash verification and post-deadline exports establish integrity/accounting, not complete capture of every late event or deployment reliability. No natural callers, speech-model comparison, payment workflow, or software-update benchmark was evaluated. Generalization beyond the declared simulator frame remains untested.",
+    "sha256": "8a0dc9cc51f4821d866ea1e2bd1ea53f1c43f3dd9e010a8a28504a5d5c34674d",
+    "explanation_title": "Validity: provenance is not a universal deployment guarantee"
+  },
+  {
+    "block": 50,
+    "manuscript_page": 8,
+    "original_text": "All 1,500 originals, including unsuccessful outcomes, remain in the analysis. Identity/export/backup joins and 196,037 chained notices were checked; 3,450 frozen final-inventory file hashes still match after analysis. Operational provenance identifies each original's applicable controller binding. These checks do not imply that every original ran the final controller version.",
+    "sha256": "2b161788f99b852db13841b254af1a3f832d92b55c750b5c7cc183508f4301d0",
+    "explanation_title": "Reproducibility: what was checked"
+  },
+  {
+    "block": 51,
+    "manuscript_page": 8,
+    "original_text": "The retained local result package contains the full 1,500-row CSV, compact original records, frozen-method outputs, verification records, reproduction commands, and three bounded trace examples. It does not contain all raw archives or the entire pinned runtime. The final returned evidence bundle has SHA-256 1d67c5adc39fc6ef6f9cfcaa32a910532be8a9faf824383946d5c2ed10426341. A separate companion evidence map records exact source/output hashes. No public archival DOI or anonymously accessible full artifact is claimed.",
+    "sha256": "4d6dc913e0d2d0e5f88bea701a65d84790bfc113a27e0668b96e1534ac716548",
+    "explanation_title": "Reproducibility: results package versus full archive collection"
+  },
+  {
+    "block": 52,
+    "manuscript_page": 8,
+    "original_text": "The principal result is an observed tie in business correctness beyond a strong baseline. The secondary result distinguishes an ordinary supported update from the implemented explicit-withdrawal criterion. This suggests a useful reporting discipline: distinguish effects, knowledge, exposure, and correction, and preserve refusal and missingness rather than equating either with success. It does not establish a breakthrough, general superiority, or durable repair's isolated causal effect. For software-update agents, artifact versions and deployment evidence offer a conceptual analogue; this study supplies no empirical software-update result. The completed study supports a bounded systems/measurement paper with a negative primary finding and a qualified secondary finding.",
+    "sha256": "3f7de29aed84e8fe02170bd5aea23f48aa50d17bdaad95849546c323a96b5d7c",
+    "explanation_title": "Conclusion: the strongest honest story"
+  }
+]

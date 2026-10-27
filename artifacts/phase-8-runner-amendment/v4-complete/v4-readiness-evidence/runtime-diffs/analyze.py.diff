@@ -1,0 +1,22 @@
+--- accepted-v3/analyze.py
++++ candidate-v4/analyze.py
+@@ -6,6 +6,7 @@
+ from pathlib import Path
+ from typing import Any
+ 
++from closed_prefix import imported as imported_closed
+ from controls import Journal, canonical, hash_file, read, write_new
+ from handover import FIRST
+ from instrument import analysis, evaluate_trace
+@@ -75,10 +76,7 @@
+     }
+     rows, evidence = [], []
+     for slot in Journal(root).rows():
+-        if (
+-            slot["execution_id"] in (FIRST, "01a11705-11f0-7826-bd9d-9066d82c4452")
+-            and (root / "handover.json").exists()
+-        ):
++        if imported_closed(root, slot["execution_id"]):
+             from imported_analysis import imported_row
+ 
+             row, provenance = imported_row(root, slot["execution_id"])
